@@ -6,11 +6,6 @@ import path from "path";
 
 const app = express();
 
-// 시퀄라이즈 부분
-// sequelize.sync({ force: false }).catch((error) => {
-//   console.error(error);
-// });
-
 app.use(express.urlencoded());
 app.use(express.json());
 
@@ -55,7 +50,6 @@ const server = app
 
     // 시퀄라이즈 연결 부
     sequelize
-      // .sync({ alter: true })
       .authenticate()
       .then(async () => {
         console.log("postgreSQL Connected ...");

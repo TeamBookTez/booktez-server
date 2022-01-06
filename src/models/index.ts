@@ -11,7 +11,7 @@ export const sequelize = new Sequelize(
   // config.development.password,
   {
     host: process.env.DB_HOST || "localhost",
-    database: process.env.DB_DBNAME,
+    database: process.env.DB_DB,
     dialect: "postgres",
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -21,6 +21,13 @@ export const sequelize = new Sequelize(
 );
 
 sequelize.addModels([User]);
+User.sync({ force: true })
+  .then(() => {
+    console.log("✅Success Create Tables");
+  })
+  .catch((err) => {
+    console.log("❗️Error in Create Tables : ", err);
+  });
 
 export { User };
 export default sequelize;

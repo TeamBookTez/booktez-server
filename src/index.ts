@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-// import { sequelize } from "./models";
+import { sequelize } from "./models";
 import router from "./router";
 import path from "path";
 
@@ -54,15 +54,15 @@ const server = app
     );
 
     // 시퀄라이즈 연결 부
-    // sequelize
-    //   // .sync({ alter: true })
-    //   .authenticate()
-    //   .then(async () => {
-    //     console.log("postgreSQL Connected ...");
-    //   })
-    //   .catch((err) => {
-    //     console.log("TT : ", err);
-    //   });
+    sequelize
+      // .sync({ alter: true })
+      .authenticate()
+      .then(async () => {
+        console.log("postgreSQL Connected ...");
+      })
+      .catch((err) => {
+        console.log("TT : ", err);
+      });
   })
   .on("error", (err) => {
     console.error(err);

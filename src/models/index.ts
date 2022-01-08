@@ -21,7 +21,9 @@ export const sequelize = new Sequelize(
 );
 
 sequelize.addModels([User]);
-User.sync({ force: true })
+
+// DB를 밀어버리고 새로 만들 때만 {force: true}
+User.sync({ force: false })
   .then(() => {
     console.log("✅Success Create Tables");
   })

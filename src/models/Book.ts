@@ -51,6 +51,6 @@ export default class Book extends Model {
   @Column
   thumbnail: string;
 
-  // @HasMany(() => Review)
-  // reviews: Review[];
+  @HasMany(() => Review)
+  reviews: Review[];
 }

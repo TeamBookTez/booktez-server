@@ -33,9 +33,9 @@ export default class Review extends Model {
   @Column
   user_id: number;
 
-  //   @ForeignKey(() => Book)
-  //   @Column
-  //   book_id: number;
+  @ForeignKey(() => Book)
+  @Column
+  book_id: number;
 
   @Column(DataType.ARRAY(DataType.STRING))
   question_list: string[];
@@ -67,6 +67,6 @@ export default class Review extends Model {
   @BelongsTo(() => User)
   user: User;
 
-  //   @BelongsTo(() => Review)
-  //   review: Review;
+  @BelongsTo(() => Book)
+  book: Book;
 }

@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import dotenv from "dotenv";
 import User from "./User";
+import Book from "./Book";
 const db = {};
 
 dotenv.config();
@@ -20,7 +21,7 @@ export const sequelize = new Sequelize(
   }
 );
 
-sequelize.addModels([User]);
+sequelize.addModels([User, Book]);
 
-export { User };
+export { User, Book };
 export default sequelize;

@@ -8,7 +8,9 @@ import {
   Default,
   AllowNull,
   DataType,
+  HasMany,
 } from "sequelize-typescript";
+import { Review } from ".";
 
 @Table({
   tableName: "book",
@@ -48,4 +50,7 @@ export default class Book extends Model {
   )
   @Column
   thumbnail: string;
+
+  // @HasMany(() => Review)
+  // reviews: Review[];
 }

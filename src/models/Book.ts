@@ -1,53 +1,56 @@
 import {
   Model,
   Column,
-  CreatedAt,
-  UpdatedAt,
   Table,
   PrimaryKey,
   AutoIncrement,
   Unique,
   Default,
   AllowNull,
+  DataType,
   HasMany,
 } from "sequelize-typescript";
-
 import { Review } from ".";
 
 @Table({
-  tableName: "user",
+  tableName: "book",
   freezeTableName: true,
   underscored: true,
   timestamps: true,
   charset: "utf8", // 한국어 설정
   collate: "utf8_general_ci", // 한국어 설정
 })
-export default class User extends Model {
+export default class Book extends Model {
   @PrimaryKey
   @AutoIncrement
   @Unique
   @Column
   id: number;
 
+  @AllowNull(false)
   @Unique
   @Column
-  email: string;
-
-  @Column
-  password: string;
+  isbn: string;
 
   @Unique
   @Column
-  nickname: string;
+  isbn_sub: string;
 
-  @Default("디폴트 이미지")
+  @AllowNull(false)
   @Column
-  img: string;
+  title: string;
 
-  @AllowNull
+  @AllowNull(false)
+  @Column(DataType.ARRAY(DataType.STRING))
+  author: string[];
+
+  @AllowNull(false)
+  @Default(
+    "https://o2-server.s3.ap-northeast-2.amazonaws.com/default_O2_Logo%403x.png"
+  )
   @Column
-  emailCode!: string;
+  thumbnail: string;
 
-  @HasMany(() => Review)
-  reviews: Review[];
+  // @HasMany(() => Review)
+  // reviews: Review[];
 }

@@ -9,7 +9,10 @@ import {
   Unique,
   Default,
   AllowNull,
+  HasMany,
 } from "sequelize-typescript";
+
+import { Review } from ".";
 
 @Table({
   tableName: "user",
@@ -26,28 +29,25 @@ export default class User extends Model {
   @Column
   id: number;
 
+  @Unique
   @Column
   email: string;
 
   @Column
   password: string;
 
-  @Default(
-    "https://o2-server.s3.ap-northeast-2.amazonaws.com/default_O2_Logo%403x.png"
-  )
-  @Column
-  img: string;
-
+  @Unique
   @Column
   nickname: string;
+
+  @Default("디폴트 이미지")
+  @Column
+  img: string;
 
   @AllowNull
   @Column
   emailCode!: string;
 
-  @CreatedAt
-  createdAt!: Date;
-
-  @UpdatedAt
-  updatedAt!: Date;
+  @HasMany(() => Review)
+  reviews: Review[];
 }

@@ -15,7 +15,7 @@ import {
 import { User, Book } from ".";
 
 @Table({
-  tableName: "user",
+  tableName: "review",
   freezeTableName: true,
   underscored: true,
   timestamps: true,

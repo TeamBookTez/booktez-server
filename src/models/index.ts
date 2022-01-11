@@ -21,7 +21,7 @@ export const sequelize = new Sequelize(
 );
 
 sequelize.addModels([User]);
-User.sync({ force: true })
+User.sync({ force: false })
   .then(() => {
     console.log("✅Success Create Tables");
   })

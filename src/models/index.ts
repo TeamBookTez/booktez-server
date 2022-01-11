@@ -1,6 +1,8 @@
 import { Sequelize } from "sequelize-typescript";
 import dotenv from "dotenv";
 import User from "./User";
+import Book from "./Book";
+import Review from "./Review";
 const db = {};
 
 dotenv.config();
@@ -20,14 +22,8 @@ export const sequelize = new Sequelize(
   }
 );
 
-sequelize.addModels([User]);
-User.sync({ force: false })
-  .then(() => {
-    console.log("✅Success Create Tables");
-  })
-  .catch((err) => {
-    console.log("❗️Error in Create Tables : ", err);
-  });
+sequelize.addModels([User, Book, Review]);
 
-export { User };
+
+export { User, Book, Review };
 export default sequelize;

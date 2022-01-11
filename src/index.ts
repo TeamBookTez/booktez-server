@@ -48,14 +48,24 @@ const server = app
   `
     );
 
-    // 시퀄라이즈 연결 부
+    // 시퀄라이즈 연결
     sequelize
       .authenticate()
       .then(async () => {
-        console.log("postgreSQL Connected ...");
+        console.log("✅ Connect PostgreSQL");
       })
       .catch((err) => {
         console.log("TT : ", err);
+      });
+
+    // 시퀄라이즈 모델 DB에 싱크
+    sequelize
+      .sync({ force: false })
+      .then(() => {
+        console.log("✅ Sync Models to DB");
+      })
+      .catch((err) => {
+        console.error(err);
       });
   })
   .on("error", (err) => {

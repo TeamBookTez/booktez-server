@@ -23,7 +23,7 @@ export default {
   jwtAlgorithm: process.env.JWT_ALGO,
 
   // S3 버킷 연결 부분
-  // awsBucket: process.env.AWS_BUCKET,
-  // awsS3AccessKey: process.env.AWS_ACCESS_KEY,
-  // awsS3SecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  awsBucket: process.env.AWS_BUCKET,
+  awsS3AccessKey: process.env.AWS_ACCESS_KEY,
+  awsS3SecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 };

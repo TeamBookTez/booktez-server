@@ -43,7 +43,6 @@ const postSignupService = async ({ email, nickname, password }) => {
   }
 
   // password 형식이 잘못되었을 때
-  // TODO: 공백확인
   if (
     !/^(?=.*[a-zA-Z])((?=.*\d)(?=.*\W)).{8,64}$/.test(password) ||
     /\s/.test(password)

@@ -40,6 +40,7 @@ const getTestController = async (req: Request, res: Response) => {
     );
   }
 };
+
 const testController = {
   getTestController,
 };

@@ -14,7 +14,9 @@ import authService from "../service/auth";
  *  @로그인
  *  @route Post auth/login
  *  @access public
- *  @err
+ *  @err 1. 필요한 값이 없습니다.
+ *       2. 존재하지 않는 이메일입니다.
+ *       3. 비밀번호가 일치하지 않습니다.
  */
 
 const postLoginController = async (req: Request, res: Response) => {

@@ -24,15 +24,20 @@ const getTestController = async (req: Request, res: Response) => {
     // throw new Error();
     // 테스트 실패
     if (resData === -1) {
-      response.basicResponse(res, returnCode.NOT_FOUND, "테스트 실패");
+      response.basicResponse(res, returnCode.NOT_FOUND, false, "테스트 실패");
     } else {
       // 테스트 성공
-      response.dataResponse(res, returnCode.OK, "테스트 성공", resData);
+      response.dataResponse(res, returnCode.OK, true, "테스트 성공", resData);
     }
   } catch (err) {
     slack.slackWebhook(req, err.message);
     console.error(err.message);
-    response.basicResponse(res, returnCode.INTERNAL_SERVER_ERROR, "서버 오류");
+    response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      tu,
+      "서버 오류"
+    );
   }
 };
 const testController = {

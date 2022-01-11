@@ -35,7 +35,7 @@ const getTestController = async (req: Request, res: Response) => {
     response.basicResponse(
       res,
       returnCode.INTERNAL_SERVER_ERROR,
-      tu,
+      false,
       "서버 오류"
     );
   }

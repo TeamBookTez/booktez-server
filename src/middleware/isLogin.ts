@@ -7,15 +7,22 @@ import config from "../config";
 import response from "../library/response";
 import returnCode from "../library/returnCode";
 
+// slack
+import slack from "../others/slack/slack";
+
 export default (req: Request, res: Response, next) => {
   // 로그인 변수
   let isLogin;
 
   // 토큰이 없을 경우
-  if (req.headers.authorization == null) {
+  if (
+    req.headers.authorization == null ||
+    req.headers.authorization == undefined
+  ) {
     isLogin = false;
     req.body.isLogin = isLogin;
     next();
+    return;
   }
 
   const token = req.headers.authorization;
@@ -27,9 +34,10 @@ export default (req: Request, res: Response, next) => {
 
     req.body.userID = decoded.user;
     req.body.isLogin = isLogin;
-    next();
+    // next();
   } catch (err) {
     if (err.message === "jwt expired") {
+      slack.slackWebhook(req, err.message);
       response.basicResponse(
         res,
         returnCode.UNAUTHORIZED,
@@ -37,6 +45,7 @@ export default (req: Request, res: Response, next) => {
         "만료된 토큰입니다"
       );
     } else {
+      slack.slackWebhook(req, err.message);
       response.basicResponse(
         res,
         returnCode.UNAUTHORIZED,

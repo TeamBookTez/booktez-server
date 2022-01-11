@@ -8,9 +8,14 @@ const router = express.Router();
 
 router.get("", async (req: Request, res: Response) => {
   try {
-    response.basicResponse(res, returnCode.OK, "BookTez api");
+    response.basicResponse(res, returnCode.OK, true, "BookTez api");
   } catch (err) {
-    response.basicResponse(res, returnCode.INTERNAL_SERVER_ERROR, "서버 오류");
+    response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
   }
 });
 

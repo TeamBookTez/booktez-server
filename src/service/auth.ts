@@ -96,7 +96,7 @@ const postSignupService = async ({ email, nickname, password }) => {
  *  @access public
  */
 
-const postLoginService = async ({ email, password }) => {
+const postLoginService = async (email: string, password: string) => {
   // 요청 바디 부족
   if (!email || !password) {
     return constant.NULL_VALUE;

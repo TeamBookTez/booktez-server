@@ -100,7 +100,7 @@ const postSignupController = async (req: Request, res: Response) => {
 
 const postLoginController = async (req: Request, res: Response) => {
   try {
-    const resData = await authService.postLoginService(req.body);
+    const resData = await authService.postLoginService(req.body.email, req.body.password);
 
     if (resData === constant.NULL_VALUE) {
       response.basicResponse(

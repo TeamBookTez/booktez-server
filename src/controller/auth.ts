@@ -125,7 +125,6 @@ const postLoginController = async (req: Request, res: Response) => {
         "비밀번호가 일치하지 않습니다."
       );
     } else {
-      const { nickname, token } = data;
       response.dataResponse(
         res,
         returnCode.OK,

@@ -21,5 +21,6 @@ router.get("", async (req: Request, res: Response) => {
 
 router.use("/test", require("./test"));
 router.use("/auth", require("./auth"));
+router.use("/book", require("./book"));
 
 export default router;

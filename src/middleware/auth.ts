@@ -25,7 +25,6 @@ export default (req: Request, res: Response, next) => {
   // Verify token
   try {
     const decoded = jwt.verify(token, config.jwtSecret);
-
     req.body.userID = decoded.user;
     next();
   } catch (err) {

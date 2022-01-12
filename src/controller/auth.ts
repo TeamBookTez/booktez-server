@@ -146,7 +146,7 @@ const postLoginController = async (req: Request, res: Response) => {
   }
 };
 const authController = {
-    postSignupController,
+  postSignupController,
   postLoginController,
 };
 

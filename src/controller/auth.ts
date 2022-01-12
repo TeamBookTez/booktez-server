@@ -101,23 +101,23 @@ const postSignupController = async (req: Request, res: Response) => {
 const postLoginController = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const data = await authService.postLoginService(email, password);
+    const resData = await authService.postLoginService(email, password);
 
-    if (data === -1) {
+    if (resData === -1) {
       response.basicResponse(
         res,
         returnCode.BAD_REQUEST,
         false,
         "필요한 값이 없습니다."
       );
-    } else if (data === -2) {
+    } else if (resData === -2) {
       response.basicResponse(
         res,
         returnCode.NOT_FOUND,
         false,
         "존재하지 않는 이메일입니다."
       );
-    } else if (data === -3) {
+    } else if (resData === -3) {
       response.basicResponse(
         res,
         returnCode.BAD_REQUEST,
@@ -130,7 +130,7 @@ const postLoginController = async (req: Request, res: Response) => {
         returnCode.OK,
         "장서현의 첫 api 소중히 다뤄주세요 💋",
         true,
-        data
+        resData
       );
     }
   } catch (err) {

@@ -103,21 +103,21 @@ const postLoginController = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const resData = await authService.postLoginService(email, password);
 
-    if (resData === -1) {
+    if (resData === constant.NULL_VALUE) {
       response.basicResponse(
         res,
         returnCode.BAD_REQUEST,
         false,
         "필요한 값이 없습니다."
       );
-    } else if (resData === -2) {
+    } else if (resData === -100) {
       response.basicResponse(
         res,
         returnCode.NOT_FOUND,
         false,
         "존재하지 않는 이메일입니다."
       );
-    } else if (resData === -3) {
+    } else if (resData === -101) {
       response.basicResponse(
         res,
         returnCode.BAD_REQUEST,

@@ -100,19 +100,19 @@ const postSignupService = async ({ email, nickname, password }) => {
 const postLoginService = async (email: string, password: string) => {
   // 요청 바디 부족
   if (!email || !password) {
-    return -1;
+    return constant.NULL_VALUE;
   }
 
   // 존재하지 않는 이메일
   const user = await User.findOne({ where: { email: email } });
   if (!user) {
-    return -2;
+    return -100;
   }
 
   // 비밀번호 일치 X
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return -3;
+    return -101;
   }
 
   // 성공 시

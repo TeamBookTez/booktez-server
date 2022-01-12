@@ -34,7 +34,7 @@ export default (req: Request, res: Response, next) => {
 
     req.body.userID = decoded.user;
     req.body.isLogin = isLogin;
-    // next();
+    next();
   } catch (err) {
     if (err.message === "jwt expired") {
       slack.slackWebhook(req, err.message);

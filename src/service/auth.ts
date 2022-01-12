@@ -33,8 +33,7 @@ const postSignupService = async ({ email, nickname, password }) => {
 
   // nickname 형식이 잘못되었을 때
   if (
-    (/\W/.test(nickname) && !/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(nickname)) ||
-    /_/.test(nickname) ||
+    !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/.test(nickname) ||
     nickname.length < 2 ||
     nickname.length > 8
   ) {

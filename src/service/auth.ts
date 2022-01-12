@@ -1,13 +1,13 @@
-// sequelize
-import sequelize, { Op } from "sequelize";
+import index from "../config";
+
 // library
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
-import { User } from "../models";
-import index from "../config";
 import constant from "../library/constant";
 import isEmail from "validator/lib/isEmail";
+
+// models
+import { User } from "../models";
 
 /**
  *  @회원가입
@@ -33,8 +33,7 @@ const postSignupService = async ({ email, nickname, password }) => {
 
   // nickname 형식이 잘못되었을 때
   if (
-    /\W/.test(nickname) ||
-    /_/.test(nickname) ||
+    !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/.test(nickname) ||
     nickname.length < 2 ||
     nickname.length > 8
   ) {
@@ -85,7 +84,7 @@ const postSignupService = async ({ email, nickname, password }) => {
     },
   };
 
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+  const token = jwt.sign(payload, index.jwtSecret, {
     expiresIn: "14d",
   });
   return token;
@@ -97,22 +96,22 @@ const postSignupService = async ({ email, nickname, password }) => {
  *  @access public
  */
 
-const postLoginService = async (email: string, password: string) => {
+const postLoginService = async ({ email, password }) => {
   // 요청 바디 부족
   if (!email || !password) {
-    return -1;
+    return constant.NULL_VALUE;
   }
 
   // 존재하지 않는 이메일
   const user = await User.findOne({ where: { email: email } });
   if (!user) {
-    return -2;
+    return -100;
   }
 
   // 비밀번호 일치 X
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return -3;
+    return -101;
   }
 
   // 성공 시

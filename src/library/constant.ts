@@ -1,4 +1,5 @@
 export default {
+  SUCCESS: 1, // 성공
   NULL_VALUE: -1, // 필요한 값이 없을 때
   WRONG_EMAIL_CONVENTION: -2, // 이메일 형식이 잘못 되었을 때
   WRONG_NICKNAME_CONVENTION: -3, // 닉네임 형식이 잘못 되었을 때

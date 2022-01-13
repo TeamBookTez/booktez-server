@@ -19,6 +19,7 @@ import { User, Review } from "../models";
 const getMyInfoService = async ( userId: number ) => {
   // TODO: - user isDeleted 상태 확인
   const user = await User.findOne({ where: { id: userId } });
+  const img = user.img;
   const nickname = user.nickname;
   const email = user.email;
   const review = await Review.findAll({
@@ -28,7 +29,7 @@ const getMyInfoService = async ( userId: number ) => {
     },
   });
   const reviewCount = review.length;
-  return { nickname, email, reviewCount };
+  return { img, nickname, email, reviewCount };
 };
 
 const userService = {

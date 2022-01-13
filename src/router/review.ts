@@ -10,7 +10,7 @@ const router = express.Router();
 router.post(
   "/before/:isbn",
   authMiddleware,
-  reviewController.postReviewController
+  reviewController.postReviewBeforeController
 );
 
 module.exports = router;

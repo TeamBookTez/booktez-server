@@ -1,0 +1,21 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-src",
+    "build": "tsc && node dist",
+    "test": "nodemon"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "package.json": "^2.0.1",
+    "sendfile": "^0.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

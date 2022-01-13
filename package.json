@@ -2,13 +2,14 @@
   "name": "booktez-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "dev": "ts-node src",
     "build": "tsc && node dist",
     "test": "nodemon"
   },
   "dependencies": {
+    "aws-sdk": "^2.1055.0",
     "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

@@ -11,6 +11,7 @@ import constant from "../library/constant";
 // service
 import userService from "../service/user";
 import { resolveModelGetter } from "sequelize-typescript";
+import { path } from "path";
 
 /**
  *  @유저정보조회
@@ -41,8 +42,53 @@ const getMyInfoController = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *  @프로필이미지 수정
+ *  @route PATCH /user/img
+ *  @access public
+ *  @err 잘못된 폼데이터
+ */
+
+const patchImgController = async (req: Request, res: Response) => {
+  try {
+    const img = req.file.path;
+    console.log(img);
+
+    console.log(req.body);
+    const resData = await userService.patchImgService(req.body.userID.id, img);
+
+    // 폼데이터 잘못된 경우
+    if (resData === constant.WRONG_IMG_FORM) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "잘못된 폼 데이터입니다."
+      );
+    }
+
+    // 모두 성공시
+    response.basicResponse(
+      res,
+      returnCode.OK,
+      true,
+      "프로필 이미지 변경 완료."
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
 const userController = {
   getMyInfoController,
+  patchImgController,
 };
 
 export default userController;

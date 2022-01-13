@@ -14,7 +14,7 @@ import { User, Book, Review } from "../models";
  *  @error
  *      1. 요청 값이 잘못됨
  */
-const postReviewService = async (
+const postReviewBeforeService = async (
   isbn: string,
   userId: number,
   answerOne: string,
@@ -89,7 +89,7 @@ const postReviewService = async (
 };
 
 const reviewService = {
-  postReviewService,
+  postReviewBeforeService,
 };
 
 export default reviewService;

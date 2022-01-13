@@ -11,7 +11,7 @@ import constant from "../library/constant";
 // service
 import userService from "../service/user";
 import { resolveModelGetter } from "sequelize-typescript";
-import { path } from "path";
+const path = require("path");
 
 /**
  *  @유저정보조회

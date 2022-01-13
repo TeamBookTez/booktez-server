@@ -14,15 +14,12 @@ export const upload = multer({
     bucket: config.awsBucket,
     acl: "public-read",
     key: function (req, file, cb) {
-      console.log("dd");
       cb(
         null,
-        "origin/" + Date.now() + "." + file.originalname.split(".").pop()
+        `origin/${Date.now()}.${file.originalname.split(".").pop()}`
       );
     },
   }),
 });
-
-console.log("ee");
 
 module.exports = upload;

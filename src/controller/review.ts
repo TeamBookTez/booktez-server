@@ -18,9 +18,9 @@ import reviewService from "../service/review";
  *  @error
  *      1. 요청 값이 잘못됨
  */
-const postReviewController = async (req: Request, res: Response) => {
+const postReviewBeforeController = async (req: Request, res: Response) => {
   try {
-    const resData = await reviewService.postReviewService(
+    const resData = await reviewService.postReviewBeforeService(
       req.params.isbn,
       req.body.userID.id,
       req.body.answerOne,
@@ -72,7 +72,7 @@ const postReviewController = async (req: Request, res: Response) => {
 };
 
 const reivewController = {
-  postReviewController,
+  postReviewBeforeController,
 };
 
 export default reivewController;

@@ -13,4 +13,11 @@ router.post(
   reviewController.postReviewBeforeController
 );
 
+// 독서 후 수정
+router.patch(
+  "/:reviewId",
+  authMiddleware,
+  reviewController.patchReviewController
+);
+
 module.exports = router;

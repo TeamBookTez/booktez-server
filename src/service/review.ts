@@ -1,7 +1,7 @@
 import sequelize from "sequelize";
 import { Op } from "sequelize";
 
-// librarys
+// libraries
 import constant from "../library/constant";
 
 // models
@@ -88,8 +88,48 @@ const postReviewBeforeService = async (
   return review.id;
 };
 
+/**
+ *  @독서 완료 후 답변 수정
+ *  @route PATCH /review/:reviewId
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const patchReviewService = async (
+  reviewId: number,
+  answerOne: string,
+  answerTwo: string,
+  answerThree: JSON
+) => {
+  if (!reviewId || !answerOne || !answerTwo || !answerThree) {
+    return constant.NULL_VALUE;
+  }
+
+  const reviewToChange = await Review.findOne({
+    where: { id: reviewId, is_deleted: false },
+  });
+  if (!reviewToChange) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
+  await Review.update(
+    {
+      answer_one: answerOne,
+      answer_two: answerTwo,
+      answer_three: answerThree,
+    },
+    {
+      where: { id: reviewId },
+    }
+  );
+
+  return constant.SUCCESS;
+};
+
 const reviewService = {
   postReviewBeforeService,
+  patchReviewService,
 };
 
 export default reviewService;

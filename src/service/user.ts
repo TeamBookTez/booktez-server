@@ -41,6 +41,8 @@ const getMyInfoService = async (userId: number) => {
 const patchImgService = async (userId: number, img: string) => {
   // 폼데이터 맞는지 체크 -> 아니면 return statusCode.WRONG_IMG_FORM
   if (!img) {
+    return constant.NULL_VALUE
+  } else if (img === undefined) {
     return constant.WRONG_IMG_FORM;
   }
   console.log(img);

@@ -52,13 +52,19 @@ const getMyInfoController = async (req: Request, res: Response) => {
 const patchImgController = async (req: Request, res: Response) => {
   try {
     const img = req.file.path;
+    console.log(req.file);
     console.log(img);
-
-    console.log(req.body);
     const resData = await userService.patchImgService(req.body.userID.id, img);
 
     // 폼데이터 잘못된 경우
-    if (resData === constant.WRONG_IMG_FORM) {
+    if (resData === constant.NULL_VALUE) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 데이터가 없습니다."
+      );
+    } else if (resData === constant.WRONG_IMG_FORM) {
       response.basicResponse(
         res,
         returnCode.BAD_REQUEST,

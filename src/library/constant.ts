@@ -6,4 +6,6 @@ export default {
   EMAIL_ALREADY_EXIST: -5, // 이미 존재하는 이메일 일 때
   NICKNAME_ALREADY_EXIST: -6, // 이미 존재하는 닉네임 일 때
   WRONG_IMG_FORM: -7, // 잘못된 이미지 폼일 때
+  WRONG_REQUEST_VALUE: -8, // 잘못된 요청값이 들어왔을 때
+  VALUE_ALREADY_EXIST: -9, // 이미 존재하는 값일 때
 };

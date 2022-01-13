@@ -6,6 +6,7 @@ import constant from "../library/constant";
 
 // models
 import { User, Book, Review } from "../models";
+// import Review from '../models/Review';
 
 /**
  *  @독서중 독서 전 작성
@@ -127,9 +128,44 @@ const patchReviewService = async (
   return constant.SUCCESS;
 };
 
+/**
+ *  @독후감 조회하기
+ *  @route GET /review/:reviewId
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewService = async ( 
+  userId: number,
+  reviewId: number, 
+) => {
+  // 필요한 값이 없을 때
+  if (!userId || !reviewId) {
+    return constant.NULL_VALUE;
+  }
+  
+  const reviewToShow = await Review.findOne({
+    where: { 
+      id: reviewId, 
+      user_id: userId, 
+      is_deleted: false 
+    }
+  })
+
+  // 존재하지 않는 리뷰일 때
+  if(!reviewToShow) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
+  console.log(reviewToShow);
+  return;
+}
+
 const reviewService = {
   postReviewBeforeService,
   patchReviewService,
+  getReviewService,
 };
 
 export default reviewService;

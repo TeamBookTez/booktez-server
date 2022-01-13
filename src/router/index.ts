@@ -23,5 +23,6 @@ router.use("/test", require("./test"));
 router.use("/auth", require("./auth"));
 router.use("/book", require("./book"));
 router.use("/user", require("./user"));
+router.use("/review", require("./review"));
 
 export default router;

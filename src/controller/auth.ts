@@ -74,7 +74,7 @@ const postSignupController = async (req: Request, res: Response) => {
         returnCode.CREATED,
         "이동근의 북스테어즈에 온 것을 환영합니다.",
         true,
-        resData.token
+        resData
       );
     }
   } catch (err) {
@@ -100,7 +100,10 @@ const postSignupController = async (req: Request, res: Response) => {
 
 const postLoginController = async (req: Request, res: Response) => {
   try {
-    const resData = await authService.postLoginService(req.body.email, req.body.password);
+    const resData = await authService.postLoginService(
+      req.body.email,
+      req.body.password
+    );
 
     if (resData === constant.NULL_VALUE) {
       response.basicResponse(

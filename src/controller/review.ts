@@ -71,8 +71,8 @@ const postReviewBeforeController = async (req: Request, res: Response) => {
   }
 };
 
-const reivewController = {
+const reviewController = {
   postReviewBeforeController,
 };
 
-export default reivewController;
+export default reviewController;

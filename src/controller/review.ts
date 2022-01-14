@@ -57,7 +57,7 @@ const postReviewBeforeController = async (req: Request, res: Response) => {
         res,
         returnCode.OK,
         true,
-        "독서단계이동 (전 -> 중)",
+        "작성이 완료되었습니다.",
         resData
       );
     }
@@ -102,14 +102,14 @@ const postReviewNowController = async (req: Request, res: Response) => {
         res,
         returnCode.BAD_REQUEST,
         false,
-        "존재하지 않은 Review입니다."
+        "존재하지 않는 Review입니다."
       );
     } else {
       response.dataResponse(
         res,
         returnCode.OK,
         true,
-        "독서단계이동 (중 -> 완료)",
+        "작성이 완료되었습니다.",
         resData
       );
     }

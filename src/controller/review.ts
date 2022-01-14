@@ -205,14 +205,15 @@ const getReviewController = async (req: Request, res: Response) => {
         false,
         "존재하지 않는 Review입니다."
       );
+    } else {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "독후감 조회 성공.",
+        true,
+        resData
+      );
     }
-    response.dataResponse(
-      res,
-      returnCode.OK,
-      "독후감 조회 성공.",
-      true,
-      resData
-    );
   } catch (err) {
     slack.slackWebhook(req, err.message);
     console.error(err.message);

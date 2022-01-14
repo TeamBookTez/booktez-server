@@ -118,7 +118,7 @@ const postReviewNowService = async (
     },
   });
 
-  // 2. 존재하지 않은 review
+  // 2. 존재하지 않는 review
   if (!review) {
     return constant.WRONG_REQUEST_VALUE;
   }

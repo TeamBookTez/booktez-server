@@ -96,10 +96,8 @@ const postReviewBeforeService = async (
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
- *      2. 존재하지 않는 ISBN
- *      3. 이미 존재하는 독후감
+ *      2. 존재하지 않는 Review
  */
-
 const postReviewNowService = async (
   reviewId: number,
   userId: number,

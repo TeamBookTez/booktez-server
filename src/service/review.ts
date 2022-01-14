@@ -127,9 +127,53 @@ const patchReviewService = async (
   return constant.SUCCESS;
 };
 
+/**
+ *  @독후감 조회하기
+ *  @route GET /review/:reviewId
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewService = async (userId: number, reviewId: number) => {
+
+  // 필요한 값이 없을 때
+  if (!userId || !reviewId) {
+    return constant.NULL_VALUE;
+  }
+
+  const reviewToShow = await Review.findOne({
+    where: {
+      id: reviewId,
+      user_id: userId,
+      is_deleted: false,
+    },
+  });
+
+  // 존재하지 않는 리뷰일 때
+  if (!reviewToShow) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
+  const bookToShow = await Book.findOne({
+    where: { id: reviewToShow.book_id },
+  });
+
+  return {
+    bookTitle: bookToShow.title,
+    answerOne: reviewToShow.answer_one,
+    answerTwo: reviewToShow.answer_two,
+    questionList: reviewToShow.question_list,
+    answerThree: reviewToShow.answer_three,
+    reviewState: reviewToShow.review_st,
+    finishState: reviewToShow.finish_st,
+  };
+};
+
 const reviewService = {
   postReviewBeforeService,
   patchReviewService,
+  getReviewService,
 };
 
 export default reviewService;

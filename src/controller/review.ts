@@ -122,9 +122,59 @@ const patchReviewController = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *  @독후감 조회하기
+ *  @route GET /review/:reviewId
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewController = async (req: Request, res: Response) => {
+  try {
+    const resData = await reviewService.getReviewService(
+      Number(req.body.userID.id),
+      Number(req.params.reviewId)
+    );
+
+    if (resData === constant.NULL_VALUE) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    } else if (resData === constant.WRONG_REQUEST_VALUE) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "존재하지 않는 Review입니다."
+      );
+    }
+    response.dataResponse(
+      res,
+      returnCode.OK,
+      "독후감 조회 성공.",
+      true,
+      resData
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
 const reviewController = {
   postReviewBeforeController,
   patchReviewController,
+  getReviewController,
 };
 
 export default reviewController;

@@ -20,4 +20,11 @@ router.patch(
   reviewController.patchReviewController
 );
 
+// 독후감 조회
+router.get(
+  "/:reviewId", 
+  authMiddleware, 
+  reviewController.getReviewController
+);
+
 module.exports = router;

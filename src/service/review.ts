@@ -13,6 +13,8 @@ import { User, Book, Review } from "../models";
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
+ *      2. 존재하지 않는 ISBN
+ *      3. 이미 존재하는 독후감
  */
 const postReviewBeforeService = async (
   isbn: string,
@@ -84,6 +86,52 @@ const postReviewBeforeService = async (
     review_st: progress,
     finish_st: false,
   });
+
+  return { reviewId: review.id };
+};
+
+/**
+
+ *  @독서중 독서 중 작성
+ *  @route POST /review/now/:reviewId
+ *  @access private
+ *  @error
+ *      1. 요청 값이 잘못됨
+ *      2. 존재하지 않는 Review
+ */
+const postReviewNowService = async (
+  reviewId: number,
+  userId: number,
+  answerThree: JSON,
+  progress: number
+) => {
+  if (!reviewId || !userId || !answerThree || !progress) {
+    return constant.NULL_VALUE;
+  }
+
+  // user 확인
+  const user = await User.findOne({ where: { id: userId } });
+
+  // 해당 review 조회
+  const review = await Review.findOne({
+    where: {
+      [Op.and]: [{ id: reviewId }, { user_id: user.id }, { is_deleted: false }],
+    },
+  });
+
+  // 2. 존재하지 않는 review
+  if (!review) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
+  // 3. review update
+  review.update({
+    answer_three: answerThree,
+    progress: progress,
+  });
+
+  // 변경 리뷰 저장
+  review.save();
 
   return { reviewId: review.id };
 };
@@ -172,6 +220,7 @@ const getReviewService = async (userId: number, reviewId: number) => {
 
 const reviewService = {
   postReviewBeforeService,
+  postReviewNowService,
   patchReviewService,
   getReviewService,
 };

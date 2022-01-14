@@ -68,15 +68,15 @@ const patchImgController = async (req: Request, res: Response) => {
         false,
         "잘못된 폼 데이터입니다."
       );
-    }
-
-    // 모두 성공시
-    response.basicResponse(
+    } else {
+      // 모두 성공시
+      response.basicResponse(
       res,
       returnCode.OK,
       true,
       "프로필 이미지 변경 완료."
-    );
+      );
+    }  
   } catch (err) {
     slack.slackWebhook(req, err.message);
     console.error(err.message);

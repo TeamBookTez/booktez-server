@@ -13,4 +13,11 @@ router.post(
   reviewController.postReviewBeforeController
 );
 
+// 독서 중
+router.patch(
+  "/now/:reviewId",
+  authMiddleware,
+  reviewController.postReviewNowController
+);
+
 module.exports = router;

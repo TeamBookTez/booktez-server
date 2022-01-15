@@ -12,7 +12,7 @@ import { Book, Review } from "../models";
  *  @access private
  */
 const getBookService = async (userId: number) => {
-  let resData = [];
+  let books = [];
   await Review.findAll({
     attributes: ["review_st"],
     include: [
@@ -27,7 +27,7 @@ const getBookService = async (userId: number) => {
     order: [["updated_at", "DESC"]],
   }).then((reviews) =>
     reviews.forEach((review) => {
-      resData.push({
+      books.push({
         thumbnail: review.book.thumbnail,
         title: review.book.title,
         author: review.book.author,
@@ -36,7 +36,7 @@ const getBookService = async (userId: number) => {
     })
   );
 
-  return resData;
+  return { books: books };
 };
 
 /**

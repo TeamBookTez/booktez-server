@@ -200,8 +200,66 @@ const postLoginController = async (req: Request, res: Response) => {
     );
   }
 };
+
+/**
+ *  @닉네임_유효성_검사
+ *  @route get auth/nickname
+ *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ */
+
+const getNicknameController = async (req: Request, res: Response) => {
+  try {
+    const resData = await authService.getNicknameService(req.body.nickname);
+
+    if (resData === constant.NULL_VALUE) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    } else if (resData === constant.WRONG_NICKNAME_CONVENTION) {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "올바른 형식이 아닙니다.",
+        true,
+        { isValid: false }
+      );
+    } else if (resData === constant.NICKNAME_ALREADY_EXIST) {
+      response.dataResponse(
+        res, 
+        returnCode.OK, 
+        "이미 사용 중인 닉네임입니다.", 
+        true, 
+        {isValid: false}
+      );
+    } else {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "사용 가능한 닉네임입니다.",
+        true,
+        { isValid: true }
+      );
+    }
+  } catch (err) {
+      slack.slackWebhook(req, err.message);
+      console.error(err.message);
+      response.basicResponse(
+        res,
+        returnCode.INTERNAL_SERVER_ERROR,
+        false,
+        "서버 오류"
+      );
+    }
+  }
+};
+
 const authController = {
   getEmailController,
+  getNicknameController,
   postSignupController,
   postLoginController,
 };

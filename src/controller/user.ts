@@ -51,6 +51,7 @@ const getMyInfoController = async (req: Request, res: Response) => {
 const patchImgController = async (req: Request, res: Response) => {
   try {
     const img = req.file.location ? req.file.location : null;
+
     const resData = await userService.patchImgService(req.body.userID.id, img);
 
     // 폼데이터 잘못된 경우

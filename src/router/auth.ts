@@ -5,6 +5,7 @@ const router = express.Router();
 import authController from "../controller/auth";
 
 router.get("/email", authController.getEmailController);
+router.get("/nickname", authController.getNicknameController);
 router.post("/login", authController.postLoginController);
 router.post("/signup", authController.postSignupController);
 

@@ -36,7 +36,7 @@ const getQuestionService = async (userId: number, reviewId: number) => {
     return constant.WRONG_REQUEST_VALUE;
   }
 
-  return review.question_list;
+  return { question_list: review.question_list };
 };
 
 /**

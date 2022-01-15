@@ -229,11 +229,11 @@ const getNicknameController = async (req: Request, res: Response) => {
       );
     } else if (resData === constant.NICKNAME_ALREADY_EXIST) {
       response.dataResponse(
-        res, 
-        returnCode.OK, 
-        "이미 사용 중인 닉네임입니다.", 
-        true, 
-        {isValid: false}
+        res,
+        returnCode.OK,
+        "이미 사용 중인 닉네임입니다.",
+        true,
+        { isValid: false }
       );
     } else {
       response.dataResponse(
@@ -245,15 +245,14 @@ const getNicknameController = async (req: Request, res: Response) => {
       );
     }
   } catch (err) {
-      slack.slackWebhook(req, err.message);
-      console.error(err.message);
-      response.basicResponse(
-        res,
-        returnCode.INTERNAL_SERVER_ERROR,
-        false,
-        "서버 오류"
-      );
-    }
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
   }
 };
 

@@ -9,6 +9,13 @@ const router = express.Router();
 // 독후감 조회
 router.get("/:reviewId", authMiddleware, reviewController.getReviewController);
 
+// 질문리스트 조회
+router.get(
+  "/:reviewId/question-list",
+  authMiddleware,
+  reviewController.getQuestionController
+);
+
 // 독서 전
 router.post(
   "/before/:isbn",

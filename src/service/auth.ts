@@ -126,7 +126,42 @@ const postLoginService = async (email: string, password: string) => {
   return { nickname, token };
 };
 
+/**
+ *  @닉네임_유효성_검사
+ *  @route get auth/nickname
+ *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ */
+
+const getNicknameService = async (nickname: string) => {
+  // 필요한 값이 존재하지 않는 경우
+  if (!nickname) {
+    return constant.NULL_VALUE;
+  } 
+  
+  if (
+    // nickname 형식이 잘못되었을 때
+    !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/.test(nickname) ||
+    nickname.length < 2 ||
+    nickname.length > 8
+  ) {
+    return constant.WRONG_NICKNAME_CONVENTION;
+  }
+
+  // nickname이 이미 존재할 때
+  const nicknameExist = await User.findAll({
+    where: {
+      nickname,
+    },
+  });
+
+  if (nicknameExist.length > 0) {
+    return constant.NICKNAME_ALREADY_EXIST;
+  }
+}
+
 const authService = {
+  getNicknameService,
   postSignupService,
   postLoginService,
 };

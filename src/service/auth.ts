@@ -10,6 +10,38 @@ import isEmail from "validator/lib/isEmail";
 import { User } from "../models";
 
 /**
+ *  @이메일 유효성 검사
+ *  @route GET /auth/email
+ *  @access public
+ *  @err 1. 필요한 값이 없을 때
+ *       2. 이메일 형식이 올바르지 않을 때
+ *       3. 이메일이 이미 존재할 때
+ */
+const getEmailService = async (email: string) => {
+  // 필요한 값이 존재하지 않는 경우
+  if (!email) {
+    return constant.NULL_VALUE;
+  }
+
+  // email 형식이 잘못되었을 때
+  if (!isEmail(email)) {
+    return constant.WRONG_EMAIL_CONVENTION;
+  }
+
+  // email이 이미 존재할 때
+  const emailExist = await User.findAll({
+    where: {
+      email,
+    },
+  });
+  if (emailExist.length > 0) {
+    return constant.EMAIL_ALREADY_EXIST;
+  }
+
+  return constant.SUCCESS;
+};
+
+/**
  *  @회원가입
  *  @route POST /auth/signup
  *  @access public
@@ -127,6 +159,7 @@ const postLoginService = async (email: string, password: string) => {
 };
 
 const authService = {
+  getEmailService,
   postSignupService,
   postLoginService,
 };

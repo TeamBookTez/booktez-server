@@ -50,7 +50,11 @@ const getEmailService = async (email: string) => {
  *       5. 이메일이 이미 존재할 때
  *       6. 닉네임이 이미 존재할 때
  */
-const postSignupService = async ({ email, nickname, password }) => {
+const postSignupService = async (
+  email: string,
+  nickname: string,
+  password: string
+) => {
   // 필요한 값이 존재하지 않는 경우
   if (!email || !nickname || !password) {
     return constant.NULL_VALUE;
@@ -167,8 +171,8 @@ const getNicknameService = async (nickname: string) => {
   // 필요한 값이 존재하지 않는 경우
   if (!nickname) {
     return constant.NULL_VALUE;
-  } 
-  
+  }
+
   if (
     // nickname 형식이 잘못되었을 때
     !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/.test(nickname) ||

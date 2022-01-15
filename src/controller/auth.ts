@@ -78,7 +78,11 @@ const getEmailController = async (req: Request, res: Response) => {
  */
 const postSignupController = async (req: Request, res: Response) => {
   try {
-    const resData = await authService.postSignupService(req.body);
+    const resData = await authService.postSignupService(
+      req.body.email,
+      req.body.nickname,
+      req.body.password
+    );
 
     if (resData === constant.NULL_VALUE) {
       response.basicResponse(

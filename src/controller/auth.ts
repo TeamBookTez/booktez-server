@@ -34,7 +34,7 @@ const getEmailController = async (req: Request, res: Response) => {
         returnCode.OK,
         "올바른 형식이 아닙니다.",
         true,
-        { isUnique: false }
+        { isValid: false }
       );
     } else if (resData === constant.EMAIL_ALREADY_EXIST) {
       response.dataResponse(
@@ -42,7 +42,7 @@ const getEmailController = async (req: Request, res: Response) => {
         returnCode.OK,
         "이미 사용 중인 이메일입니다.",
         true,
-        { isUnique: false }
+        { isValid: false }
       );
     } else {
       response.dataResponse(
@@ -50,7 +50,7 @@ const getEmailController = async (req: Request, res: Response) => {
         returnCode.OK,
         "사용할 수 있는 이메일입니다.",
         true,
-        { isUnique: true }
+        { isValid: true }
       );
     }
   } catch (err) {

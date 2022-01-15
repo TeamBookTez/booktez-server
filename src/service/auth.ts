@@ -14,8 +14,6 @@ import { User } from "../models";
  *  @route GET /auth/email
  *  @access public
  *  @err 1. 필요한 값이 없을 때
- *       2. 이메일 형식이 올바르지 않을 때
- *       3. 이메일이 이미 존재할 때
  */
 const getEmailService = async (email: string) => {
   // 필요한 값이 존재하지 않는 경우

@@ -16,8 +16,6 @@ import authService from "../service/auth";
  *  @route GET /auth/email
  *  @access public
  *  @err 1. 필요한 값이 없을 때
- *       2. 이메일 형식이 올바르지 않을 때
- *       3. 이메일이 이미 존재할 때
  */
 const getEmailController = async (req: Request, res: Response) => {
   try {
@@ -36,9 +34,7 @@ const getEmailController = async (req: Request, res: Response) => {
         returnCode.OK,
         "올바른 형식이 아닙니다.",
         true,
-        {
-          isUnique: false,
-        }
+        { isUnique: false }
       );
     } else if (resData === constant.EMAIL_ALREADY_EXIST) {
       response.dataResponse(
@@ -46,9 +42,7 @@ const getEmailController = async (req: Request, res: Response) => {
         returnCode.OK,
         "이미 사용 중인 이메일입니다.",
         true,
-        {
-          isUnique: false,
-        }
+        { isUnique: false }
       );
     } else {
       response.dataResponse(
@@ -56,9 +50,7 @@ const getEmailController = async (req: Request, res: Response) => {
         returnCode.OK,
         "사용할 수 있는 이메일입니다.",
         true,
-        {
-          isUnique: true,
-        }
+        { isUnique: true }
       );
     }
   } catch (err) {

@@ -12,6 +12,68 @@ import returnCode from "../library/returnCode";
 import authService from "../service/auth";
 
 /**
+ *  @이메일 유효성 검사
+ *  @route GET /auth/email
+ *  @access public
+ *  @err 1. 필요한 값이 없을 때
+ *       2. 이메일 형식이 올바르지 않을 때
+ *       3. 이메일이 이미 존재할 때
+ */
+const getEmailController = async (req: Request, res: Response) => {
+  try {
+    const resData: number = await authService.getEmailService(req.body.email);
+
+    if (resData === constant.NULL_VALUE) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    } else if (resData === constant.WRONG_EMAIL_CONVENTION) {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "올바른 형식이 아닙니다.",
+        true,
+        {
+          isUnique: false,
+        }
+      );
+    } else if (resData === constant.EMAIL_ALREADY_EXIST) {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "이미 사용 중인 이메일입니다.",
+        true,
+        {
+          isUnique: false,
+        }
+      );
+    } else {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "사용할 수 있는 이메일입니다.",
+        true,
+        {
+          isUnique: true,
+        }
+      );
+    }
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
  *  @회원가입
  *  @route POST /auth/signup
  *  @access public
@@ -147,6 +209,7 @@ const postLoginController = async (req: Request, res: Response) => {
   }
 };
 const authController = {
+  getEmailController,
   postSignupController,
   postLoginController,
 };

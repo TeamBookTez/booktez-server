@@ -21,6 +21,33 @@ const constant_1 = __importDefault(require("../library/constant"));
 // services
 const review_1 = __importDefault(require("../service/review"));
 /**
+ *  @질문리스트 조회하기
+ *  @route GET /review/:reviewId/question-list
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없습니다.
+ *      2. 존재하지 않는 Review 입니다.
+ */
+const getQuestionController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield review_1.default.getQuestionService(Number(req.body.userID.id), Number(req.params.reviewId));
+        if (resData === constant_1.default.NULL_VALUE) {
+            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
+        }
+        else if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
+        }
+        else {
+            response_1.default.dataResponse(res, returnCode_1.default.OK, "질문리스트 조회 성공.", true, resData);
+        }
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
+/**
  *  @독서중 독서 전 작성
  *  @route POST /review/before/:isbn
  *  @access private
@@ -168,6 +195,7 @@ const reviewController = {
     postReviewNowController,
     patchReviewController,
     getReviewController,
+    getQuestionController,
     deleteReviewController,
 };
 exports.default = reviewController;

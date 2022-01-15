@@ -10,6 +10,8 @@ const auth_1 = __importDefault(require("../middleware/auth"));
 const router = express_1.default.Router();
 // 독후감 조회
 router.get("/:reviewId", auth_1.default, review_1.default.getReviewController);
+// 질문리스트 조회
+router.get("/:reviewId/question-list", auth_1.default, review_1.default.getQuestionController);
 // 독서 전
 router.post("/before/:isbn", auth_1.default, review_1.default.postReviewBeforeController);
 // 독서 중

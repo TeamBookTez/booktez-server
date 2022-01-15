@@ -57,7 +57,7 @@ const getEmailService = (email) => __awaiter(void 0, void 0, void 0, function* (
  *       5. 이메일이 이미 존재할 때
  *       6. 닉네임이 이미 존재할 때
  */
-const postSignupService = ({ email, nickname, password }) => __awaiter(void 0, void 0, void 0, function* () {
+const postSignupService = (email, nickname, password) => __awaiter(void 0, void 0, void 0, function* () {
     // 필요한 값이 존재하지 않는 경우
     if (!email || !nickname || !password) {
         return constant_1.default.NULL_VALUE;

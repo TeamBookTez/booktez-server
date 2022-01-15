@@ -61,7 +61,7 @@ const getEmailController = (req, res) => __awaiter(void 0, void 0, void 0, funct
  */
 const postSignupController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield auth_1.default.postSignupService(req.body);
+        const resData = yield auth_1.default.postSignupService(req.body.email, req.body.nickname, req.body.password);
         if (resData === constant_1.default.NULL_VALUE) {
             response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }

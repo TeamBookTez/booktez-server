@@ -30,6 +30,7 @@ const getEmailService = async (email: string) => {
   const emailExist = await User.findAll({
     where: {
       email,
+      isDeleted: false,
     },
   });
   if (emailExist.length > 0) {
@@ -86,6 +87,7 @@ const postSignupService = async (
   const emailExist = await User.findAll({
     where: {
       email,
+      isDeleted: false,
     },
   });
   if (emailExist.length > 0) {
@@ -96,6 +98,7 @@ const postSignupService = async (
   const nicknameExist = await User.findAll({
     where: {
       nickname,
+      isDeleted: false,
     },
   });
 
@@ -137,7 +140,7 @@ const postLoginService = async (email: string, password: string) => {
   }
 
   // 존재하지 않는 이메일
-  const user = await User.findOne({ where: { email: email } });
+  const user = await User.findOne({ where: { email, isDeleted: false } });
   if (!user) {
     return -100;
   }
@@ -186,6 +189,7 @@ const getNicknameService = async (nickname: string) => {
   const nicknameExist = await User.findAll({
     where: {
       nickname,
+      isDeleted: false,
     },
   });
 

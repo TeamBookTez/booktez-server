@@ -26,8 +26,8 @@ const getQuestionService = async (userId: number, reviewId: number) => {
   const review = await Review.findOne({
     where: {
       id: reviewId,
-      user_id: userId,
-      is_deleted: false,
+      userId,
+      isDeleted: false,
     },
   });
 
@@ -36,7 +36,7 @@ const getQuestionService = async (userId: number, reviewId: number) => {
     return constant.WRONG_REQUEST_VALUE;
   }
 
-  return { question_list: review.question_list };
+  return { questionList: review.questionList };
 };
 
 /**
@@ -68,7 +68,7 @@ const postReviewBeforeService = async (
   }
 
   // user 확인
-  const user = await User.findOne({ where: { id: userId } });
+  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
 
   // isbn 체킹
   let mainIsbn: string, subIsbn: string;
@@ -83,8 +83,8 @@ const postReviewBeforeService = async (
       [Op.or]: [
         { isbn: mainIsbn },
         { isbn: subIsbn },
-        { isbn_sub: mainIsbn },
-        { isbn_sub: subIsbn },
+        { isbnSub: mainIsbn },
+        { isbnSub: subIsbn },
       ],
     },
   });
@@ -96,11 +96,9 @@ const postReviewBeforeService = async (
   // 중복 review 확인
   const exist = await Review.findOne({
     where: {
-      [Op.and]: [
-        { book_id: book.id },
-        { user_id: user.id },
-        { is_deleted: false },
-      ],
+      bookId: book.id,
+      userId: user.id,
+      isDeleted: false,
     },
   });
 
@@ -110,13 +108,13 @@ const postReviewBeforeService = async (
 
   // review 확인 - 기존의 독서 전 단계가 완료된 리뷰
   const review = await Review.create({
-    user_id: user.id,
-    book_id: book.id,
-    question_list: questionList,
-    answer_one: answerOne,
-    answer_two: answerTwo,
-    review_st: progress,
-    finish_st: false,
+    userId: user.id,
+    bookId: book.id,
+    questionList,
+    answerOne,
+    answerTwo,
+    reviewSt: progress,
+    finishSt: false,
   });
 
   return { reviewId: review.id };
@@ -142,13 +140,11 @@ const postReviewNowService = async (
   }
 
   // user 확인
-  const user = await User.findOne({ where: { id: userId } });
+  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
 
   // 해당 review 조회
   const review = await Review.findOne({
-    where: {
-      [Op.and]: [{ id: reviewId }, { user_id: user.id }, { is_deleted: false }],
-    },
+    where: { id: reviewId, userId: user.id, isDeleted: false },
   });
 
   // 2. 존재하지 않는 review
@@ -157,13 +153,13 @@ const postReviewNowService = async (
   }
 
   // 3. review update
-  review.update({
-    answer_three: answerThree,
-    progress: progress,
+  await review.update({
+    answerThree,
+    reviewSt: progress,
   });
 
   // 변경 리뷰 저장
-  review.save();
+  await review.save();
 
   return { reviewId: review.id };
 };
@@ -187,7 +183,7 @@ const patchReviewService = async (
   }
 
   const reviewToChange = await Review.findOne({
-    where: { id: reviewId, is_deleted: false },
+    where: { id: reviewId, isDeleted: false },
   });
   if (!reviewToChange) {
     return constant.WRONG_REQUEST_VALUE;
@@ -195,12 +191,12 @@ const patchReviewService = async (
 
   await Review.update(
     {
-      answer_one: answerOne,
-      answer_two: answerTwo,
-      answer_three: answerThree,
+      answerOne,
+      answerTwo,
+      answerThree,
     },
     {
-      where: { id: reviewId },
+      where: { id: reviewId, isDeleted: false },
     }
   );
 
@@ -224,8 +220,8 @@ const getReviewService = async (userId: number, reviewId: number) => {
   const reviewToShow = await Review.findOne({
     where: {
       id: reviewId,
-      user_id: userId,
-      is_deleted: false,
+      userId,
+      isDeleted: false,
     },
   });
 
@@ -235,17 +231,17 @@ const getReviewService = async (userId: number, reviewId: number) => {
   }
 
   const bookToShow = await Book.findOne({
-    where: { id: reviewToShow.book_id },
+    where: { id: reviewToShow.bookId },
   });
 
   return {
     bookTitle: bookToShow.title,
-    answerOne: reviewToShow.answer_one,
-    answerTwo: reviewToShow.answer_two,
-    questionList: reviewToShow.question_list,
-    answerThree: reviewToShow.answer_three,
-    reviewState: reviewToShow.review_st,
-    finishState: reviewToShow.finish_st,
+    answerOne: reviewToShow.answerOne,
+    answerTwo: reviewToShow.answerTwo,
+    questionList: reviewToShow.questionList,
+    answerThree: reviewToShow.answerThree,
+    reviewState: reviewToShow.reviewSt,
+    finishState: reviewToShow.finishSt,
   };
 };
 
@@ -265,13 +261,11 @@ const deleteReviewService = async (userId: number, reviewId: number) => {
   }
 
   // user 확인
-  const user = await User.findOne({ where: { id: userId } });
+  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
 
   // 해당 review 조회
   const review = await Review.findOne({
-    where: {
-      [Op.and]: [{ id: reviewId }, { user_id: user.id }],
-    },
+    where: { id: reviewId, userId: user.id, isDeleted: false },
   });
 
   // 2. 존재하지 않는 review
@@ -280,17 +274,17 @@ const deleteReviewService = async (userId: number, reviewId: number) => {
   }
 
   // 3. 이미 삭제된 Review 입니다.
-  if (review.is_deleted) {
+  if (review.isDeleted) {
     return constant.VALUE_ALREADY_DELETED;
   }
 
   // 독후감 삭제
-  review.update({
-    is_deleted: true,
+  await review.update({
+    isDeleted: true,
   });
 
   // 삭제 리뷰 저장
-  review.save();
+  await review.save();
 
   return constant.SUCCESS;
 };

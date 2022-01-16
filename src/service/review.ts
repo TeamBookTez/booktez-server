@@ -90,7 +90,7 @@ const postReviewBeforeService = async (
   });
 
   if (!book) {
-    return -101;
+    return constant.DB_NOT_FOUND;
   }
 
   // 중복 review 확인
@@ -152,10 +152,13 @@ const postReviewNowService = async (
     return constant.WRONG_REQUEST_VALUE;
   }
 
+  let finishSt = Number(progress) === 4 ? true : false;
+
   // 3. review update
   await review.update({
     answerThree,
     reviewSt: progress,
+    finishSt,
   });
 
   // 변경 리뷰 저장

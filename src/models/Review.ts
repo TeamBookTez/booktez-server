@@ -31,38 +31,38 @@ export default class Review extends Model {
 
   @ForeignKey(() => User)
   @Column
-  user_id: number;
+  userId: number;
 
   @ForeignKey(() => Book)
   @Column
-  book_id: number;
+  bookId: number;
 
   @Column(DataType.ARRAY(DataType.STRING))
-  question_list: string[];
+  questionList: string[];
 
   @Column(DataType.TEXT)
-  answer_one: string;
+  answerOne: string;
 
   @Column(DataType.TEXT)
-  answer_two: string;
+  answerTwo: string;
 
   @Column(DataType.JSON)
-  answer_three: JSON;
+  answerThree: JSON;
 
   @Default(2)
   @AllowNull(false)
   @Column
-  review_st: number;
+  reviewSt: number;
 
   @Default(false)
   @AllowNull(false)
   @Column
-  finish_st: boolean;
+  finishSt: boolean;
 
   @AllowNull(false)
   @Default(false)
   @Column
-  is_deleted: boolean;
+  isDeleted: boolean;
 
   @BelongsTo(() => User)
   user: User;

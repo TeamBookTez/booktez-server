@@ -34,7 +34,7 @@ export default class Book extends Model {
 
   @Unique
   @Column
-  isbn_sub: string;
+  isbnSub: string;
 
   @AllowNull(false)
   @Column
@@ -46,7 +46,7 @@ export default class Book extends Model {
 
   @AllowNull(false)
   @Default(
-    "https://o2-server.s3.ap-northeast-2.amazonaws.com/default_O2_Logo%403x.png"
+    "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/defaultProfile.png"
   )
   @Column
   thumbnail: string;

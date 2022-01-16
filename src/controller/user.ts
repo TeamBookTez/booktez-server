@@ -25,19 +25,19 @@ const getMyInfoController = async (req: Request, res: Response) => {
 
     if (resData === constant.NON_EXISTENT_USER) {
       response.basicResponse(
-        res, 
-        returnCode.BAD_REQUEST, 
-        false, 
+        res,
+        returnCode.BAD_REQUEST,
+        false,
         "존재하지 않는 유저입니다."
       );
     } else {
-        response.dataResponse(
-          res,
-          returnCode.OK,
-          "마이페이지 조회 성공.",
-          true,
-          resData
-          );
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "마이페이지 조회 성공.",
+        true,
+        resData
+      );
     }
   } catch (err) {
     slack.slackWebhook(req, err.message);
@@ -80,19 +80,20 @@ const patchImgController = async (req: Request, res: Response) => {
         "잘못된 폼 데이터입니다."
       );
     } else if (resData === constant.NON_EXISTENT_USER) {
-        response.basicResponse(
-          res,
-          returnCode.BAD_REQUEST,
-          false,
-          "존재하지 않는 유저입니다."
-        );
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "존재하지 않는 유저입니다."
+      );
     } else {
       // 모두 성공시
-        response.basicResponse(
+      response.dataResponse(
         res,
         returnCode.OK,
+        "프로필 이미지 변경 성공.",
         true,
-        "프로필 이미지 변경 완료."
+        resData
       );
     }
   } catch (err) {

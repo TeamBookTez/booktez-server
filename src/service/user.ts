@@ -53,6 +53,8 @@ const patchImgService = async (userId: number, img: string) => {
 
   await user.update({img: img});
   await user.save();
+
+  return {img: user.img};
 };
 
 const userService = {

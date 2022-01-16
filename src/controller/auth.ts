@@ -12,16 +12,26 @@ import returnCode from "../library/returnCode";
 import authService from "../service/auth";
 
 /**
- *  @이메일 유효성 검사
+ *  @이메일_유효성_검사
  *  @route GET /auth/email
  *  @access public
  *  @err 1. 필요한 값이 없을 때
  */
 const getEmailController = async (req: Request, res: Response) => {
   try {
-    const resData: number = await authService.getEmailService(req.params.email);
+    const resData: number = await authService.getEmailService(
+      req.query.email ? String(req.query.email) : undefined
+    );
 
-    if (resData === constant.NULL_VALUE) {
+    if (resData === constant.WRONG_REQUEST_VALUE) {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "잘못된 요청 값이 들어왔습니다.",
+        true,
+        { isValid: false }
+      );
+    } else if (resData === constant.NULL_VALUE) {
       response.basicResponse(
         res,
         returnCode.BAD_REQUEST,
@@ -51,6 +61,127 @@ const getEmailController = async (req: Request, res: Response) => {
         "사용할 수 있는 이메일입니다.",
         true,
         { isValid: true }
+      );
+    }
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
+ *  @닉네임_유효성_검사
+ *  @route get auth/nickname
+ *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ */
+const getNicknameController = async (req: Request, res: Response) => {
+  try {
+    const resData = await authService.getNicknameService(
+      req.query.nickname ? String(req.query.nickname) : undefined
+    );
+
+    if (resData === constant.WRONG_REQUEST_VALUE) {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "잘못된 요청 값이 들어왔습니다.",
+        true,
+        { isValid: false }
+      );
+    } else if (resData === constant.NULL_VALUE) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    } else if (resData === constant.WRONG_NICKNAME_CONVENTION) {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "올바른 형식이 아닙니다.",
+        true,
+        { isValid: false }
+      );
+    } else if (resData === constant.NICKNAME_ALREADY_EXIST) {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "이미 사용 중인 닉네임입니다.",
+        true,
+        { isValid: false }
+      );
+    } else {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "사용 가능한 닉네임입니다.",
+        true,
+        { isValid: true }
+      );
+    }
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
+ *  @로그인
+ *  @route Post auth/login
+ *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ *       2. 존재하지 않는 이메일입니다.
+ *       3. 비밀번호가 일치하지 않습니다.
+ */
+const postLoginController = async (req: Request, res: Response) => {
+  try {
+    const resData = await authService.postLoginService(
+      req.body.email,
+      req.body.password
+    );
+
+    if (resData === constant.NULL_VALUE) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    } else if (resData === -100) {
+      response.basicResponse(
+        res,
+        returnCode.NOT_FOUND,
+        false,
+        "존재하지 않는 이메일입니다."
+      );
+    } else if (resData === -101) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "비밀번호가 일치하지 않습니다."
+      );
+    } else {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "장서현의 첫 api 소중히 다뤄주세요 💋",
+        true,
+        resData
       );
     }
   } catch (err) {
@@ -147,124 +278,11 @@ const postSignupController = async (req: Request, res: Response) => {
   }
 };
 
-/**
- *  @로그인
- *  @route Post auth/login
- *  @access public
- *  @err 1. 필요한 값이 없습니다.
- *       2. 존재하지 않는 이메일입니다.
- *       3. 비밀번호가 일치하지 않습니다.
- */
-
-const postLoginController = async (req: Request, res: Response) => {
-  try {
-    const resData = await authService.postLoginService(
-      req.body.email,
-      req.body.password
-    );
-
-    if (resData === constant.NULL_VALUE) {
-      response.basicResponse(
-        res,
-        returnCode.BAD_REQUEST,
-        false,
-        "필요한 값이 없습니다."
-      );
-    } else if (resData === -100) {
-      response.basicResponse(
-        res,
-        returnCode.NOT_FOUND,
-        false,
-        "존재하지 않는 이메일입니다."
-      );
-    } else if (resData === -101) {
-      response.basicResponse(
-        res,
-        returnCode.BAD_REQUEST,
-        false,
-        "비밀번호가 일치하지 않습니다."
-      );
-    } else {
-      response.dataResponse(
-        res,
-        returnCode.OK,
-        "장서현의 첫 api 소중히 다뤄주세요 💋",
-        true,
-        resData
-      );
-    }
-  } catch (err) {
-    slack.slackWebhook(req, err.message);
-    console.error(err.message);
-    response.basicResponse(
-      res,
-      returnCode.INTERNAL_SERVER_ERROR,
-      false,
-      "서버 오류"
-    );
-  }
-};
-
-/**
- *  @닉네임_유효성_검사
- *  @route get auth/nickname
- *  @access public
- *  @err 1. 필요한 값이 없습니다.
- */
-
-const getNicknameController = async (req: Request, res: Response) => {
-  try {
-    const resData = await authService.getNicknameService(req.params.nickname);
-
-    if (resData === constant.NULL_VALUE) {
-      response.basicResponse(
-        res,
-        returnCode.BAD_REQUEST,
-        false,
-        "필요한 값이 없습니다."
-      );
-    } else if (resData === constant.WRONG_NICKNAME_CONVENTION) {
-      response.dataResponse(
-        res,
-        returnCode.OK,
-        "올바른 형식이 아닙니다.",
-        true,
-        { isValid: false }
-      );
-    } else if (resData === constant.NICKNAME_ALREADY_EXIST) {
-      response.dataResponse(
-        res,
-        returnCode.OK,
-        "이미 사용 중인 닉네임입니다.",
-        true,
-        { isValid: false }
-      );
-    } else {
-      response.dataResponse(
-        res,
-        returnCode.OK,
-        "사용 가능한 닉네임입니다.",
-        true,
-        { isValid: true }
-      );
-    }
-  } catch (err) {
-    slack.slackWebhook(req, err.message);
-    console.error(err.message);
-    response.basicResponse(
-      res,
-      returnCode.INTERNAL_SERVER_ERROR,
-      false,
-      "서버 오류"
-    );
-  }
-};
-
 const authController = {
   getEmailController,
   getNicknameController,
-  postSignupController,
   postLoginController,
+  postSignupController,
 };
 
 export default authController;

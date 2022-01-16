@@ -154,10 +154,11 @@ const getNicknameService = async (nickname: string) => {
       nickname,
     },
   });
-
   if (nicknameExist.length > 0) {
     return constant.NICKNAME_ALREADY_EXIST;
   }
+
+  return constant.SUCCESS;
 }
 
 const authService = {

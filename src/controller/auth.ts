@@ -19,7 +19,7 @@ import authService from "../service/auth";
  */
 const getEmailController = async (req: Request, res: Response) => {
   try {
-    const resData: number = await authService.getEmailService(req.body.email);
+    const resData: number = await authService.getEmailService(req.params.email);
 
     if (resData === constant.NULL_VALUE) {
       response.basicResponse(
@@ -214,7 +214,7 @@ const postLoginController = async (req: Request, res: Response) => {
 
 const getNicknameController = async (req: Request, res: Response) => {
   try {
-    const resData = await authService.getNicknameService(req.body.nickname);
+    const resData = await authService.getNicknameService(req.params.nickname);
 
     if (resData === constant.NULL_VALUE) {
       response.basicResponse(

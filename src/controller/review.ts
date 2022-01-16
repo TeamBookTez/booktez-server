@@ -88,7 +88,7 @@ const postReviewBeforeController = async (req: Request, res: Response) => {
         false,
         "요청값이 잘못되었습니다."
       );
-    } else if (resData === -101) {
+    } else if (resData === constant.DB_NOT_FOUND) {
       response.basicResponse(
         res,
         returnCode.BAD_REQUEST,

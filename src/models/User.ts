@@ -48,11 +48,11 @@ export default class User extends Model {
 
   @AllowNull
   @Column
-  emailCode!: string;
+  emailCode: string;
 
   @AllowNull
   @Column
-  token!: string;
+  token: string;
 
   @AllowNull(false)
   @Default(false)

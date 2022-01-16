@@ -34,15 +34,15 @@ const getQuestionService = (userId, reviewId) => __awaiter(void 0, void 0, void 
     const review = yield models_1.Review.findOne({
         where: {
             id: reviewId,
-            user_id: userId,
-            is_deleted: false,
+            userId,
+            isDeleted: false,
         },
     });
     // 존재하지 않는 리뷰일 때
     if (!review) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
-    return { question_list: review.question_list };
+    return { questionList: review.questionList };
 });
 /**
  *  @독서중 독서 전 작성
@@ -63,7 +63,7 @@ const postReviewBeforeService = (isbn, userId, answerOne, answerTwo, questionLis
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
     // user 확인
-    const user = yield models_1.User.findOne({ where: { id: userId } });
+    const user = yield models_1.User.findOne({ where: { id: userId, isDeleted: false } });
     // isbn 체킹
     let mainIsbn, subIsbn;
     let isbnList = isbn.split(" ");
@@ -76,22 +76,20 @@ const postReviewBeforeService = (isbn, userId, answerOne, answerTwo, questionLis
             [sequelize_1.Op.or]: [
                 { isbn: mainIsbn },
                 { isbn: subIsbn },
-                { isbn_sub: mainIsbn },
-                { isbn_sub: subIsbn },
+                { isbnSub: mainIsbn },
+                { isbnSub: subIsbn },
             ],
         },
     });
     if (!book) {
-        return -101;
+        return constant_1.default.DB_NOT_FOUND;
     }
     // 중복 review 확인
     const exist = yield models_1.Review.findOne({
         where: {
-            [sequelize_1.Op.and]: [
-                { book_id: book.id },
-                { user_id: user.id },
-                { is_deleted: false },
-            ],
+            bookId: book.id,
+            userId: user.id,
+            isDeleted: false,
         },
     });
     if (exist) {
@@ -99,13 +97,13 @@ const postReviewBeforeService = (isbn, userId, answerOne, answerTwo, questionLis
     }
     // review 확인 - 기존의 독서 전 단계가 완료된 리뷰
     const review = yield models_1.Review.create({
-        user_id: user.id,
-        book_id: book.id,
-        question_list: questionList,
-        answer_one: answerOne,
-        answer_two: answerTwo,
-        review_st: progress,
-        finish_st: false,
+        userId: user.id,
+        bookId: book.id,
+        questionList,
+        answerOne,
+        answerTwo,
+        reviewSt: progress,
+        finishSt: false,
     });
     return { reviewId: review.id };
 });
@@ -123,24 +121,24 @@ const postReviewNowService = (reviewId, userId, answerThree, progress) => __awai
         return constant_1.default.NULL_VALUE;
     }
     // user 확인
-    const user = yield models_1.User.findOne({ where: { id: userId } });
+    const user = yield models_1.User.findOne({ where: { id: userId, isDeleted: false } });
     // 해당 review 조회
     const review = yield models_1.Review.findOne({
-        where: {
-            [sequelize_1.Op.and]: [{ id: reviewId }, { user_id: user.id }, { is_deleted: false }],
-        },
+        where: { id: reviewId, userId: user.id, isDeleted: false },
     });
     // 2. 존재하지 않는 review
     if (!review) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
+    let finishSt = Number(progress) === 4 ? true : false;
     // 3. review update
-    review.update({
-        answer_three: answerThree,
-        progress: progress,
+    yield review.update({
+        answerThree,
+        reviewSt: progress,
+        finishSt,
     });
     // 변경 리뷰 저장
-    review.save();
+    yield review.save();
     return { reviewId: review.id };
 });
 /**
@@ -156,17 +154,17 @@ const patchReviewService = (reviewId, answerOne, answerTwo, answerThree) => __aw
         return constant_1.default.NULL_VALUE;
     }
     const reviewToChange = yield models_1.Review.findOne({
-        where: { id: reviewId, is_deleted: false },
+        where: { id: reviewId, isDeleted: false },
     });
     if (!reviewToChange) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
     yield models_1.Review.update({
-        answer_one: answerOne,
-        answer_two: answerTwo,
-        answer_three: answerThree,
+        answerOne,
+        answerTwo,
+        answerThree,
     }, {
-        where: { id: reviewId },
+        where: { id: reviewId, isDeleted: false },
     });
     return constant_1.default.SUCCESS;
 });
@@ -186,8 +184,8 @@ const getReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void 0,
     const reviewToShow = yield models_1.Review.findOne({
         where: {
             id: reviewId,
-            user_id: userId,
-            is_deleted: false,
+            userId,
+            isDeleted: false,
         },
     });
     // 존재하지 않는 리뷰일 때
@@ -195,16 +193,16 @@ const getReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void 0,
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
     const bookToShow = yield models_1.Book.findOne({
-        where: { id: reviewToShow.book_id },
+        where: { id: reviewToShow.bookId },
     });
     return {
         bookTitle: bookToShow.title,
-        answerOne: reviewToShow.answer_one,
-        answerTwo: reviewToShow.answer_two,
-        questionList: reviewToShow.question_list,
-        answerThree: reviewToShow.answer_three,
-        reviewState: reviewToShow.review_st,
-        finishState: reviewToShow.finish_st,
+        answerOne: reviewToShow.answerOne,
+        answerTwo: reviewToShow.answerTwo,
+        questionList: reviewToShow.questionList,
+        answerThree: reviewToShow.answerThree,
+        reviewState: reviewToShow.reviewSt,
+        finishState: reviewToShow.finishSt,
     };
 });
 /**
@@ -222,27 +220,25 @@ const deleteReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void
         return constant_1.default.NULL_VALUE;
     }
     // user 확인
-    const user = yield models_1.User.findOne({ where: { id: userId } });
+    const user = yield models_1.User.findOne({ where: { id: userId, isDeleted: false } });
     // 해당 review 조회
     const review = yield models_1.Review.findOne({
-        where: {
-            [sequelize_1.Op.and]: [{ id: reviewId }, { user_id: user.id }],
-        },
+        where: { id: reviewId, userId: user.id, isDeleted: false },
     });
     // 2. 존재하지 않는 review
     if (!review) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
     // 3. 이미 삭제된 Review 입니다.
-    if (review.is_deleted) {
+    if (review.isDeleted) {
         return constant_1.default.VALUE_ALREADY_DELETED;
     }
     // 독후감 삭제
-    review.update({
-        is_deleted: true,
+    yield review.update({
+        isDeleted: true,
     });
     // 삭제 리뷰 저장
-    review.save();
+    yield review.save();
     return constant_1.default.SUCCESS;
 });
 const reviewService = {

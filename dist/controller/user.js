@@ -29,7 +29,12 @@ const user_1 = __importDefault(require("../service/user"));
 const getMyInfoController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const resData = yield user_1.default.getMyInfoService(req.body.userID.id);
-        response_1.default.dataResponse(res, returnCode_1.default.OK, "마이페이지 조회 성공.", true, resData);
+        if (resData === constant_1.default.NON_EXISTENT_USER) {
+            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 유저입니다.");
+        }
+        else {
+            response_1.default.dataResponse(res, returnCode_1.default.OK, "마이페이지 조회 성공.", true, resData);
+        }
     }
     catch (err) {
         slack_1.default.slackWebhook(req, err.message);
@@ -54,9 +59,12 @@ const patchImgController = (req, res) => __awaiter(void 0, void 0, void 0, funct
         else if (resData === constant_1.default.WRONG_IMG_FORM) {
             response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "잘못된 폼 데이터입니다.");
         }
+        else if (resData === constant_1.default.NON_EXISTENT_USER) {
+            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 유저입니다.");
+        }
         else {
             // 모두 성공시
-            response_1.default.basicResponse(res, returnCode_1.default.OK, true, "프로필 이미지 변경 완료.");
+            response_1.default.dataResponse(res, returnCode_1.default.OK, "프로필 이미지 변경 성공.", true, resData);
         }
     }
     catch (err) {

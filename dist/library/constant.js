@@ -11,6 +11,8 @@ exports.default = {
     WRONG_IMG_FORM: -7,
     WRONG_REQUEST_VALUE: -8,
     VALUE_ALREADY_EXIST: -9,
-    VALUE_ALREADY_DELETED: -10, // 이미 삭제된 값일 때
+    VALUE_ALREADY_DELETED: -10,
+    DB_NOT_FOUND: -11,
+    NON_EXISTENT_USER: -12, // 존재하지 않는 유저일 때
 };
 //# sourceMappingURL=constant.js.map

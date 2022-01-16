@@ -30,7 +30,7 @@ __decorate([
     sequelize_typescript_1.Unique,
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
-], Book.prototype, "isbn_sub", void 0);
+], Book.prototype, "isbnSub", void 0);
 __decorate([
     (0, sequelize_typescript_1.AllowNull)(false),
     sequelize_typescript_1.Column,
@@ -43,7 +43,7 @@ __decorate([
 ], Book.prototype, "author", void 0);
 __decorate([
     (0, sequelize_typescript_1.AllowNull)(false),
-    (0, sequelize_typescript_1.Default)("https://o2-server.s3.ap-northeast-2.amazonaws.com/default_O2_Logo%403x.png"),
+    (0, sequelize_typescript_1.Default)("https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/defaultProfile.png"),
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Book.prototype, "thumbnail", void 0);

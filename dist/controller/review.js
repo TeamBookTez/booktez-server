@@ -62,7 +62,7 @@ const postReviewBeforeController = (req, res) => __awaiter(void 0, void 0, void 
         if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
             response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "요청값이 잘못되었습니다.");
         }
-        else if (resData === -101) {
+        else if (resData === constant_1.default.DB_NOT_FOUND) {
             response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 ISBN입니다.");
         }
         else if (resData === constant_1.default.VALUE_ALREADY_EXIST) {

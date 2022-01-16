@@ -24,46 +24,46 @@ __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => _1.User),
     sequelize_typescript_1.Column,
     __metadata("design:type", Number)
-], Review.prototype, "user_id", void 0);
+], Review.prototype, "userId", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => _1.Book),
     sequelize_typescript_1.Column,
     __metadata("design:type", Number)
-], Review.prototype, "book_id", void 0);
+], Review.prototype, "bookId", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.ARRAY(sequelize_typescript_1.DataType.STRING)),
     __metadata("design:type", Array)
-], Review.prototype, "question_list", void 0);
+], Review.prototype, "questionList", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.TEXT),
     __metadata("design:type", String)
-], Review.prototype, "answer_one", void 0);
+], Review.prototype, "answerOne", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.TEXT),
     __metadata("design:type", String)
-], Review.prototype, "answer_two", void 0);
+], Review.prototype, "answerTwo", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.JSON),
     __metadata("design:type", Object)
-], Review.prototype, "answer_three", void 0);
+], Review.prototype, "answerThree", void 0);
 __decorate([
     (0, sequelize_typescript_1.Default)(2),
     (0, sequelize_typescript_1.AllowNull)(false),
     sequelize_typescript_1.Column,
     __metadata("design:type", Number)
-], Review.prototype, "review_st", void 0);
+], Review.prototype, "reviewSt", void 0);
 __decorate([
     (0, sequelize_typescript_1.Default)(false),
     (0, sequelize_typescript_1.AllowNull)(false),
     sequelize_typescript_1.Column,
     __metadata("design:type", Boolean)
-], Review.prototype, "finish_st", void 0);
+], Review.prototype, "finishSt", void 0);
 __decorate([
     (0, sequelize_typescript_1.AllowNull)(false),
     (0, sequelize_typescript_1.Default)(false),
     sequelize_typescript_1.Column,
     __metadata("design:type", Boolean)
-], Review.prototype, "is_deleted", void 0);
+], Review.prototype, "isDeleted", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => _1.User),
     __metadata("design:type", _1.User)

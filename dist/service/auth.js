@@ -16,17 +16,22 @@ const config_1 = __importDefault(require("../config"));
 // library
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const constant_1 = __importDefault(require("../library/constant"));
 const isEmail_1 = __importDefault(require("validator/lib/isEmail"));
+const constant_1 = __importDefault(require("../library/constant"));
+const checkValidation_1 = require("../library/checkValidation");
 // models
 const models_1 = require("../models");
 /**
- *  @이메일 유효성 검사
- *  @route GET /auth/email
+ *  @이메일_유효성_검사
+ *  @route GET /auth/email?email=
  *  @access public
  *  @err 1. 필요한 값이 없을 때
  */
 const getEmailService = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    // 잘못된 요청값이 들어왔을 때 (query !== email)
+    if (email === undefined) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
     // 필요한 값이 존재하지 않는 경우
     if (!email) {
         return constant_1.default.NULL_VALUE;
@@ -39,12 +44,75 @@ const getEmailService = (email) => __awaiter(void 0, void 0, void 0, function* (
     const emailExist = yield models_1.User.findAll({
         where: {
             email,
+            isDeleted: false,
         },
     });
     if (emailExist.length > 0) {
         return constant_1.default.EMAIL_ALREADY_EXIST;
     }
     return constant_1.default.SUCCESS;
+});
+/**
+ *  @닉네임_유효성_검사
+ *  @route GET /auth/nickname?nickname=
+ *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ */
+const getNicknameService = (nickname) => __awaiter(void 0, void 0, void 0, function* () {
+    // 잘못된 요청값이 들어왔을 때 (query !== nickname)
+    if (nickname === undefined) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
+    // 필요한 값이 존재하지 않는 경우
+    if (!nickname) {
+        return constant_1.default.NULL_VALUE;
+    }
+    // nickname 형식이 잘못되었을 때
+    if (!(0, checkValidation_1.checkNicknameValid)(nickname)) {
+        return constant_1.default.WRONG_NICKNAME_CONVENTION;
+    }
+    // nickname이 이미 존재할 때
+    const nicknameExist = yield models_1.User.findAll({
+        where: {
+            nickname,
+            isDeleted: false,
+        },
+    });
+    if (nicknameExist.length > 0) {
+        return constant_1.default.NICKNAME_ALREADY_EXIST;
+    }
+    return constant_1.default.SUCCESS;
+});
+/**
+ *  @로그인
+ *  @route Post auth/login
+ *  @access public
+ */
+const postLoginService = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+    // 요청 바디 부족
+    if (!email || !password) {
+        return constant_1.default.NULL_VALUE;
+    }
+    // 존재하지 않는 이메일
+    const user = yield models_1.User.findOne({ where: { email, isDeleted: false } });
+    if (!user) {
+        return -100;
+    }
+    // 비밀번호 일치 X
+    const isMatch = yield bcryptjs_1.default.compare(password, user.password);
+    if (!isMatch) {
+        return -101;
+    }
+    // 성공 시
+    // 토큰 만들기
+    const payload = {
+        user: {
+            id: user.id,
+        },
+    };
+    const nickname = user.nickname;
+    const token = jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: "14d" });
+    return { nickname, token };
 });
 /**
  *  @회원가입
@@ -66,21 +134,19 @@ const postSignupService = (email, nickname, password) => __awaiter(void 0, void 
     if (!(0, isEmail_1.default)(email)) {
         return constant_1.default.WRONG_EMAIL_CONVENTION;
     }
-    // nickname 형식이 잘못되었을 때
-    if (!/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/.test(nickname) ||
-        nickname.length < 2 ||
-        nickname.length > 8) {
+    if (!(0, checkValidation_1.checkNicknameValid)(nickname)) {
+        // nickname 형식이 잘못되었을 때
         return constant_1.default.WRONG_NICKNAME_CONVENTION;
     }
     // password 형식이 잘못되었을 때
-    if (!/^(?=.*[a-zA-Z])((?=.*\d)(?=.*\W)).{8,64}$/.test(password) ||
-        /\s/.test(password)) {
+    if (!(0, checkValidation_1.checkPasswordValid)(password)) {
         return constant_1.default.WRONG_PASSWORD_CONVENTION;
     }
     // email이 이미 존재할 때
     const emailExist = yield models_1.User.findAll({
         where: {
             email,
+            isDeleted: false,
         },
     });
     if (emailExist.length > 0) {
@@ -90,6 +156,7 @@ const postSignupService = (email, nickname, password) => __awaiter(void 0, void 
     const nicknameExist = yield models_1.User.findAll({
         where: {
             nickname,
+            isDeleted: false,
         },
     });
     if (nicknameExist.length > 0) {
@@ -113,70 +180,11 @@ const postSignupService = (email, nickname, password) => __awaiter(void 0, void 
     });
     return token;
 });
-/**
- *  @로그인
- *  @route Post auth/login
- *  @access public
- */
-const postLoginService = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
-    // 요청 바디 부족
-    if (!email || !password) {
-        return constant_1.default.NULL_VALUE;
-    }
-    // 존재하지 않는 이메일
-    const user = yield models_1.User.findOne({ where: { email: email } });
-    if (!user) {
-        return -100;
-    }
-    // 비밀번호 일치 X
-    const isMatch = yield bcryptjs_1.default.compare(password, user.password);
-    if (!isMatch) {
-        return -101;
-    }
-    // 성공 시
-    // 토큰 만들기
-    const payload = {
-        user: {
-            id: user.id,
-        },
-    };
-    const nickname = user.nickname;
-    const token = jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: "14d" });
-    return { nickname, token };
-});
-/**
- *  @닉네임_유효성_검사
- *  @route get auth/nickname
- *  @access public
- *  @err 1. 필요한 값이 없습니다.
- */
-const getNicknameService = (nickname) => __awaiter(void 0, void 0, void 0, function* () {
-    // 필요한 값이 존재하지 않는 경우
-    if (!nickname) {
-        return constant_1.default.NULL_VALUE;
-    }
-    if (
-    // nickname 형식이 잘못되었을 때
-    !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/.test(nickname) ||
-        nickname.length < 2 ||
-        nickname.length > 8) {
-        return constant_1.default.WRONG_NICKNAME_CONVENTION;
-    }
-    // nickname이 이미 존재할 때
-    const nicknameExist = yield models_1.User.findAll({
-        where: {
-            nickname,
-        },
-    });
-    if (nicknameExist.length > 0) {
-        return constant_1.default.NICKNAME_ALREADY_EXIST;
-    }
-});
 const authService = {
-    getNicknameService,
     getEmailService,
-    postSignupService,
+    getNicknameService,
     postLoginService,
+    postSignupService,
 };
 exports.default = authService;
 //# sourceMappingURL=auth.js.map

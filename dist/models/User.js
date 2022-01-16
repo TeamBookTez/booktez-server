@@ -35,7 +35,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "nickname", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Default)("디폴트 이미지"),
+    (0, sequelize_typescript_1.Default)("https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/defaultProfile.png"),
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], User.prototype, "img", void 0);
@@ -44,6 +44,17 @@ __decorate([
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], User.prototype, "emailCode", void 0);
+__decorate([
+    sequelize_typescript_1.AllowNull,
+    sequelize_typescript_1.Column,
+    __metadata("design:type", String)
+], User.prototype, "token", void 0);
+__decorate([
+    (0, sequelize_typescript_1.AllowNull)(false),
+    (0, sequelize_typescript_1.Default)(false),
+    sequelize_typescript_1.Column,
+    __metadata("design:type", Boolean)
+], User.prototype, "isDeleted", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => _1.Review),
     __metadata("design:type", Array)

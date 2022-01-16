@@ -25,7 +25,7 @@ const models_1 = require("../models");
 const getBookService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     let books = [];
     yield models_1.Review.findAll({
-        attributes: ["review_st"],
+        attributes: ["reviewSt"],
         include: [
             {
                 model: models_1.Book,
@@ -33,15 +33,16 @@ const getBookService = (userId) => __awaiter(void 0, void 0, void 0, function* (
             },
         ],
         where: {
-            user_id: userId,
+            userId,
+            isDeleted: false,
         },
-        order: [["updated_at", "DESC"]],
+        order: [["updatedAt", "DESC"]],
     }).then((reviews) => reviews.forEach((review) => {
         books.push({
             thumbnail: review.book.thumbnail,
             title: review.book.title,
             author: review.book.author,
-            state: review.review_st,
+            state: review.reviewSt,
         });
     }));
     return { books: books };
@@ -67,9 +68,10 @@ const postBookService = (isLogin, isbn, thumbnail, title, author) => __awaiter(v
                 [sequelize_1.Op.or]: [
                     { isbn: isbnOne },
                     { isbn: isbnTwo },
-                    { isbn_sub: isbnOne },
-                    { isbn_sub: isbnTwo },
+                    { isbnSub: isbnOne },
+                    { isbnSub: isbnTwo },
                 ],
+                isDeleted: false,
             },
         });
     }
@@ -78,12 +80,12 @@ const postBookService = (isLogin, isbn, thumbnail, title, author) => __awaiter(v
         isbnOne = isbn;
         exist = yield models_1.Book.findOne({
             where: {
-                [sequelize_1.Op.or]: [{ isbn: isbnOne }, { isbn_sub: isbnOne }],
+                [sequelize_1.Op.or]: [{ isbn: isbnOne }, { isbnSub: isbnOne }],
             },
         });
     }
     if (!exist) {
-        models_1.Book.create(Object.assign(Object.assign(Object.assign({ isbn: isbnOne }, (isbnTwo && { isbn_sub: isbnTwo })), { title,
+        yield models_1.Book.create(Object.assign(Object.assign(Object.assign({ isbn: isbnOne }, (isbnTwo && { isbnSub: isbnTwo })), { title,
             author }), (thumbnail && { thumbnail })));
     }
     return isLogin;

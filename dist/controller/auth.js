@@ -21,6 +21,34 @@ const returnCode_1 = __importDefault(require("../library/returnCode"));
 // services
 const auth_1 = __importDefault(require("../service/auth"));
 /**
+ *  @이메일 유효성 검사
+ *  @route GET /auth/email
+ *  @access public
+ *  @err 1. 필요한 값이 없을 때
+ */
+const getEmailController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield auth_1.default.getEmailService(req.body.email);
+        if (resData === constant_1.default.NULL_VALUE) {
+            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
+        }
+        else if (resData === constant_1.default.WRONG_EMAIL_CONVENTION) {
+            response_1.default.dataResponse(res, returnCode_1.default.OK, "올바른 형식이 아닙니다.", true, { isValid: false });
+        }
+        else if (resData === constant_1.default.EMAIL_ALREADY_EXIST) {
+            response_1.default.dataResponse(res, returnCode_1.default.OK, "이미 사용 중인 이메일입니다.", true, { isValid: false });
+        }
+        else {
+            response_1.default.dataResponse(res, returnCode_1.default.OK, "사용할 수 있는 이메일입니다.", true, { isValid: true });
+        }
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
+/**
  *  @회원가입
  *  @route POST /auth/signup
  *  @access public
@@ -33,7 +61,7 @@ const auth_1 = __importDefault(require("../service/auth"));
  */
 const postSignupController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield auth_1.default.postSignupService(req.body);
+        const resData = yield auth_1.default.postSignupService(req.body.email, req.body.nickname, req.body.password);
         if (resData === constant_1.default.NULL_VALUE) {
             response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
@@ -92,7 +120,37 @@ const postLoginController = (req, res) => __awaiter(void 0, void 0, void 0, func
         response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
     }
 });
+/**
+ *  @닉네임_유효성_검사
+ *  @route get auth/nickname
+ *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ */
+const getNicknameController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield auth_1.default.getNicknameService(req.body.nickname);
+        if (resData === constant_1.default.NULL_VALUE) {
+            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
+        }
+        else if (resData === constant_1.default.WRONG_NICKNAME_CONVENTION) {
+            response_1.default.dataResponse(res, returnCode_1.default.OK, "올바른 형식이 아닙니다.", true, { isValid: false });
+        }
+        else if (resData === constant_1.default.NICKNAME_ALREADY_EXIST) {
+            response_1.default.dataResponse(res, returnCode_1.default.OK, "이미 사용 중인 닉네임입니다.", true, { isValid: false });
+        }
+        else {
+            response_1.default.dataResponse(res, returnCode_1.default.OK, "사용 가능한 닉네임입니다.", true, { isValid: true });
+        }
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
 const authController = {
+    getEmailController,
+    getNicknameController,
     postSignupController,
     postLoginController,
 };

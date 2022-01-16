@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "ts-node src",
     "build": "tsc && node dist",
-    "test": "nodemon"
+    "test": "nodemon",
+    "postinstall": "npx patch-package"
   },
   "dependencies": {
+    "@types/express-serve-static-core": "^4.17.28",
     "aws-sdk": "^2.1057.0",
     "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",

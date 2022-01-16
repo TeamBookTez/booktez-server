@@ -18,6 +18,33 @@ const constant_1 = __importDefault(require("../library/constant"));
 // models
 const models_1 = require("../models");
 /**
+ *  @질문리스트 조회하기
+ *  @route GET /review/:reviewId/question-list
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없습니다.
+ *      2. 존재하지 않는 Review 입니다.
+ */
+const getQuestionService = (userId, reviewId) => __awaiter(void 0, void 0, void 0, function* () {
+    // 필요한 값이 없을 때
+    if (!userId || !reviewId) {
+        return constant_1.default.NULL_VALUE;
+    }
+    // review 조회
+    const review = yield models_1.Review.findOne({
+        where: {
+            id: reviewId,
+            user_id: userId,
+            is_deleted: false,
+        },
+    });
+    // 존재하지 않는 리뷰일 때
+    if (!review) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
+    return { question_list: review.question_list };
+});
+/**
  *  @독서중 독서 전 작성
  *  @route POST /review/before/:isbn
  *  @access private
@@ -219,6 +246,7 @@ const deleteReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void
     return constant_1.default.SUCCESS;
 });
 const reviewService = {
+    getQuestionService,
     postReviewBeforeService,
     postReviewNowService,
     patchReviewService,

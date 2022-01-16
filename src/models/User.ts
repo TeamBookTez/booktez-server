@@ -40,13 +40,24 @@ export default class User extends Model {
   @Column
   nickname: string;
 
-  @Default("디폴트 이미지")
+  @Default(
+    "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/defaultProfile.png"
+  )
   @Column
   img: string;
 
   @AllowNull
   @Column
   emailCode!: string;
+
+  @AllowNull
+  @Column
+  token!: string;
+
+  @AllowNull(false)
+  @Default(false)
+  @Column
+  isDeleted: boolean;
 
   @HasMany(() => Review)
   reviews: Review[];

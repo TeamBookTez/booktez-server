@@ -24,6 +24,5 @@ export const sequelize = new Sequelize(
 
 sequelize.addModels([User, Book, Review]);
 
-
 export { User, Book, Review };
 export default sequelize;

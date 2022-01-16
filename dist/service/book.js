@@ -23,7 +23,7 @@ const models_1 = require("../models");
  *  @access private
  */
 const getBookService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    let resData = [];
+    let books = [];
     yield models_1.Review.findAll({
         attributes: ["review_st"],
         include: [
@@ -37,14 +37,14 @@ const getBookService = (userId) => __awaiter(void 0, void 0, void 0, function* (
         },
         order: [["updated_at", "DESC"]],
     }).then((reviews) => reviews.forEach((review) => {
-        resData.push({
+        books.push({
             thumbnail: review.book.thumbnail,
             title: review.book.title,
             author: review.book.author,
             state: review.review_st,
         });
     }));
-    return resData;
+    return { books: books };
 });
 /**
  *  @서재에 책 추가하기

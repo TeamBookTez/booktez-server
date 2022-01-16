@@ -12,6 +12,56 @@ import constant from "../library/constant";
 import reviewService from "../service/review";
 
 /**
+ *  @질문리스트 조회하기
+ *  @route GET /review/:reviewId/question-list
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없습니다.
+ *      2. 존재하지 않는 Review 입니다.
+ */
+const getQuestionController = async (req: Request, res: Response) => {
+  try {
+    const resData = await reviewService.getQuestionService(
+      Number(req.body.userID.id),
+      Number(req.params.reviewId)
+    );
+
+    if (resData === constant.NULL_VALUE) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    } else if (resData === constant.WRONG_REQUEST_VALUE) {
+      response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "존재하지 않는 Review입니다."
+      );
+    } else {
+      response.dataResponse(
+        res,
+        returnCode.OK,
+        "질문리스트 조회 성공.",
+        true,
+        resData
+      );
+    }
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
  *  @독서중 독서 전 작성
  *  @route POST /review/before/:isbn
  *  @access private
@@ -283,6 +333,7 @@ const reviewController = {
   postReviewNowController,
   patchReviewController,
   getReviewController,
+  getQuestionController,
   deleteReviewController,
 };
 

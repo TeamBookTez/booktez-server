@@ -10,6 +10,36 @@ import isEmail from "validator/lib/isEmail";
 import { User } from "../models";
 
 /**
+ *  @이메일 유효성 검사
+ *  @route GET /auth/email
+ *  @access public
+ *  @err 1. 필요한 값이 없을 때
+ */
+const getEmailService = async (email: string) => {
+  // 필요한 값이 존재하지 않는 경우
+  if (!email) {
+    return constant.NULL_VALUE;
+  }
+
+  // email 형식이 잘못되었을 때
+  if (!isEmail(email)) {
+    return constant.WRONG_EMAIL_CONVENTION;
+  }
+
+  // email이 이미 존재할 때
+  const emailExist = await User.findAll({
+    where: {
+      email,
+    },
+  });
+  if (emailExist.length > 0) {
+    return constant.EMAIL_ALREADY_EXIST;
+  }
+
+  return constant.SUCCESS;
+};
+
+/**
  *  @회원가입
  *  @route POST /auth/signup
  *  @access public
@@ -20,7 +50,11 @@ import { User } from "../models";
  *       5. 이메일이 이미 존재할 때
  *       6. 닉네임이 이미 존재할 때
  */
-const postSignupService = async ({ email, nickname, password }) => {
+const postSignupService = async (
+  email: string,
+  nickname: string,
+  password: string
+) => {
   // 필요한 값이 존재하지 않는 경우
   if (!email || !nickname || !password) {
     return constant.NULL_VALUE;
@@ -137,8 +171,8 @@ const getNicknameService = async (nickname: string) => {
   // 필요한 값이 존재하지 않는 경우
   if (!nickname) {
     return constant.NULL_VALUE;
-  } 
-  
+  }
+
   if (
     // nickname 형식이 잘못되었을 때
     !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/.test(nickname) ||
@@ -159,10 +193,11 @@ const getNicknameService = async (nickname: string) => {
   }
 
   return constant.SUCCESS;
-}
+};
 
 const authService = {
   getNicknameService,
+  getEmailService,
   postSignupService,
   postLoginService,
 };

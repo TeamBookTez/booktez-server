@@ -1,0 +1,19 @@
+diff --git a/node_modules/@types/express-serve-static-core/index.d.ts b/node_modules/@types/express-serve-static-core/index.d.ts
+index 33549ff..4798b7f 100644
+--- a/node_modules/@types/express-serve-static-core/index.d.ts
++++ b/node_modules/@types/express-serve-static-core/index.d.ts
+@@ -17,7 +17,13 @@ declare global {
+     namespace Express {
+         // These open interfaces may be extended in an application-specific manner via declaration merging.
+         // See for example method-override.d.ts (https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/method-override/index.d.ts)
+-        interface Request {}
++        interface Request {
++            file: Multer.File;
++
++            files: {
++                [fieldname: string]: MulterS3.File[];
++            } | Multer.File[];
++        }
+         interface Response {}
+         interface Application {}
+     }

@@ -21,6 +21,32 @@ const isEmail_1 = __importDefault(require("validator/lib/isEmail"));
 // models
 const models_1 = require("../models");
 /**
+ *  @이메일 유효성 검사
+ *  @route GET /auth/email
+ *  @access public
+ *  @err 1. 필요한 값이 없을 때
+ */
+const getEmailService = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    // 필요한 값이 존재하지 않는 경우
+    if (!email) {
+        return constant_1.default.NULL_VALUE;
+    }
+    // email 형식이 잘못되었을 때
+    if (!(0, isEmail_1.default)(email)) {
+        return constant_1.default.WRONG_EMAIL_CONVENTION;
+    }
+    // email이 이미 존재할 때
+    const emailExist = yield models_1.User.findAll({
+        where: {
+            email,
+        },
+    });
+    if (emailExist.length > 0) {
+        return constant_1.default.EMAIL_ALREADY_EXIST;
+    }
+    return constant_1.default.SUCCESS;
+});
+/**
  *  @회원가입
  *  @route POST /auth/signup
  *  @access public
@@ -31,7 +57,7 @@ const models_1 = require("../models");
  *       5. 이메일이 이미 존재할 때
  *       6. 닉네임이 이미 존재할 때
  */
-const postSignupService = ({ email, nickname, password }) => __awaiter(void 0, void 0, void 0, function* () {
+const postSignupService = (email, nickname, password) => __awaiter(void 0, void 0, void 0, function* () {
     // 필요한 값이 존재하지 않는 경우
     if (!email || !nickname || !password) {
         return constant_1.default.NULL_VALUE;
@@ -118,7 +144,37 @@ const postLoginService = (email, password) => __awaiter(void 0, void 0, void 0, 
     const token = jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: "14d" });
     return { nickname, token };
 });
+/**
+ *  @닉네임_유효성_검사
+ *  @route get auth/nickname
+ *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ */
+const getNicknameService = (nickname) => __awaiter(void 0, void 0, void 0, function* () {
+    // 필요한 값이 존재하지 않는 경우
+    if (!nickname) {
+        return constant_1.default.NULL_VALUE;
+    }
+    if (
+    // nickname 형식이 잘못되었을 때
+    !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/.test(nickname) ||
+        nickname.length < 2 ||
+        nickname.length > 8) {
+        return constant_1.default.WRONG_NICKNAME_CONVENTION;
+    }
+    // nickname이 이미 존재할 때
+    const nicknameExist = yield models_1.User.findAll({
+        where: {
+            nickname,
+        },
+    });
+    if (nicknameExist.length > 0) {
+        return constant_1.default.NICKNAME_ALREADY_EXIST;
+    }
+});
 const authService = {
+    getNicknameService,
+    getEmailService,
     postSignupService,
     postLoginService,
 };

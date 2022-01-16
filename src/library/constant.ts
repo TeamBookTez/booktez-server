@@ -10,4 +10,5 @@ export default {
   WRONG_REQUEST_VALUE: -8, // 잘못된 요청값이 들어왔을 때
   VALUE_ALREADY_EXIST: -9, // 이미 존재하는 값일 때
   VALUE_ALREADY_DELETED: -10, // 이미 삭제된 값일 때
+  NON_EXISTENT_USER: -12, // 존재하지 않는 유저일 때
 };

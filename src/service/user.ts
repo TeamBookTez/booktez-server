@@ -1,11 +1,7 @@
 // sequelize
 import Sequelize, { Op } from "sequelize";
 
-// library
-// import jwt from "jsonwebtoken";
-// import bcrypt from 'bcryptjs';
 import constant from "../library/constant";
-// import index from "../config";
 
 // model
 import { User, Review } from "../models";
@@ -14,22 +10,24 @@ import { User, Review } from "../models";
  *  @유저정보조회
  *  @route GET /user/myInfo
  *  @access public
- *  @err
+ *  @err 1. 존재하지 않는 유저
  */
 const getMyInfoService = async (userId: number) => {
-  // TODO: - user isDeleted 상태 확인
-  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
+  const user = await User.findOne({
+    where: { id: userId, isDeleted: false } 
+  });
+
+  if (!user) {
+    return constant.NON_EXISTENT_USER;
+  }
+
   const img = user.img;
   const nickname = user.nickname;
   const email = user.email;
-
-  const review = await Review.findAll({
-    where: {
-      userId,
-      isDeleted: false,
-    },
+  const reviewCount = await Review.count({
+    where: {userId, isDeleted: false}
   });
-  const reviewCount = review.length;
+
   return { img, nickname, email, reviewCount };
 };
 
@@ -37,25 +35,24 @@ const getMyInfoService = async (userId: number) => {
  *  @프로필이미지 수정
  *  @route PATCH /user/img
  *  @access public
- *  @err 잘못된 폼데이터
+ *  @err 1. 잘못된 폼 데이터
+ *       2. 존재하지 않는 유저
  */
 const patchImgService = async (userId: number, img: string) => {
-  // 폼데이터 맞는지 체크 -> 아니면 return statusCode.WRONG_IMG_FORM
   if (!img) {
     return constant.NULL_VALUE;
-  } else if (img === undefined) {
+  } else if (img === undefined) { 
     return constant.WRONG_IMG_FORM;
   }
-  // TODO: - user isDeleted 상태 확인
-  // userId에 맞는 user의 img 업로드
-  await User.update(
-    {
-      img: img,
-    },
-    {
-      where: { id: userId, isDeleted: false },
-    }
-  );
+
+  const user = await User.findOne({ where: {id: userId, isDeleted: false}});
+  
+  if (!user) {
+    return constant.NON_EXISTENT_USER;
+  }
+
+  await user.update({img: img});
+  await user.save();
 };
 
 const userService = {

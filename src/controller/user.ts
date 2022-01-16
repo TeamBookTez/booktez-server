@@ -22,13 +22,23 @@ import { resolveModelGetter } from "sequelize-typescript";
 const getMyInfoController = async (req: Request, res: Response) => {
   try {
     const resData = await userService.getMyInfoService(req.body.userID.id);
-    response.dataResponse(
-      res,
-      returnCode.OK,
-      "마이페이지 조회 성공.",
-      true,
-      resData
-    );
+
+    if (resData === constant.NON_EXISTENT_USER) {
+      response.basicResponse(
+        res, 
+        returnCode.BAD_REQUEST, 
+        false, 
+        "존재하지 않는 유저입니다."
+      );
+    } else {
+        response.dataResponse(
+          res,
+          returnCode.OK,
+          "마이페이지 조회 성공.",
+          true,
+          resData
+          );
+    }
   } catch (err) {
     slack.slackWebhook(req, err.message);
     console.error(err.message);
@@ -69,9 +79,16 @@ const patchImgController = async (req: Request, res: Response) => {
         false,
         "잘못된 폼 데이터입니다."
       );
+    } else if (resData === constant.NON_EXISTENT_USER) {
+        response.basicResponse(
+          res,
+          returnCode.BAD_REQUEST,
+          false,
+          "존재하지 않는 유저입니다."
+        );
     } else {
       // 모두 성공시
-      response.basicResponse(
+        response.basicResponse(
         res,
         returnCode.OK,
         true,

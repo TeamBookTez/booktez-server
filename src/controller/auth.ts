@@ -13,7 +13,7 @@ import authService from "../service/auth";
 
 /**
  *  @이메일_유효성_검사
- *  @route GET /auth/email
+ *  @route GET /auth/email?email=
  *  @access public
  *  @err 1. 필요한 값이 없을 때
  */
@@ -77,7 +77,7 @@ const getEmailController = async (req: Request, res: Response) => {
 
 /**
  *  @닉네임_유효성_검사
- *  @route get auth/nickname
+ *  @route GET /auth/nickname?nickname=
  *  @access public
  *  @err 1. 필요한 값이 없습니다.
  */

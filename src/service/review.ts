@@ -152,7 +152,7 @@ const postReviewNowService = async (
     return constant.WRONG_REQUEST_VALUE;
   }
 
-  let finishSt = progress === 4 ? true : false;
+  let finishSt = Number(progress) === 4 ? true : false;
 
   // 3. review update
   await review.update({

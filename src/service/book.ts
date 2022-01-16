@@ -82,7 +82,6 @@ const postBookService = async (
     exist = await Book.findOne({
       where: {
         [Op.or]: [{ isbn: isbnOne }, { isbnSub: isbnOne }],
-        isDeleted: false,
       },
     });
   }

@@ -3,19 +3,28 @@ import index from "../config";
 // library
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import constant from "../library/constant";
 import isEmail from "validator/lib/isEmail";
+import constant from "../library/constant";
+import {
+  checkNicknameValid,
+  checkPasswordValid,
+} from "../library/checkValidation";
 
 // models
 import { User } from "../models";
 
 /**
- *  @이메일 유효성 검사
- *  @route GET /auth/email
+ *  @이메일_유효성_검사
+ *  @route GET /auth/email?email=
  *  @access public
  *  @err 1. 필요한 값이 없을 때
  */
-const getEmailService = async (email: string) => {
+const getEmailService = async (email?: string) => {
+  // 잘못된 요청값이 들어왔을 때 (query !== email)
+  if (email === undefined) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
   // 필요한 값이 존재하지 않는 경우
   if (!email) {
     return constant.NULL_VALUE;
@@ -38,6 +47,76 @@ const getEmailService = async (email: string) => {
   }
 
   return constant.SUCCESS;
+};
+
+/**
+ *  @닉네임_유효성_검사
+ *  @route GET /auth/nickname?nickname=
+ *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ */
+const getNicknameService = async (nickname?: string) => {
+  // 잘못된 요청값이 들어왔을 때 (query !== nickname)
+  if (nickname === undefined) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
+  // 필요한 값이 존재하지 않는 경우
+  if (!nickname) {
+    return constant.NULL_VALUE;
+  }
+
+  // nickname 형식이 잘못되었을 때
+  if (!checkNicknameValid(nickname)) {
+    return constant.WRONG_NICKNAME_CONVENTION;
+  }
+
+  // nickname이 이미 존재할 때
+  const nicknameExist = await User.findAll({
+    where: {
+      nickname,
+      isDeleted: false,
+    },
+  });
+
+  if (nicknameExist.length > 0) {
+    return constant.NICKNAME_ALREADY_EXIST;
+  }
+};
+
+/**
+ *  @로그인
+ *  @route Post auth/login
+ *  @access public
+ */
+const postLoginService = async (email: string, password: string) => {
+  // 요청 바디 부족
+  if (!email || !password) {
+    return constant.NULL_VALUE;
+  }
+
+  // 존재하지 않는 이메일
+  const user = await User.findOne({ where: { email, isDeleted: false } });
+  if (!user) {
+    return -100;
+  }
+
+  // 비밀번호 일치 X
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return -101;
+  }
+
+  // 성공 시
+  // 토큰 만들기
+  const payload = {
+    user: {
+      id: user.id,
+    },
+  };
+  const nickname = user.nickname;
+  const token = jwt.sign(payload, index.jwtSecret, { expiresIn: "14d" });
+  return { nickname, token };
 };
 
 /**
@@ -66,20 +145,13 @@ const postSignupService = async (
     return constant.WRONG_EMAIL_CONVENTION;
   }
 
-  // nickname 형식이 잘못되었을 때
-  if (
-    !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/.test(nickname) ||
-    nickname.length < 2 ||
-    nickname.length > 8
-  ) {
+  if (!checkNicknameValid(nickname)) {
+    // nickname 형식이 잘못되었을 때
     return constant.WRONG_NICKNAME_CONVENTION;
   }
 
   // password 형식이 잘못되었을 때
-  if (
-    !/^(?=.*[a-zA-Z])((?=.*\d)(?=.*\W)).{8,64}$/.test(password) ||
-    /\s/.test(password)
-  ) {
+  if (!checkPasswordValid(password)) {
     return constant.WRONG_PASSWORD_CONVENTION;
   }
 
@@ -127,82 +199,11 @@ const postSignupService = async (
   return token;
 };
 
-/**
- *  @로그인
- *  @route Post auth/login
- *  @access public
- */
-
-const postLoginService = async (email: string, password: string) => {
-  // 요청 바디 부족
-  if (!email || !password) {
-    return constant.NULL_VALUE;
-  }
-
-  // 존재하지 않는 이메일
-  const user = await User.findOne({ where: { email, isDeleted: false } });
-  if (!user) {
-    return -100;
-  }
-
-  // 비밀번호 일치 X
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    return -101;
-  }
-
-  // 성공 시
-  // 토큰 만들기
-  const payload = {
-    user: {
-      id: user.id,
-    },
-  };
-  const nickname = user.nickname;
-  const token = jwt.sign(payload, index.jwtSecret, { expiresIn: "14d" });
-  return { nickname, token };
-};
-
-/**
- *  @닉네임_유효성_검사
- *  @route get auth/nickname
- *  @access public
- *  @err 1. 필요한 값이 없습니다.
- */
-
-const getNicknameService = async (nickname: string) => {
-  // 필요한 값이 존재하지 않는 경우
-  if (!nickname) {
-    return constant.NULL_VALUE;
-  }
-
-  if (
-    // nickname 형식이 잘못되었을 때
-    !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/.test(nickname) ||
-    nickname.length < 2 ||
-    nickname.length > 8
-  ) {
-    return constant.WRONG_NICKNAME_CONVENTION;
-  }
-
-  // nickname이 이미 존재할 때
-  const nicknameExist = await User.findAll({
-    where: {
-      nickname,
-      isDeleted: false,
-    },
-  });
-
-  if (nicknameExist.length > 0) {
-    return constant.NICKNAME_ALREADY_EXIST;
-  }
-};
-
 const authService = {
-  getNicknameService,
   getEmailService,
-  postSignupService,
+  getNicknameService,
   postLoginService,
+  postSignupService,
 };
 
 export default authService;

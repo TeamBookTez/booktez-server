@@ -18,14 +18,15 @@ import { User, Review } from "../models";
  */
 const getMyInfoService = async (userId: number) => {
   // TODO: - user isDeleted 상태 확인
-  const user = await User.findOne({ where: { id: userId } });
+  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
   const img = user.img;
   const nickname = user.nickname;
   const email = user.email;
+
   const review = await Review.findAll({
     where: {
-      user_id: userId,
-      is_deleted: false,
+      userId,
+      isDeleted: false,
     },
   });
   const reviewCount = review.length;
@@ -41,7 +42,7 @@ const getMyInfoService = async (userId: number) => {
 const patchImgService = async (userId: number, img: string) => {
   // 폼데이터 맞는지 체크 -> 아니면 return statusCode.WRONG_IMG_FORM
   if (!img) {
-    return constant.NULL_VALUE
+    return constant.NULL_VALUE;
   } else if (img === undefined) {
     return constant.WRONG_IMG_FORM;
   }
@@ -52,7 +53,7 @@ const patchImgService = async (userId: number, img: string) => {
       img: img,
     },
     {
-      where: { id: userId },
+      where: { id: userId, isDeleted: false },
     }
   );
 };

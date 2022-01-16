@@ -219,7 +219,7 @@ const getReviewService = async (userId: number, reviewId: number) => {
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
-
+  console.log(userId, reviewId);
   const reviewToShow = await Review.findOne({
     where: {
       id: reviewId,
@@ -228,6 +228,7 @@ const getReviewService = async (userId: number, reviewId: number) => {
     },
   });
 
+  console.log(reviewToShow);
   // 존재하지 않는 리뷰일 때
   if (!reviewToShow) {
     return constant.WRONG_REQUEST_VALUE;

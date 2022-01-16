@@ -11,4 +11,5 @@ export default {
   VALUE_ALREADY_EXIST: -9, // 이미 존재하는 값일 때
   VALUE_ALREADY_DELETED: -10, // 이미 삭제된 값일 때
   DB_NOT_FOUND: -11, // DB 응답값이 없을 때
+  NON_EXISTENT_USER: -12, // 존재하지 않는 유저일 때
 };

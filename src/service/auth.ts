@@ -82,6 +82,8 @@ const getNicknameService = async (nickname?: string) => {
   if (nicknameExist.length > 0) {
     return constant.NICKNAME_ALREADY_EXIST;
   }
+  
+  return constant.SUCCESS;
 };
 
 /**
@@ -173,7 +175,6 @@ const postSignupService = async (
       isDeleted: false,
     },
   });
-
   if (nicknameExist.length > 0) {
     return constant.NICKNAME_ALREADY_EXIST;
   }

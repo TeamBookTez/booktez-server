@@ -25,7 +25,6 @@ router.get("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
     }
 }));
-router.use("/test", require("./test"));
 router.use("/auth", require("./auth"));
 router.use("/book", require("./book"));
 router.use("/user", require("./user"));

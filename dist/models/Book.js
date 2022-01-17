@@ -42,11 +42,19 @@ __decorate([
     __metadata("design:type", Array)
 ], Book.prototype, "author", void 0);
 __decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.ARRAY(sequelize_typescript_1.DataType.STRING)),
+    __metadata("design:type", Array)
+], Book.prototype, "translator", void 0);
+__decorate([
     (0, sequelize_typescript_1.AllowNull)(false),
     (0, sequelize_typescript_1.Default)("https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/defaultProfile.png"),
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Book.prototype, "thumbnail", void 0);
+__decorate([
+    sequelize_typescript_1.Column,
+    __metadata("design:type", String)
+], Book.prototype, "publicationDt", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => _1.Review),
     __metadata("design:type", Array)

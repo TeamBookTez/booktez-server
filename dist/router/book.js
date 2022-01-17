@@ -6,11 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 // Middleware
-const isLogin_1 = __importDefault(require("../middleware/isLogin"));
-const auth_1 = __importDefault(require("../middleware/auth"));
+const authMiddleware_1 = require("../middleware/authMiddleware");
 // Controller
 const book_1 = __importDefault(require("../controller/book"));
-router.get("/", auth_1.default, book_1.default.getBookController);
-router.post("/", isLogin_1.default, book_1.default.postBookController);
+router.post("/", authMiddleware_1.isLogin, book_1.default.postBookController);
+router.get("/", authMiddleware_1.auth, book_1.default.getBookController);
 module.exports = router;
 //# sourceMappingURL=book.js.map

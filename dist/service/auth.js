@@ -87,6 +87,9 @@ const getNicknameService = (nickname) => __awaiter(void 0, void 0, void 0, funct
  *  @로그인
  *  @route Post auth/login
  *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ *       2. 존재하지 않는 이메일입니다.
+ *       3. 비밀번호가 일치하지 않습니다.
  */
 const postLoginService = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     // 요청 바디 부족
@@ -96,12 +99,12 @@ const postLoginService = (email, password) => __awaiter(void 0, void 0, void 0, 
     // 존재하지 않는 이메일
     const user = yield models_1.User.findOne({ where: { email, isDeleted: false } });
     if (!user) {
-        return -100;
+        return constant_1.default.EMAIL_NOT_FOUND;
     }
     // 비밀번호 일치 X
     const isMatch = yield bcryptjs_1.default.compare(password, user.password);
     if (!isMatch) {
-        return -101;
+        return constant_1.default.PW_NOT_CORRECT;
     }
     // 성공 시
     // 토큰 만들기
@@ -134,8 +137,8 @@ const postSignupService = (email, nickname, password) => __awaiter(void 0, void 
     if (!(0, isEmail_1.default)(email)) {
         return constant_1.default.WRONG_EMAIL_CONVENTION;
     }
+    // nickname 형식이 잘못되었을 때
     if (!(0, checkValidation_1.checkNicknameValid)(nickname)) {
-        // nickname 형식이 잘못되었을 때
         return constant_1.default.WRONG_NICKNAME_CONVENTION;
     }
     // password 형식이 잘못되었을 때

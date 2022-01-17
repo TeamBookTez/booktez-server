@@ -18,33 +18,6 @@ const constant_1 = __importDefault(require("../library/constant"));
 // models
 const models_1 = require("../models");
 /**
- *  @질문리스트 조회하기
- *  @route GET /review/:reviewId/question-list
- *  @access private
- *  @error
- *      1. 필요한 값이 없습니다.
- *      2. 존재하지 않는 Review 입니다.
- */
-const getQuestionService = (userId, reviewId) => __awaiter(void 0, void 0, void 0, function* () {
-    // 필요한 값이 없을 때
-    if (!userId || !reviewId) {
-        return constant_1.default.NULL_VALUE;
-    }
-    // review 조회
-    const review = yield models_1.Review.findOne({
-        where: {
-            id: reviewId,
-            userId,
-            isDeleted: false,
-        },
-    });
-    // 존재하지 않는 리뷰일 때
-    if (!review) {
-        return constant_1.default.WRONG_REQUEST_VALUE;
-    }
-    return { questionList: review.questionList };
-});
-/**
  *  @독서중 독서 전 작성
  *  @route POST /review/before/:isbn
  *  @access private
@@ -60,7 +33,7 @@ const postReviewBeforeService = (isbn, userId, answerOne, answerTwo, questionLis
         !answerTwo ||
         !questionList ||
         !progress) {
-        return constant_1.default.WRONG_REQUEST_VALUE;
+        return constant_1.default.NULL_VALUE;
     }
     // user 확인
     const user = yield models_1.User.findOne({ where: { id: userId, isDeleted: false } });
@@ -108,15 +81,42 @@ const postReviewBeforeService = (isbn, userId, answerOne, answerTwo, questionLis
     return { reviewId: review.id };
 });
 /**
+ *  @질문리스트 조회하기
+ *  @route GET /review/:reviewId/question-list
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없습니다.
+ *      2. 존재하지 않는 Review 입니다.
+ */
+const getQuestionService = (userId, reviewId) => __awaiter(void 0, void 0, void 0, function* () {
+    // 필요한 값이 없을 때
+    if (!userId || !reviewId) {
+        return constant_1.default.NULL_VALUE;
+    }
+    // review 조회
+    const review = yield models_1.Review.findOne({
+        where: {
+            id: reviewId,
+            userId,
+            isDeleted: false,
+        },
+    });
+    // 존재하지 않는 리뷰일 때
+    if (!review) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
+    return { questionList: review.questionList };
+});
+/**
 
  *  @독서중 독서 중 작성
- *  @route POST /review/now/:reviewId
+ *  @route PATCH /review/now/:reviewId
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const postReviewNowService = (reviewId, userId, answerThree, progress) => __awaiter(void 0, void 0, void 0, function* () {
+const patchReviewNowService = (reviewId, userId, answerThree, progress) => __awaiter(void 0, void 0, void 0, function* () {
     if (!reviewId || !userId || !answerThree || !progress) {
         return constant_1.default.NULL_VALUE;
     }
@@ -139,34 +139,18 @@ const postReviewNowService = (reviewId, userId, answerThree, progress) => __awai
     });
     // 변경 리뷰 저장
     yield review.save();
-    return { reviewId: review.id };
-});
-/**
- *  @독서 완료 후 답변 수정
- *  @route PATCH /review/:reviewId
- *  @access private
- *  @error
- *      1. 필요한 값이 없을 때
- *      2. 리뷰가 존재하지 않을 때
- */
-const patchReviewService = (reviewId, answerOne, answerTwo, answerThree) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!reviewId || !answerOne || !answerTwo || !answerThree) {
-        return constant_1.default.NULL_VALUE;
-    }
-    const reviewToChange = yield models_1.Review.findOne({
-        where: { id: reviewId, isDeleted: false },
-    });
-    if (!reviewToChange) {
-        return constant_1.default.WRONG_REQUEST_VALUE;
-    }
-    yield models_1.Review.update({
-        answerOne,
-        answerTwo,
-        answerThree,
-    }, {
-        where: { id: reviewId, isDeleted: false },
-    });
-    return constant_1.default.SUCCESS;
+    // 책 확인
+    const book = yield models_1.Book.findOne({ where: { id: review.bookId } });
+    return {
+        reviewId: review.id,
+        bookData: {
+            thumbnail: book.thumbnail,
+            title: book.title,
+            authors: book.author,
+            translators: book.translator,
+            publicationDt: book.publicationDt,
+        },
+    };
 });
 /**
  *  @독후감 조회하기
@@ -206,6 +190,33 @@ const getReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void 0,
     };
 });
 /**
+ *  @독서 완료 후 답변 수정
+ *  @route PATCH /review/:reviewId
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const patchReviewService = (reviewId, answerOne, answerTwo, answerThree) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!reviewId || !answerOne || !answerTwo || !answerThree) {
+        return constant_1.default.NULL_VALUE;
+    }
+    const reviewToChange = yield models_1.Review.findOne({
+        where: { id: reviewId, isDeleted: false },
+    });
+    if (!reviewToChange) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
+    yield models_1.Review.update({
+        answerOne,
+        answerTwo,
+        answerThree,
+    }, {
+        where: { id: reviewId, isDeleted: false },
+    });
+    return constant_1.default.SUCCESS;
+});
+/**
  *  @독후감 삭제
  *  @route DELETE /review/:reviewId
  *  @access private
@@ -242,11 +253,11 @@ const deleteReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void
     return constant_1.default.SUCCESS;
 });
 const reviewService = {
-    getQuestionService,
     postReviewBeforeService,
-    postReviewNowService,
-    patchReviewService,
+    getQuestionService,
+    patchReviewNowService,
     getReviewService,
+    patchReviewService,
     deleteReviewService,
 };
 exports.default = reviewService;

@@ -18,44 +18,14 @@ const constant_1 = __importDefault(require("../library/constant"));
 // models
 const models_1 = require("../models");
 /**
- *  @서재 책 조회
- *  @route GET /book
- *  @access private
- */
-const getBookService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    let books = [];
-    yield models_1.Review.findAll({
-        attributes: ["reviewSt"],
-        include: [
-            {
-                model: models_1.Book,
-                attributes: ["title", "author", "thumbnail"],
-            },
-        ],
-        where: {
-            userId,
-            isDeleted: false,
-        },
-        order: [["updatedAt", "DESC"]],
-    }).then((reviews) => reviews.forEach((review) => {
-        books.push({
-            thumbnail: review.book.thumbnail,
-            title: review.book.title,
-            author: review.book.author,
-            state: review.reviewSt,
-        });
-    }));
-    return { books: books };
-});
-/**
  *  @서재에 책 추가하기
  *  @route POST /book
  *  @access public
  *  @access private
  *  @err   필요한 값이 없을 때
  */
-const postBookService = (isLogin, isbn, thumbnail, title, author) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!isbn || !title || !author) {
+const postBookService = (isLogin, isbn, thumbnail, title, author, translator, publicationDate) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!isbn || !title || !author || !translator || !publicationDate) {
         return constant_1.default.NULL_VALUE;
     }
     let isbnOne, isbnTwo;
@@ -71,7 +41,6 @@ const postBookService = (isLogin, isbn, thumbnail, title, author) => __awaiter(v
                     { isbnSub: isbnOne },
                     { isbnSub: isbnTwo },
                 ],
-                isDeleted: false,
             },
         });
     }
@@ -85,14 +54,45 @@ const postBookService = (isLogin, isbn, thumbnail, title, author) => __awaiter(v
         });
     }
     if (!exist) {
-        yield models_1.Book.create(Object.assign(Object.assign(Object.assign({ isbn: isbnOne }, (isbnTwo && { isbnSub: isbnTwo })), { title,
-            author }), (thumbnail && { thumbnail })));
+        yield models_1.Book.create(Object.assign(Object.assign(Object.assign(Object.assign({ isbn: isbnOne }, (isbnTwo && { isbnSub: isbnTwo })), { title,
+            author }), (thumbnail && { thumbnail })), { translator, publicationDt: publicationDate }));
     }
     return isLogin;
 });
+/**
+ *  @서재 책 조회
+ *  @route GET /book
+ *  @access private
+ */
+const getBookService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    let books = [];
+    yield models_1.Review.findAll({
+        attributes: ["id", "reviewSt"],
+        include: [
+            {
+                model: models_1.Book,
+                attributes: ["title", "author", "thumbnail"],
+            },
+        ],
+        where: {
+            userId,
+            isDeleted: false,
+        },
+        order: [["updatedAt", "DESC"]],
+    }).then((reviews) => reviews.forEach((review) => {
+        books.push({
+            reviewId: review.id,
+            thumbnail: review.book.thumbnail,
+            title: review.book.title,
+            author: review.book.author,
+            state: review.reviewSt,
+        });
+    }));
+    return { books: books };
+});
 const bookService = {
-    getBookService,
     postBookService,
+    getBookService,
 };
 exports.default = bookService;
 //# sourceMappingURL=book.js.map

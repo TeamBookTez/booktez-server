@@ -28,49 +28,46 @@ const user_1 = __importDefault(require("../service/user"));
  */
 const getMyInfoController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield user_1.default.getMyInfoService(req.body.userID.id);
+        const resData = yield user_1.default.getMyInfoService(req.user.id);
         if (resData === constant_1.default.NON_EXISTENT_USER) {
-            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 유저입니다.");
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 유저입니다.");
         }
-        else {
-            response_1.default.dataResponse(res, returnCode_1.default.OK, "마이페이지 조회 성공.", true, resData);
-        }
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "마이페이지 조회 성공.", true, resData);
     }
     catch (err) {
         slack_1.default.slackWebhook(req, err.message);
         console.error(err.message);
-        response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
     }
 });
 /**
  *  @프로필이미지 수정
  *  @route PATCH /user/img
- *  @access public
- *  @err 잘못된 폼데이터
+ *  @access private
+ *  @err 1. 잘못된 폼 데이터
+ *       2. 존재하지 않는 유저
  */
 const patchImgController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const img = req.file.location ? req.file.location : null;
-        const resData = yield user_1.default.patchImgService(req.body.userID.id, img);
+        const resData = yield user_1.default.patchImgService(req.user.id, img);
         // 폼데이터 잘못된 경우
         if (resData === constant_1.default.NULL_VALUE) {
-            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 데이터가 없습니다.");
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 데이터가 없습니다.");
         }
-        else if (resData === constant_1.default.WRONG_IMG_FORM) {
-            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "잘못된 폼 데이터입니다.");
+        if (resData === constant_1.default.WRONG_IMG_FORM) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "잘못된 폼 데이터입니다.");
         }
-        else if (resData === constant_1.default.NON_EXISTENT_USER) {
-            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 유저입니다.");
+        if (resData === constant_1.default.NON_EXISTENT_USER) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 유저입니다.");
         }
-        else {
-            // 모두 성공시
-            response_1.default.dataResponse(res, returnCode_1.default.OK, "프로필 이미지 변경 성공.", true, resData);
-        }
+        // 모두 성공시
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "프로필 이미지 변경 성공.", true, resData);
     }
     catch (err) {
         slack_1.default.slackWebhook(req, err.message);
         console.error(err.message);
-        response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
     }
 });
 const userController = {

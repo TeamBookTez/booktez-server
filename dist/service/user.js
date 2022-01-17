@@ -23,7 +23,7 @@ const models_1 = require("../models");
  */
 const getMyInfoService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield models_1.User.findOne({
-        where: { id: userId, isDeleted: false }
+        where: { id: userId, isDeleted: false },
     });
     if (!user) {
         return constant_1.default.NON_EXISTENT_USER;
@@ -32,14 +32,14 @@ const getMyInfoService = (userId) => __awaiter(void 0, void 0, void 0, function*
     const nickname = user.nickname;
     const email = user.email;
     const reviewCount = yield models_1.Review.count({
-        where: { userId, isDeleted: false }
+        where: { userId, isDeleted: false },
     });
     return { img, nickname, email, reviewCount };
 });
 /**
  *  @프로필이미지 수정
  *  @route PATCH /user/img
- *  @access public
+ *  @access private
  *  @err 1. 잘못된 폼 데이터
  *       2. 존재하지 않는 유저
  */
@@ -47,14 +47,14 @@ const patchImgService = (userId, img) => __awaiter(void 0, void 0, void 0, funct
     if (!img) {
         return constant_1.default.NULL_VALUE;
     }
-    else if (img === undefined) {
+    if (img === undefined) {
         return constant_1.default.WRONG_IMG_FORM;
     }
     const user = yield models_1.User.findOne({ where: { id: userId, isDeleted: false } });
     if (!user) {
         return constant_1.default.NON_EXISTENT_USER;
     }
-    yield user.update({ img: img });
+    yield user.update({ img });
     yield user.save();
     return { img: user.img };
 });

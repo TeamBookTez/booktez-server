@@ -35,7 +35,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "nickname", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Default)("https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/defaultProfile.png"),
+    (0, sequelize_typescript_1.Default)(process.env.DEFAULT_IMG),
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], User.prototype, "img", void 0);

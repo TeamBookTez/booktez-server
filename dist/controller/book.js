@@ -21,22 +21,6 @@ const returnCode_1 = __importDefault(require("../library/returnCode"));
 // services
 const book_1 = __importDefault(require("../service/book"));
 /**
- *  @서재 책 조회
- *  @route GET /book
- *  @access private
- */
-const getBookController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const resData = yield book_1.default.getBookService(req.body.userID.id);
-        response_1.default.dataResponse(res, returnCode_1.default.OK, true, "서재 조회 성공", resData);
-    }
-    catch (err) {
-        slack_1.default.slackWebhook(req, err.message);
-        console.error(err.message);
-        response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
-    }
-});
-/**
  *  @서재에 책 추가하기
  *  @route POST /book
  *  @access public
@@ -45,23 +29,37 @@ const getBookController = (req, res) => __awaiter(void 0, void 0, void 0, functi
  */
 const postBookController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield book_1.default.postBookService(req.body.isLogin, req.body.isbn, req.body.thumbnail, req.body.title, req.body.author);
+        const resData = yield book_1.default.postBookService(req.user ? true : false, req.body.isbn, req.body.thumbnail, req.body.title, req.body.author, req.body.translator, req.body.publicationDate);
         if (resData == constant_1.default.NULL_VALUE) {
-            response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
-        else {
-            response_1.default.dataResponse(res, returnCode_1.default.OK, true, "책 선택이 완료되었습니다.", { isLogin: resData });
-        }
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, true, "책 선택이 완료되었습니다.", { isLogin: resData });
     }
     catch (err) {
         slack_1.default.slackWebhook(req, err.message);
         console.error(err.message);
-        response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
+/**
+ *  @서재 책 조회
+ *  @route GET /book
+ *  @access private
+ */
+const getBookController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield book_1.default.getBookService(req.user.id);
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, true, "서재 조회 성공", resData);
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
     }
 });
 const bookController = {
-    getBookController,
     postBookController,
+    getBookController,
 };
 exports.default = bookController;
 //# sourceMappingURL=book.js.map

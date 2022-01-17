@@ -73,7 +73,6 @@ const postBookService = async (
           { isbnSub: isbnOne },
           { isbnSub: isbnTwo },
         ],
-        isDeleted: false,
       },
     });
   } else {

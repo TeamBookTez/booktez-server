@@ -12,4 +12,6 @@ export default {
   VALUE_ALREADY_DELETED: -10, // 이미 삭제된 값일 때
   DB_NOT_FOUND: -11, // DB 응답값이 없을 때
   NON_EXISTENT_USER: -12, // 존재하지 않는 유저일 때
+  EMAIL_NOT_FOUND: -13, // 이메일이 존재하지 않을 때
+  PW_NOT_CORRECT: -14, // 비밀번호가 일치하지 않을 때
 };

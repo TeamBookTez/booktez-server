@@ -1,4 +1,3 @@
-// libraries
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import config from "../config";
@@ -10,6 +9,7 @@ import returnCode from "../library/returnCode";
 // slack
 import slack from "../others/slack/slack";
 
+// model
 import User from "../models/User";
 
 export const auth = async (req: Request, res: Response, next) => {

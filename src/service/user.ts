@@ -14,7 +14,7 @@ import { User, Review } from "../models";
  */
 const getMyInfoService = async (userId: number) => {
   const user = await User.findOne({
-    where: { id: userId, isDeleted: false } 
+    where: { id: userId, isDeleted: false },
   });
 
   if (!user) {
@@ -25,7 +25,7 @@ const getMyInfoService = async (userId: number) => {
   const nickname = user.nickname;
   const email = user.email;
   const reviewCount = await Review.count({
-    where: {userId, isDeleted: false}
+    where: { userId, isDeleted: false },
   });
 
   return { img, nickname, email, reviewCount };
@@ -34,27 +34,29 @@ const getMyInfoService = async (userId: number) => {
 /**
  *  @프로필이미지 수정
  *  @route PATCH /user/img
- *  @access public
+ *  @access private
  *  @err 1. 잘못된 폼 데이터
  *       2. 존재하지 않는 유저
  */
 const patchImgService = async (userId: number, img: string) => {
   if (!img) {
     return constant.NULL_VALUE;
-  } else if (img === undefined) { 
+  }
+
+  if (img === undefined) {
     return constant.WRONG_IMG_FORM;
   }
 
-  const user = await User.findOne({ where: {id: userId, isDeleted: false}});
-  
+  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
+
   if (!user) {
     return constant.NON_EXISTENT_USER;
   }
 
-  await user.update({img: img});
+  await user.update({ img });
   await user.save();
 
-  return {img: user.img};
+  return { img: user.img };
 };
 
 const userService = {

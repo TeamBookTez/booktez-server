@@ -164,7 +164,19 @@ const postReviewNowService = async (
   // 변경 리뷰 저장
   await review.save();
 
-  return { reviewId: review.id };
+  // 책 확인
+  const book = await Book.findOne({where: {id: review.bookId}})
+
+  return {
+    reviewId: review.id,
+    bookData: {
+      thumbnail: book.thumbnail,
+      title: book.title,
+      authors: book.author,
+      translators: book.translator,
+      publicationDate: book.publication_dt,
+    },
+  };
 };
 
 /**

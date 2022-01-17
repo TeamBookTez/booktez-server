@@ -46,7 +46,9 @@ const postBookController = async (req: Request, res: Response) => {
       req.body.isbn,
       req.body.thumbnail,
       req.body.title,
-      req.body.author
+      req.body.author,
+      req.body.translator,
+      req.body.publicationDate
     );
 
     if (resData == constant.NULL_VALUE) {

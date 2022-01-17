@@ -53,9 +53,11 @@ const postBookService = async (
   isbn: string,
   thumbnail: string,
   title: string,
-  author: string[]
+  author: string[],
+  translator: string[],
+  publicationDate: string
 ) => {
-  if (!isbn || !title || !author) {
+  if (!isbn || !title || !author || !translator || !publicationDate) {
     return constant.NULL_VALUE;
   }
 
@@ -94,6 +96,8 @@ const postBookService = async (
       title,
       author,
       ...(thumbnail && { thumbnail }),
+      translator,
+      publicationDate
     });
   }
 

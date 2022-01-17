@@ -42,7 +42,7 @@ const getEmailController = async (req: Request, res: Response) => {
       response.dataResponse(
         res,
         returnCode.OK,
-        "올바른 형식이 아닙니다.",
+        "이메일 형식에 맞지 않는 메일 주소입니다.",
         true,
         { isValid: false }
       );
@@ -106,7 +106,7 @@ const getNicknameController = async (req: Request, res: Response) => {
       response.dataResponse(
         res,
         returnCode.OK,
-        "올바른 형식이 아닙니다.",
+        "10자 이내 영문/한글/숫자로 입력해주세요.",
         true,
         { isValid: false }
       );

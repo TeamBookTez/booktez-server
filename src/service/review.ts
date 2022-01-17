@@ -174,7 +174,7 @@ const postReviewNowService = async (
       title: book.title,
       authors: book.author,
       translators: book.translator,
-      publicationDate: book.publication_dt,
+      publicationDate: book.publicationDate,
     },
   };
 };

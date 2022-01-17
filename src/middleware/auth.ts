@@ -19,7 +19,7 @@ export default (req: Request, res: Response, next) => {
       false,
       "토큰 값이 요청되지 않았습니다"
     );
-  }
+  } 
   const token = req.headers.authorization;
 
   // Verify token

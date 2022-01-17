@@ -41,7 +41,7 @@ export default class User extends Model {
   nickname: string;
 
   @Default(
-    "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/defaultProfile.png"
+    process.env.DEFAULT_IMG
   )
   @Column
   img: string;

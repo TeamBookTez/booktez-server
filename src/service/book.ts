@@ -61,7 +61,7 @@ const postBookService = async (
       author,
       ...(thumbnail && { thumbnail }),
       translator,
-      publicationDate,
+      publicationDt: publicationDate,
     });
   }
 

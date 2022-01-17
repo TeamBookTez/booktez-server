@@ -173,7 +173,7 @@ const patchReviewNowService = async (
       title: book.title,
       authors: book.author,
       translators: book.translator,
-      publicationDate: book.publicationDate,
+      publicationDt: book.publicationDt,
     },
   };
 };

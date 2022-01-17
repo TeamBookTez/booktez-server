@@ -3,15 +3,15 @@ import userController from "../controller/user";
 
 // middleware
 import upload from "../middleware/upload";
-import authMiddleware from "../middleware/auth";
+import { auth } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.get("/myInfo", authMiddleware, userController.getMyInfoController);
+router.get("/myInfo", auth, userController.getMyInfoController);
 router.patch(
   "/img",
+  auth,
   upload.single("img"),
-  authMiddleware,
   userController.patchImgController
 );
 

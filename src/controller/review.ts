@@ -22,7 +22,7 @@ import reviewService from "../service/review";
 const getQuestionController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.getQuestionService(
-      Number(req.body.userID.id),
+      Number(req.user.id),
       Number(req.params.reviewId)
     );
 
@@ -74,7 +74,7 @@ const postReviewBeforeController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.postReviewBeforeService(
       req.params.isbn,
-      req.body.userID.id,
+      req.user.id,
       req.body.answerOne,
       req.body.answerTwo,
       req.body.questionList,
@@ -135,7 +135,7 @@ const postReviewNowController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.postReviewNowService(
       Number(req.params.reviewId),
-      req.body.userID.id,
+      req.user.id,
       req.body.answerThree,
       req.body.progress
     );
@@ -237,7 +237,7 @@ const patchReviewController = async (req: Request, res: Response) => {
 const getReviewController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.getReviewService(
-      Number(req.body.userID.id),
+      Number(req.user.id),
       Number(req.params.reviewId)
     );
 
@@ -288,7 +288,7 @@ const getReviewController = async (req: Request, res: Response) => {
 const deleteReviewController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.deleteReviewService(
-      Number(req.body.userID.id),
+      Number(req.user.id),
       Number(req.params.reviewId)
     );
 

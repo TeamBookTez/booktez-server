@@ -18,7 +18,7 @@ import bookService from "../service/book";
  */
 const getBookController = async (req: Request, res: Response) => {
   try {
-    const resData = await bookService.getBookService(req.body.userID.id);
+    const resData = await bookService.getBookService(req.user.id);
     response.dataResponse(res, returnCode.OK, true, "서재 조회 성공", resData);
   } catch (err) {
     slack.slackWebhook(req, err.message);
@@ -42,7 +42,7 @@ const getBookController = async (req: Request, res: Response) => {
 const postBookController = async (req: Request, res: Response) => {
   try {
     const resData = await bookService.postBookService(
-      req.body.isLogin,
+      req.user ? true : false,
       req.body.isbn,
       req.body.thumbnail,
       req.body.title,

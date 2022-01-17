@@ -2,13 +2,12 @@ import express from "express";
 const router = express.Router();
 
 // Middleware
-import isLoginMiddleware from "../middleware/isLogin";
-import authMiddleware from "../middleware/auth";
+import { auth, isLogin } from "../middleware/authMiddleware";
 
 // Controller
 import bookController from "../controller/book";
 
-router.get("/", authMiddleware, bookController.getBookController);
-router.post("/", isLoginMiddleware, bookController.postBookController);
+router.get("/", auth, bookController.getBookController);
+router.post("/", isLogin, bookController.postBookController);
 
 module.exports = router;

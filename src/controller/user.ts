@@ -21,7 +21,7 @@ import { resolveModelGetter } from "sequelize-typescript";
 
 const getMyInfoController = async (req: Request, res: Response) => {
   try {
-    const resData = await userService.getMyInfoService(req.body.userID.id);
+    const resData = await userService.getMyInfoService(req.user.id);
 
     if (resData === constant.NON_EXISTENT_USER) {
       response.basicResponse(
@@ -62,7 +62,7 @@ const patchImgController = async (req: Request, res: Response) => {
   try {
     const img = req.file.location ? req.file.location : null;
 
-    const resData = await userService.patchImgService(req.body.userID.id, img);
+    const resData = await userService.patchImgService(req.user.id, img);
 
     // 폼데이터 잘못된 경우
     if (resData === constant.NULL_VALUE) {

@@ -7,41 +7,6 @@ import constant from "../library/constant";
 import { Book, Review } from "../models";
 
 /**
- *  @서재 책 조회
- *  @route GET /book
- *  @access private
- */
-const getBookService = async (userId: number) => {
-  let books = [];
-  await Review.findAll({
-    attributes: ["id", "reviewSt"],
-    include: [
-      {
-        model: Book,
-        attributes: ["title", "author", "thumbnail"],
-      },
-    ],
-    where: {
-      userId,
-      isDeleted: false,
-    },
-    order: [["updatedAt", "DESC"]],
-  }).then((reviews) =>
-    reviews.forEach((review) => {
-      books.push({
-        reviewId: review.id,
-        thumbnail: review.book.thumbnail,
-        title: review.book.title,
-        author: review.book.author,
-        state: review.reviewSt,
-      });
-    })
-  );
-
-  return { books: books };
-};
-
-/**
  *  @서재에 책 추가하기
  *  @route POST /book
  *  @access public
@@ -96,16 +61,51 @@ const postBookService = async (
       author,
       ...(thumbnail && { thumbnail }),
       translator,
-      publicationDate
+      publicationDate,
     });
   }
 
   return isLogin;
 };
 
+/**
+ *  @서재 책 조회
+ *  @route GET /book
+ *  @access private
+ */
+const getBookService = async (userId: number) => {
+  let books = [];
+  await Review.findAll({
+    attributes: ["id", "reviewSt"],
+    include: [
+      {
+        model: Book,
+        attributes: ["title", "author", "thumbnail"],
+      },
+    ],
+    where: {
+      userId,
+      isDeleted: false,
+    },
+    order: [["updatedAt", "DESC"]],
+  }).then((reviews) =>
+    reviews.forEach((review) => {
+      books.push({
+        reviewId: review.id,
+        thumbnail: review.book.thumbnail,
+        title: review.book.title,
+        author: review.book.author,
+        state: review.reviewSt,
+      });
+    })
+  );
+
+  return { books: books };
+};
+
 const bookService = {
-  getBookService,
   postBookService,
+  getBookService,
 };
 
 export default bookService;

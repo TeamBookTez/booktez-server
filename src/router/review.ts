@@ -6,8 +6,8 @@ import { auth } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-// 독후감 조회
-router.get("/:reviewId", auth, reviewController.getReviewController);
+// 독서 전
+router.post("/before/:isbn", auth, reviewController.postReviewBeforeController);
 
 // 질문리스트 조회
 router.get(
@@ -16,16 +16,16 @@ router.get(
   reviewController.getQuestionController
 );
 
-// 독서 전
-router.post("/before/:isbn", auth, reviewController.postReviewBeforeController);
-
 // 독서 중
 router.patch("/now/:reviewId", auth, reviewController.postReviewNowController);
+
+// 독후감 조회
+router.get("/:reviewId", auth, reviewController.getReviewController);
 
 // 독서 후 수정
 router.patch("/:reviewId", auth, reviewController.patchReviewController);
 
-// 독서 후 수정
+// 독서 후 삭제
 router.delete("/:reviewId", auth, reviewController.deleteReviewController);
 
 module.exports = router;

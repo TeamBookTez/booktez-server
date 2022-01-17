@@ -12,27 +12,6 @@ import returnCode from "../library/returnCode";
 import bookService from "../service/book";
 
 /**
- *  @서재 책 조회
- *  @route GET /book
- *  @access private
- */
-const getBookController = async (req: Request, res: Response) => {
-  try {
-    const resData = await bookService.getBookService(req.user.id);
-    response.dataResponse(res, returnCode.OK, true, "서재 조회 성공", resData);
-  } catch (err) {
-    slack.slackWebhook(req, err.message);
-    console.error(err.message);
-    response.basicResponse(
-      res,
-      returnCode.INTERNAL_SERVER_ERROR,
-      false,
-      "서버 오류"
-    );
-  }
-};
-
-/**
  *  @서재에 책 추가하기
  *  @route POST /book
  *  @access public
@@ -52,25 +31,52 @@ const postBookController = async (req: Request, res: Response) => {
     );
 
     if (resData == constant.NULL_VALUE) {
-      response.basicResponse(
+      return response.basicResponse(
         res,
         returnCode.BAD_REQUEST,
         false,
         "필요한 값이 없습니다."
       );
-    } else {
-      response.dataResponse(
-        res,
-        returnCode.OK,
-        true,
-        "책 선택이 완료되었습니다.",
-        { isLogin: resData }
-      );
     }
+
+    return response.dataResponse(
+      res,
+      returnCode.OK,
+      true,
+      "책 선택이 완료되었습니다.",
+      { isLogin: resData }
+    );
   } catch (err) {
     slack.slackWebhook(req, err.message);
     console.error(err.message);
-    response.basicResponse(
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
+ *  @서재 책 조회
+ *  @route GET /book
+ *  @access private
+ */
+const getBookController = async (req: Request, res: Response) => {
+  try {
+    const resData = await bookService.getBookService(req.user.id);
+    return response.dataResponse(
+      res,
+      returnCode.OK,
+      true,
+      "서재 조회 성공",
+      resData
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
       res,
       returnCode.INTERNAL_SERVER_ERROR,
       false,
@@ -80,8 +86,8 @@ const postBookController = async (req: Request, res: Response) => {
 };
 
 const bookController = {
-  getBookController,
   postBookController,
+  getBookController,
 };
 
 export default bookController;

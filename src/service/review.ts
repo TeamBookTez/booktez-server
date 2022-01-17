@@ -8,38 +8,6 @@ import constant from "../library/constant";
 import { User, Book, Review } from "../models";
 
 /**
- *  @질문리스트 조회하기
- *  @route GET /review/:reviewId/question-list
- *  @access private
- *  @error
- *      1. 필요한 값이 없습니다.
- *      2. 존재하지 않는 Review 입니다.
- */
-
-const getQuestionService = async (userId: number, reviewId: number) => {
-  // 필요한 값이 없을 때
-  if (!userId || !reviewId) {
-    return constant.NULL_VALUE;
-  }
-
-  // review 조회
-  const review = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
-  });
-
-  // 존재하지 않는 리뷰일 때
-  if (!review) {
-    return constant.WRONG_REQUEST_VALUE;
-  }
-
-  return { questionList: review.questionList };
-};
-
-/**
  *  @독서중 독서 전 작성
  *  @route POST /review/before/:isbn
  *  @access private
@@ -64,7 +32,7 @@ const postReviewBeforeService = async (
     !questionList ||
     !progress
   ) {
-    return constant.WRONG_REQUEST_VALUE;
+    return constant.NULL_VALUE;
   }
 
   // user 확인
@@ -121,15 +89,46 @@ const postReviewBeforeService = async (
 };
 
 /**
+ *  @질문리스트 조회하기
+ *  @route GET /review/:reviewId/question-list
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없습니다.
+ *      2. 존재하지 않는 Review 입니다.
+ */
+const getQuestionService = async (userId: number, reviewId: number) => {
+  // 필요한 값이 없을 때
+  if (!userId || !reviewId) {
+    return constant.NULL_VALUE;
+  }
+
+  // review 조회
+  const review = await Review.findOne({
+    where: {
+      id: reviewId,
+      userId,
+      isDeleted: false,
+    },
+  });
+
+  // 존재하지 않는 리뷰일 때
+  if (!review) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
+  return { questionList: review.questionList };
+};
+
+/**
 
  *  @독서중 독서 중 작성
- *  @route POST /review/now/:reviewId
+ *  @route PATCH /review/now/:reviewId
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const postReviewNowService = async (
+const patchReviewNowService = async (
   reviewId: number,
   userId: number,
   answerThree: JSON,
@@ -165,7 +164,7 @@ const postReviewNowService = async (
   await review.save();
 
   // 책 확인
-  const book = await Book.findOne({where: {id: review.bookId}})
+  const book = await Book.findOne({ where: { id: review.bookId } });
 
   return {
     reviewId: review.id,
@@ -177,45 +176,6 @@ const postReviewNowService = async (
       publicationDate: book.publicationDate,
     },
   };
-};
-
-/**
- *  @독서 완료 후 답변 수정
- *  @route PATCH /review/:reviewId
- *  @access private
- *  @error
- *      1. 필요한 값이 없을 때
- *      2. 리뷰가 존재하지 않을 때
- */
-const patchReviewService = async (
-  reviewId: number,
-  answerOne: string,
-  answerTwo: string,
-  answerThree: JSON
-) => {
-  if (!reviewId || !answerOne || !answerTwo || !answerThree) {
-    return constant.NULL_VALUE;
-  }
-
-  const reviewToChange = await Review.findOne({
-    where: { id: reviewId, isDeleted: false },
-  });
-  if (!reviewToChange) {
-    return constant.WRONG_REQUEST_VALUE;
-  }
-
-  await Review.update(
-    {
-      answerOne,
-      answerTwo,
-      answerThree,
-    },
-    {
-      where: { id: reviewId, isDeleted: false },
-    }
-  );
-
-  return constant.SUCCESS;
 };
 
 /**
@@ -257,6 +217,45 @@ const getReviewService = async (userId: number, reviewId: number) => {
     reviewState: reviewToShow.reviewSt,
     finishState: reviewToShow.finishSt,
   };
+};
+
+/**
+ *  @독서 완료 후 답변 수정
+ *  @route PATCH /review/:reviewId
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const patchReviewService = async (
+  reviewId: number,
+  answerOne: string,
+  answerTwo: string,
+  answerThree: JSON
+) => {
+  if (!reviewId || !answerOne || !answerTwo || !answerThree) {
+    return constant.NULL_VALUE;
+  }
+
+  const reviewToChange = await Review.findOne({
+    where: { id: reviewId, isDeleted: false },
+  });
+  if (!reviewToChange) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
+  await Review.update(
+    {
+      answerOne,
+      answerTwo,
+      answerThree,
+    },
+    {
+      where: { id: reviewId, isDeleted: false },
+    }
+  );
+
+  return constant.SUCCESS;
 };
 
 /**
@@ -304,11 +303,11 @@ const deleteReviewService = async (userId: number, reviewId: number) => {
 };
 
 const reviewService = {
-  getQuestionService,
   postReviewBeforeService,
-  postReviewNowService,
-  patchReviewService,
+  getQuestionService,
+  patchReviewNowService,
   getReviewService,
+  patchReviewService,
   deleteReviewService,
 };
 

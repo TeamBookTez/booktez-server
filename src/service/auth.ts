@@ -82,7 +82,7 @@ const getNicknameService = async (nickname?: string) => {
   if (nicknameExist.length > 0) {
     return constant.NICKNAME_ALREADY_EXIST;
   }
-  
+
   return constant.SUCCESS;
 };
 
@@ -90,6 +90,9 @@ const getNicknameService = async (nickname?: string) => {
  *  @로그인
  *  @route Post auth/login
  *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ *       2. 존재하지 않는 이메일입니다.
+ *       3. 비밀번호가 일치하지 않습니다.
  */
 const postLoginService = async (email: string, password: string) => {
   // 요청 바디 부족
@@ -100,13 +103,13 @@ const postLoginService = async (email: string, password: string) => {
   // 존재하지 않는 이메일
   const user = await User.findOne({ where: { email, isDeleted: false } });
   if (!user) {
-    return -100;
+    return constant.EMAIL_NOT_FOUND;
   }
 
   // 비밀번호 일치 X
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return -101;
+    return constant.PW_NOT_CORRECT;
   }
 
   // 성공 시
@@ -147,8 +150,8 @@ const postSignupService = async (
     return constant.WRONG_EMAIL_CONVENTION;
   }
 
+  // nickname 형식이 잘못되었을 때
   if (!checkNicknameValid(nickname)) {
-    // nickname 형식이 잘못되었을 때
     return constant.WRONG_NICKNAME_CONVENTION;
   }
 

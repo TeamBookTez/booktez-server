@@ -17,7 +17,7 @@ router.get(
 );
 
 // 독서 중
-router.patch("/now/:reviewId", auth, reviewController.postReviewNowController);
+router.patch("/now/:reviewId", auth, reviewController.patchReviewNowController);
 
 // 독후감 조회
 router.get("/:reviewId", auth, reviewController.getReviewController);

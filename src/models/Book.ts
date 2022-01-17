@@ -55,7 +55,7 @@ export default class Book extends Model {
   thumbnail: string;
 
   @Column
-  publicationDate: string;
+  publicationDt: string;
 
   @HasMany(() => Review)
   reviews: Review[];

@@ -1,5 +1,5 @@
 diff --git a/node_modules/@types/express-serve-static-core/index.d.ts b/node_modules/@types/express-serve-static-core/index.d.ts
-index 217e77a..be88c9a 100644
+index 217e77a..b34c562 100644
 --- a/node_modules/@types/express-serve-static-core/index.d.ts
 +++ b/node_modules/@types/express-serve-static-core/index.d.ts
 @@ -16,10 +16,20 @@ declare global {
@@ -14,7 +14,7 @@ index 217e77a..be88c9a 100644
 +                [fieldname: string]: MulterS3.File[];
 +            } | Multer.File[];
 +
-+            user?:{}
++            user?: any
 +        }
 +
          interface Response {}

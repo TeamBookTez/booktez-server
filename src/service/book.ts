@@ -14,7 +14,7 @@ import { Book, Review } from "../models";
 const getBookService = async (userId: number) => {
   let books = [];
   await Review.findAll({
-    attributes: ["reviewSt"],
+    attributes: ["id", "reviewSt"],
     include: [
       {
         model: Book,
@@ -29,6 +29,7 @@ const getBookService = async (userId: number) => {
   }).then((reviews) =>
     reviews.forEach((review) => {
       books.push({
+        reviewId: review.id,
         thumbnail: review.book.thumbnail,
         title: review.book.title,
         author: review.book.author,
@@ -52,9 +53,11 @@ const postBookService = async (
   isbn: string,
   thumbnail: string,
   title: string,
-  author: string[]
+  author: string[],
+  translator: string[],
+  publicationDate: string
 ) => {
-  if (!isbn || !title || !author) {
+  if (!isbn || !title || !author || !translator || !publicationDate) {
     return constant.NULL_VALUE;
   }
 
@@ -92,6 +95,8 @@ const postBookService = async (
       title,
       author,
       ...(thumbnail && { thumbnail }),
+      translator,
+      publicationDate
     });
   }
 

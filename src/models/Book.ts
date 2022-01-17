@@ -44,12 +44,18 @@ export default class Book extends Model {
   @Column(DataType.ARRAY(DataType.STRING))
   author: string[];
 
+  @Column(DataType.ARRAY(DataType.STRING))
+  translator: string[];
+
   @AllowNull(false)
   @Default(
     "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/defaultProfile.png"
   )
   @Column
   thumbnail: string;
+
+  @Column
+  publication_dt: string;
 
   @HasMany(() => Review)
   reviews: Review[];

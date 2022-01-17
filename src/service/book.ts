@@ -14,7 +14,7 @@ import { Book, Review } from "../models";
 const getBookService = async (userId: number) => {
   let books = [];
   await Review.findAll({
-    attributes: ["reviewSt"],
+    attributes: ["id", "reviewSt"],
     include: [
       {
         model: Book,
@@ -29,6 +29,7 @@ const getBookService = async (userId: number) => {
   }).then((reviews) =>
     reviews.forEach((review) => {
       books.push({
+        reviewId: review.id,
         thumbnail: review.book.thumbnail,
         title: review.book.title,
         author: review.book.author,

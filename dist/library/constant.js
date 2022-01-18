@@ -15,6 +15,7 @@ exports.default = {
     DB_NOT_FOUND: -11,
     NON_EXISTENT_USER: -12,
     EMAIL_NOT_FOUND: -13,
-    PW_NOT_CORRECT: -14, // 비밀번호가 일치하지 않을 때
+    PW_NOT_CORRECT: -14,
+    ANONYMOUS_USER: -15, // 비회원인 유저일 때
 };
 //# sourceMappingURL=constant.js.map

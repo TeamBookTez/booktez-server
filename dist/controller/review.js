@@ -22,26 +22,22 @@ const constant_1 = __importDefault(require("../library/constant"));
 const review_1 = __importDefault(require("../service/review"));
 /**
  *  @독서중 독서 전 작성
- *  @route POST /review/before/:isbn
+ *  @route PATCH /review/before/:reviewId
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
- *      2. 존재하지 않는 ISBN
- *      3. 이미 존재하는 독후감
+ *      2. 존재하지 않는 Review
  */
-const postReviewBeforeController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const patchReviewBeforeController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.postReviewBeforeService(req.params.isbn, req.user.id, req.body.answerOne, req.body.answerTwo, req.body.questionList, req.body.progress);
+        const resData = yield review_1.default.patchReviewBeforeController(Number(req.params.reviewId), req.user.id, req.body.answerOne, req.body.answerTwo, req.body.questionList, req.body.progress);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "요청값이 잘못되었습니다.");
         }
         if (resData === constant_1.default.DB_NOT_FOUND) {
-            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 ISBN입니다.");
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
-        if (resData === constant_1.default.VALUE_ALREADY_EXIST) {
-            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "이미 독후감이 존재합니다.");
-        }
-        return response_1.default.dataResponse(res, returnCode_1.default.OK, true, "작성이 완료되었습니다.", resData);
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, true, "수정이 완료되었습니다.", resData);
     }
     catch (err) {
         slack_1.default.slackWebhook(req, err.message);
@@ -179,7 +175,7 @@ const deleteReviewController = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 const reviewController = {
-    postReviewBeforeController,
+    patchReviewBeforeController,
     getQuestionController,
     patchReviewNowController,
     getReviewController,

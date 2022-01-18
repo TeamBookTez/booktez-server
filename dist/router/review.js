@@ -9,7 +9,7 @@ const review_1 = __importDefault(require("../controller/review"));
 const authMiddleware_1 = require("../middleware/authMiddleware");
 const router = express_1.default.Router();
 // 독서 전
-router.post("/before/:isbn", authMiddleware_1.auth, review_1.default.postReviewBeforeController);
+router.patch("/before/:reviewId", authMiddleware_1.auth, review_1.default.patchReviewBeforeController);
 // 질문리스트 조회
 router.get("/:reviewId/question-list", authMiddleware_1.auth, review_1.default.getQuestionController);
 // 독서 중

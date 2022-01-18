@@ -18,22 +18,27 @@ const constant_1 = __importDefault(require("../library/constant"));
 // models
 const models_1 = require("../models");
 /**
- *  @서재에 책 추가하기
+ *  @서재,리뷰에 책 추가하기
  *  @route POST /book
  *  @access public
  *  @access private
- *  @err   필요한 값이 없을 때
+ *  @err   1. 필요한 값이 없을 때
+ *         2. 리뷰가 이미 존재할 때
  */
-const postBookService = (isLogin, isbn, thumbnail, title, author, translator, publicationDate) => __awaiter(void 0, void 0, void 0, function* () {
+const postBookService = (isLogin, userId, isbn, thumbnail, title, author, translator, publicationDate) => __awaiter(void 0, void 0, void 0, function* () {
     if (!isbn || !title || !author || !translator || !publicationDate) {
         return constant_1.default.NULL_VALUE;
     }
+    if (!isLogin) {
+        return constant_1.default.ANONYMOUS_USER;
+    }
     let isbnOne, isbnTwo;
-    let exist;
+    let bookExist;
+    let book;
     if (/\s/.test(isbn)) {
         // isbn이 2개일 경우
         [isbnOne, isbnTwo] = isbn.split(" ");
-        exist = yield models_1.Book.findOne({
+        bookExist = yield models_1.Book.findOne({
             where: {
                 [sequelize_1.Op.or]: [
                     { isbn: isbnOne },
@@ -47,17 +52,44 @@ const postBookService = (isLogin, isbn, thumbnail, title, author, translator, pu
     else {
         // isbn 1개
         isbnOne = isbn;
-        exist = yield models_1.Book.findOne({
+        bookExist = yield models_1.Book.findOne({
             where: {
                 [sequelize_1.Op.or]: [{ isbn: isbnOne }, { isbnSub: isbnOne }],
             },
         });
     }
-    if (!exist) {
-        yield models_1.Book.create(Object.assign(Object.assign(Object.assign(Object.assign({ isbn: isbnOne }, (isbnTwo && { isbnSub: isbnTwo })), { title,
+    if (!bookExist) {
+        book = yield models_1.Book.create(Object.assign(Object.assign(Object.assign(Object.assign({ isbn: isbnOne }, (isbnTwo && { isbnSub: isbnTwo })), { title,
             author }), (thumbnail && { thumbnail })), { translator, publicationDt: publicationDate }));
     }
-    return isLogin;
+    else {
+        book = bookExist;
+    }
+    // review 중복 체크
+    const exist = yield models_1.Review.findOne({
+        where: {
+            bookId: book.id,
+            userId,
+            isDeleted: false,
+        },
+    });
+    if (exist) {
+        return constant_1.default.VALUE_ALREADY_EXIST;
+    }
+    // create review
+    const review = yield models_1.Review.create({
+        userId: userId,
+        bookId: book.id,
+        questionList: [],
+        answerOne: "",
+        answerTwo: "",
+        reviewSt: 2,
+        finishSt: false,
+    });
+    return {
+        isLogin,
+        reviewId: review.id,
+    };
 });
 /**
  *  @서재 책 조회

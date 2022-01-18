@@ -29,9 +29,18 @@ const book_1 = __importDefault(require("../service/book"));
  */
 const postBookController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield book_1.default.postBookService(req.user ? true : false, req.body.isbn, req.body.thumbnail, req.body.title, req.body.author, req.body.translator, req.body.publicationDate);
-        if (resData == constant_1.default.NULL_VALUE) {
+        const resData = yield book_1.default.postBookService(req.user ? true : false, req.user ? Number(req.user.id) : constant_1.default.ANONYMOUS_USER, req.body.isbn, req.body.thumbnail, req.body.title, req.body.author, req.body.translator, req.body.publicationDate);
+        if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
+        }
+        if (resData === constant_1.default.ANONYMOUS_USER) {
+            return response_1.default.dataResponse(res, returnCode_1.default.OK, "회원가입이 필요합니다.", true, {
+                isLogin: false,
+                reviewId: constant_1.default.ANONYMOUS_USER,
+            });
+        }
+        if (resData === constant_1.default.VALUE_ALREADY_EXIST) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "이미 독후감이 존재합니다.");
         }
         return response_1.default.dataResponse(res, returnCode_1.default.OK, true, "책 선택이 완료되었습니다.", { isLogin: resData });
     }

@@ -4,7 +4,7 @@ import { Op } from "sequelize";
 import constant from "../library/constant";
 
 // models
-import { Book, Review, User } from "../models";
+import { Book, Review } from "../models";
 
 /**
  *  @서재,리뷰에 책 추가하기
@@ -99,7 +99,7 @@ const postBookService = async (
   });
 
   return {
-    isLogin: isLogin,
+    isLogin,
     reviewId: review.id,
   };
 };

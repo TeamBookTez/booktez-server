@@ -4,21 +4,21 @@ import {
   checkPasswordValid,
 } from "../../library/checkValidation";
 
-describe("checkValidation test", function () {
-  describe("checkNicknameValid test", function () {
-    it("false: length is less than 2", function () {
+describe("checkValidation test", () => {
+  describe("checkNicknameValid test", () => {
+    it("false: length is less than 2", () => {
       assert.ok(!checkNicknameValid("룡"));
     });
-    it("false: length is longer than 10", function () {
+    it("false: length is longer than 10", () => {
       assert.ok(!checkNicknameValid("12345678901"));
     });
-    it("false: include space", function () {
+    it("false: include space", () => {
       assert.ok(!checkNicknameValid("do ng"));
     });
-    it("false: include special character", function () {
+    it("false: include special character", () => {
       assert.ok(!checkNicknameValid("닉#네임"));
     });
-    it("true: 2-8 letters, no special character", function () {
+    it("true: 2-8 letters, no special character", () => {
       assert.ok(checkNicknameValid("닉네임"));
     });
   });

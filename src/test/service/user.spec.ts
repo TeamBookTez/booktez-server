@@ -2,9 +2,8 @@ import assert from "assert";
 import userService from "../../service/user";
 import constant from "../../library/constant";
 import User from "../../models/User";
-import { getAssociationsByRelation } from "sequelize-typescript";
 
-describe("userService test", () => {
+describe("userService test", async() => {
   let user;
   const email = "mocha@test.com";
   const nickname = "mocha";
@@ -22,10 +21,11 @@ describe("userService test", () => {
     await User.destroy({ where: { id: user.id } });
   });
 
+  const createdUser: any = await User.findOne({ where: { id: user.id } });
+
   describe("getMyInfo test", () => {
 
     it("success: getMyInfo returns user Info correctly", async () => {
-      const createdUser: any = await User.findOne({ where: { id: user.id } });
       const testedUser: any = await userService.getMyInfoService(user.id);
       assert.ok(createdUser.img === testedUser.img);
       assert.ok(createdUser.nickname === testedUser.nickname);
@@ -39,12 +39,17 @@ describe("userService test", () => {
         constant.NON_EXISTENT_USER
       );
     });
-    
+
   });
 
-  describe("patchImg test", () => {
-    before("save original img", async () => {});
-    after("put origin img", async () => {});
-    it("", () => {});
-  });
+  // describe("patchImg test", () => {
+  //   let originImg
+  //   before("save original img", async () => {
+  //     originImg = createdUser.img
+  //   });
+  //   after("put origin img", async () => {
+  //     await User.update()
+  //   });
+  //   it("", () => {});
+  // });
 });

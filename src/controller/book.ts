@@ -22,7 +22,7 @@ const postBookController = async (req: Request, res: Response) => {
   try {
     const resData = await bookService.postBookService(
       req.user ? true : false,
-      req.user ? Number(req.user.id) : -1,
+      req.user ? Number(req.user.id) : constant.ANONYMOUS_USER,
       req.body.isbn,
       req.body.thumbnail,
       req.body.title,
@@ -40,7 +40,7 @@ const postBookController = async (req: Request, res: Response) => {
       );
     }
 
-    if(resData == constant.VALUE_ALREADY_EXIST) {
+    if (resData == constant.VALUE_ALREADY_EXIST) {
       return response.basicResponse(
         res,
         returnCode.BAD_REQUEST,

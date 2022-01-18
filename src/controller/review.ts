@@ -13,17 +13,16 @@ import reviewService from "../service/review";
 
 /**
  *  @독서중 독서 전 작성
- *  @route POST /review/before/:isbn
+ *  @route POST /review/before/:reviewId
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
- *      2. 존재하지 않는 ISBN
- *      3. 이미 존재하는 독후감
+ *      2. 존재하지 않는 Review
  */
-const postReviewBeforeController = async (req: Request, res: Response) => {
+const patchReviewBeforeController = async (req: Request, res: Response) => {
   try {
-    const resData = await reviewService.postReviewBeforeService(
-      req.params.isbn,
+    const resData = await reviewService.patchReviewBeforeController(
+      req.params.reviewId,
       req.user.id,
       req.body.answerOne,
       req.body.answerTwo,
@@ -45,16 +44,7 @@ const postReviewBeforeController = async (req: Request, res: Response) => {
         res,
         returnCode.BAD_REQUEST,
         false,
-        "존재하지 않는 ISBN입니다."
-      );
-    }
-
-    if (resData === constant.VALUE_ALREADY_EXIST) {
-      return response.basicResponse(
-        res,
-        returnCode.BAD_REQUEST,
-        false,
-        "이미 독후감이 존재합니다."
+        "존재하지 않는 Review입니다."
       );
     }
 
@@ -62,7 +52,7 @@ const postReviewBeforeController = async (req: Request, res: Response) => {
       res,
       returnCode.OK,
       true,
-      "작성이 완료되었습니다.",
+      "수정이 완료되었습니다.",
       resData
     );
   } catch (err) {
@@ -350,7 +340,7 @@ const deleteReviewController = async (req: Request, res: Response) => {
 };
 
 const reviewController = {
-  postReviewBeforeController,
+  patchReviewBeforeController,
   getQuestionController,
   patchReviewNowController,
   getReviewController,

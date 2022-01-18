@@ -16,7 +16,7 @@ import { User, Book, Review } from "../models";
  *      2. 존재하지 않는 Review
  */
 const patchReviewBeforeController = async (
-  reviewId: string,
+  reviewId: number,
   userId: number,
   answerOne: string,
   answerTwo: string,

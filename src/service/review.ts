@@ -9,7 +9,7 @@ import { User, Book, Review } from "../models";
 
 /**
  *  @독서중 독서 전 작성
- *  @route POST /review/before/:reviewId
+ *  @route PATCH /review/before/:reviewId
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨

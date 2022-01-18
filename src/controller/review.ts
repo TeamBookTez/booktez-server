@@ -22,7 +22,7 @@ import reviewService from "../service/review";
 const patchReviewBeforeController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.patchReviewBeforeController(
-      req.params.reviewId,
+      Number(req.params.reviewId),
       req.user.id,
       req.body.answerOne,
       req.body.answerTwo,

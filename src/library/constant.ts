@@ -14,4 +14,5 @@ export default {
   NON_EXISTENT_USER: -12, // 존재하지 않는 유저일 때
   EMAIL_NOT_FOUND: -13, // 이메일이 존재하지 않을 때
   PW_NOT_CORRECT: -14, // 비밀번호가 일치하지 않을 때
+  ANONYMOUS_USER: -15, // 알 수 없는 유저, 비회원인 유저일 때
 };

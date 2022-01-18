@@ -23,30 +23,30 @@ describe("checkValidation test", function () {
     });
   });
 
-  describe("checkPasswordValid test", function () {
-    it("false: length is less than 8", function () {
+  describe("checkPasswordValid test", () => {
+    it("fail: length is less than 8", () => {
       assert.ok(!checkPasswordValid("q!1"));
     });
-    it("false: length is longer than 64", function () {
+    it("fail: length is longer than 64", () => {
       assert.ok(
         !checkPasswordValid(
           "!@#$%^&*()qwertyuiop1234567890!@#$%^&*()qwertyuiop123456789012345"
         )
       );
     });
-    it("false: include space", function () {
+    it("fail: include space", () => {
       assert.ok(!checkPasswordValid("!234 qwer"));
     });
-    it("false: not include special character", function () {
+    it("fail: not include special character", () => {
       assert.ok(!checkPasswordValid("1234qwer"));
     });
-    it("false: not include english character", function () {
+    it("fail: not include english character", () => {
       assert.ok(!checkPasswordValid("1234!@#$"));
     });
-    it("false: not include number character", function () {
+    it("fail: not include number character", () => {
       assert.ok(!checkPasswordValid("qwer!@#$"));
     });
-    it("true: 8-64 letters, include english, number, special character", function () {
+    it("success: 8-64 letters, include english, number, special character", () => {
       assert.ok(checkPasswordValid("!234qwer"));
     });
   });

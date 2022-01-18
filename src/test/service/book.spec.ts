@@ -5,12 +5,12 @@ import bookService from "../../service/book";
 
 describe("bookService test", () => {
   describe("postBookService test", () => {
-    it("error: null value given", async () => {
+    it("fail: null value given", async () => {
       assert.strictEqual(
         await bookService.postBookService(
           true,
           1,
-          "",
+          null,
           "thumbnail",
           "title",
           ["author"],
@@ -20,7 +20,7 @@ describe("bookService test", () => {
         constant.NULL_VALUE
       );
     });
-    it("error: not logged in user", async () => {
+    it("fail: not logged in user", async () => {
       assert.strictEqual(
         await bookService.postBookService(
           false,
@@ -35,7 +35,7 @@ describe("bookService test", () => {
         constant.ANONYMOUS_USER
       );
     });
-    it("error: review already exist", async () => {
+    it("fail: review already exist", async () => {
       const book = await Book.create({
         isbn: "12345",
         title: "test",

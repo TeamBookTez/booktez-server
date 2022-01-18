@@ -9,15 +9,14 @@ import { User, Book, Review } from "../models";
 
 /**
  *  @독서중 독서 전 작성
- *  @route POST /review/before/:isbn
+ *  @route POST /review/before/:reviewId
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
- *      2. 존재하지 않는 ISBN
- *      3. 이미 존재하는 독후감
+ *      2. 존재하지 않는 Review
  */
-const postReviewBeforeService = async (
-  isbn: string,
+const patchReviewBeforeController = async (
+  reviewId: string,
   userId: number,
   answerOne: string,
   answerTwo: string,
@@ -25,7 +24,7 @@ const postReviewBeforeService = async (
   progress: number
 ) => {
   if (
-    !isbn ||
+    !reviewId ||
     !userId ||
     !answerOne ||
     !answerTwo ||
@@ -35,55 +34,29 @@ const postReviewBeforeService = async (
     return constant.NULL_VALUE;
   }
 
-  // user 확인
-  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
-
-  // isbn 체킹
-  let mainIsbn: string, subIsbn: string;
-  let isbnList = isbn.split(" ");
-  isbnList.length >= 2
-    ? ([mainIsbn, subIsbn] = isbnList)
-    : ([mainIsbn, subIsbn] = [isbnList[0], "-1"]);
-
-  // book 확인
-  const book = await Book.findOne({
+  // review 체크
+  const review = await Review.findOne({
     where: {
-      [Op.or]: [
-        { isbn: mainIsbn },
-        { isbn: subIsbn },
-        { isbnSub: mainIsbn },
-        { isbnSub: subIsbn },
-      ],
-    },
-  });
-
-  if (!book) {
-    return constant.DB_NOT_FOUND;
-  }
-
-  // 중복 review 확인
-  const exist = await Review.findOne({
-    where: {
-      bookId: book.id,
-      userId: user.id,
+      id: reviewId,
+      userId,
       isDeleted: false,
     },
   });
 
-  if (exist) {
-    return constant.VALUE_ALREADY_EXIST;
+  if (!review) {
+    return constant.DB_NOT_FOUND;
   }
 
-  // review 확인 - 기존의 독서 전 단계가 완료된 리뷰
-  const review = await Review.create({
-    userId: user.id,
-    bookId: book.id,
+  // review 수정
+  await review.update({
     questionList,
     answerOne,
     answerTwo,
     reviewSt: progress,
     finishSt: false,
   });
+
+  await review.save();
 
   return { reviewId: review.id };
 };
@@ -303,7 +276,7 @@ const deleteReviewService = async (userId: number, reviewId: number) => {
 };
 
 const reviewService = {
-  postReviewBeforeService,
+  patchReviewBeforeController,
   getQuestionService,
   patchReviewNowService,
   getReviewService,

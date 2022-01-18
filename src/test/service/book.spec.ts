@@ -10,7 +10,7 @@ describe("bookService test", () => {
         await bookService.postBookService(
           true,
           1,
-          "",
+          null,
           "thumbnail",
           "title",
           ["author"],

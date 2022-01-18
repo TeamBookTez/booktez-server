@@ -7,7 +7,7 @@ import { auth } from "../middleware/authMiddleware";
 const router = express.Router();
 
 // 독서 전
-router.post(
+router.patch(
   "/before/:reviewId",
   auth,
   reviewController.patchReviewBeforeController

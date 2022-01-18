@@ -4,17 +4,19 @@ import { Op } from "sequelize";
 import constant from "../library/constant";
 
 // models
-import { Book, Review } from "../models";
+import { Book, Review, User } from "../models";
 
 /**
- *  @서재에 책 추가하기
+ *  @서재,리뷰에 책 추가하기
  *  @route POST /book
  *  @access public
  *  @access private
- *  @err   필요한 값이 없을 때
+ *  @err   1. 필요한 값이 없을 때
+ *         2. 리뷰가 이미 존재할 때
  */
 const postBookService = async (
   isLogin: boolean,
+  userId: number,
   isbn: string,
   thumbnail: string,
   title: string,
@@ -26,14 +28,19 @@ const postBookService = async (
     return constant.NULL_VALUE;
   }
 
+  if (!isLogin) {
+    return constant.ANONYMOUS_USER;
+  }
+
   let isbnOne: string, isbnTwo: string;
-  let exist;
+  let bookExist;
+  let book;
 
   if (/\s/.test(isbn)) {
     // isbn이 2개일 경우
     [isbnOne, isbnTwo] = isbn.split(" ");
 
-    exist = await Book.findOne({
+    bookExist = await Book.findOne({
       where: {
         [Op.or]: [
           { isbn: isbnOne },
@@ -46,15 +53,15 @@ const postBookService = async (
   } else {
     // isbn 1개
     isbnOne = isbn;
-    exist = await Book.findOne({
+    bookExist = await Book.findOne({
       where: {
         [Op.or]: [{ isbn: isbnOne }, { isbnSub: isbnOne }],
       },
     });
   }
 
-  if (!exist) {
-    await Book.create({
+  if (!bookExist) {
+    book = await Book.create({
       isbn: isbnOne,
       ...(isbnTwo && { isbnSub: isbnTwo }),
       title,
@@ -63,9 +70,38 @@ const postBookService = async (
       translator,
       publicationDt: publicationDate,
     });
+  } else {
+    book = bookExist;
   }
 
-  return isLogin;
+  // review 중복 체크
+  const exist = await Review.findOne({
+    where: {
+      bookId: book.id,
+      userId,
+      isDeleted: false,
+    },
+  });
+
+  if (exist) {
+    return constant.VALUE_ALREADY_EXIST;
+  }
+
+  // create review
+  const review = await Review.create({
+    userId: userId,
+    bookId: book.id,
+    questionList: [],
+    answerOne: "",
+    answerTwo: "",
+    reviewSt: 2,
+    finishSt: false,
+  });
+
+  return {
+    isLogin: isLogin,
+    reviewId: review.id,
+  };
 };
 
 /**

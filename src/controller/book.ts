@@ -22,6 +22,8 @@ const postBookController = async (req: Request, res: Response) => {
   try {
     const resData = await bookService.postBookService(
       req.user ? true : false,
+      // false,
+      req.user ? Number(req.user.id) : constant.ANONYMOUS_USER,
       req.body.isbn,
       req.body.thumbnail,
       req.body.title,
@@ -36,6 +38,28 @@ const postBookController = async (req: Request, res: Response) => {
         returnCode.BAD_REQUEST,
         false,
         "필요한 값이 없습니다."
+      );
+    }
+
+    if (resData == constant.ANONYMOUS_USER) {
+      return response.dataResponse(
+        res,
+        returnCode.OK,
+        "회원가입이 필요합니다.",
+        true,
+        {
+          isLogin: false,
+          reviewId: constant.ANONYMOUS_USER,
+        }
+      );
+    }
+
+    if (resData == constant.VALUE_ALREADY_EXIST) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "이미 독후감이 존재합니다."
       );
     }
 

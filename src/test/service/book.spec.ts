@@ -1,6 +1,6 @@
 import assert from "assert";
 import constant from "../../library/constant";
-import { Book, Review, User } from "../../models";
+import sequelize, { Book, Review, User } from "../../models";
 import bookService from "../../service/book";
 
 describe("bookService test", () => {
@@ -38,8 +38,8 @@ describe("bookService test", () => {
     it("fail: review already exist", async () => {
       const book = await Book.create({
         isbn: "12345",
-        title: "test",
-        author: ["test"],
+        title: "mocha",
+        author: ["mocha"],
       });
       const review = await Review.create({
         userId: 1,
@@ -97,8 +97,49 @@ describe("bookService test", () => {
     });
   });
   describe("getBookService test", () => {
-    it("false: length is less than 2", async () => {
-      //   assert.ok(!checkNicknameValid("룡"));
+    it("success", async () => {
+      const mochaUser = await User.create({
+        email: "mocha@test.com",
+        password: "!234qwer",
+        nickname: "mocha",
+      });
+      const mochaBook = await Book.create({
+        isbn: "12345",
+        title: "mocha",
+        author: ["mocha"],
+      });
+      const mochaReview = await Review.create({
+        userId: mochaUser.id,
+        bookId: mochaBook.id,
+        reviewSt: 2,
+        finishSt: false,
+        isDeleted: false,
+      });
+
+      const resultBooks = await bookService.getBookService(mochaUser.id);
+
+      const resultBook = resultBooks.books[0];
+
+      assert.strictEqual(mochaBook.thumbnail, resultBook.thumbnail);
+      assert.strictEqual(mochaBook.title, resultBook.title);
+      assert.strictEqual(mochaBook.author[0], resultBook.author[0]);
+      assert.strictEqual(mochaReview.reviewSt, resultBook.state);
+
+      await User.destroy({
+        where: {
+          id: mochaUser.id,
+        },
+      });
+      await Book.destroy({
+        where: {
+          id: mochaBook.id,
+        },
+      });
+      await Review.destroy({
+        where: {
+          id: mochaReview.id,
+        },
+      });
     });
   });
 });

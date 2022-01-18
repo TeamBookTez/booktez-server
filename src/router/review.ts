@@ -7,7 +7,11 @@ import { auth } from "../middleware/authMiddleware";
 const router = express.Router();
 
 // 독서 전
-router.post("/before/:isbn", auth, reviewController.postReviewBeforeController);
+router.post(
+  "/before/:reviewId",
+  auth,
+  reviewController.patchReviewBeforeController
+);
 
 // 질문리스트 조회
 router.get(

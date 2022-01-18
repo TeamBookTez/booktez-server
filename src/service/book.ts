@@ -28,15 +28,19 @@ const postBookService = async (
     return constant.NULL_VALUE;
   }
 
+  if (!isLogin) {
+    return constant.ANONYMOUS_USER;
+  }
+
   let isbnOne: string, isbnTwo: string;
-  let exist;
+  let bookExist;
   let book;
 
   if (/\s/.test(isbn)) {
     // isbn이 2개일 경우
     [isbnOne, isbnTwo] = isbn.split(" ");
 
-    exist = await Book.findOne({
+    bookExist = await Book.findOne({
       where: {
         [Op.or]: [
           { isbn: isbnOne },
@@ -49,14 +53,14 @@ const postBookService = async (
   } else {
     // isbn 1개
     isbnOne = isbn;
-    exist = await Book.findOne({
+    bookExist = await Book.findOne({
       where: {
         [Op.or]: [{ isbn: isbnOne }, { isbnSub: isbnOne }],
       },
     });
   }
 
-  if (!exist) {
+  if (!bookExist) {
     book = await Book.create({
       isbn: isbnOne,
       ...(isbnTwo && { isbnSub: isbnTwo }),
@@ -66,41 +70,38 @@ const postBookService = async (
       translator,
       publicationDt: publicationDate,
     });
-  }
-
-  if (isLogin && userId !== constant.ANONYMOUS_USER) {
-    // review 중복 체크
-    const exist = await Review.findOne({
-      where: {
-        bookId: book.id,
-        userId,
-        isDeleted: false,
-      },
-    });
-
-    if (exist) {
-      return constant.VALUE_ALREADY_EXIST;
-    }
-
-    // create review
-    const review = await Review.create({
-      userId: userId,
-      bookId: book.id,
-      questionList: [],
-      answerOne: "",
-      answerTwo: "",
-      reviewSt: 2,
-      finishSt: false,
-    });
-
-    return {
-      isLogin: isLogin,
-      reviewId: review.id,
-    };
   } else {
-    // 리뷰에 추가하지 않음
-    return constant.ANONYMOUS_USER;
+    book = bookExist;
   }
+
+  // review 중복 체크
+  const exist = await Review.findOne({
+    where: {
+      bookId: book.id,
+      userId,
+      isDeleted: false,
+    },
+  });
+
+  if (exist) {
+    return constant.VALUE_ALREADY_EXIST;
+  }
+
+  // create review
+  const review = await Review.create({
+    userId: userId,
+    bookId: book.id,
+    questionList: [],
+    answerOne: "",
+    answerTwo: "",
+    reviewSt: 2,
+    finishSt: false,
+  });
+
+  return {
+    isLogin: isLogin,
+    reviewId: review.id,
+  };
 };
 
 /**

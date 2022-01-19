@@ -1,6 +1,4 @@
-// sequelize
-import Sequelize, { Op } from "sequelize";
-
+// library
 import constant from "../library/constant";
 
 // model

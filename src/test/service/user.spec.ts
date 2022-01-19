@@ -1,7 +1,13 @@
 import assert from "assert";
-import userService from "../../service/user";
+
+// library
 import constant from "../../library/constant";
+
+// model
 import User from "../../models/User";
+
+// service
+import userService from "../../service/user";
 
 describe("userService test", async () => {
   let user;
@@ -44,10 +50,7 @@ describe("userService test", async () => {
     it("success: pathImgService changes user profile image correctly ", async () => {
       const newImg =
         "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/user_profile/1642154795489.jpeg";
-      await userService.patchImgService(
-        user.id,
-        newImg
-      );
+      await userService.patchImgService(user.id, newImg);
       const updatedUser: any = await User.findOne({
         where: { id: user.id },
       });

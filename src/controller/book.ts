@@ -3,12 +3,12 @@ import { Request, Response } from "express";
 // slack
 import slack from "../others/slack/slack";
 
-// libraries
+// library
 import constant from "../library/constant";
 import response from "../library/response";
 import returnCode from "../library/returnCode";
 
-// services
+// service
 import bookService from "../service/book";
 
 /**

@@ -1,8 +1,6 @@
 import {
   Model,
   Column,
-  CreatedAt,
-  UpdatedAt,
   Table,
   PrimaryKey,
   AutoIncrement,
@@ -40,9 +38,7 @@ export default class User extends Model {
   @Column
   nickname: string;
 
-  @Default(
-    process.env.DEFAULT_IMG
-  )
+  @Default(process.env.DEFAULT_IMG)
   @Column
   img: string;
 

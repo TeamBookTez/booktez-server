@@ -2,12 +2,12 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import config from "../config";
 
-// libraries
-import response from "../library/response";
-import returnCode from "../library/returnCode";
-
 // slack
 import slack from "../others/slack/slack";
+
+// library
+import response from "../library/response";
+import returnCode from "../library/returnCode";
 
 // model
 import User from "../models/User";

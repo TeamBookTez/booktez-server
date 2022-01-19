@@ -1,11 +1,12 @@
 import express from "express";
-const router = express.Router();
 
 // Middleware
 import { isLogin } from "../middleware/authMiddleware";
 
 // Controller
 import authController from "../controller/auth";
+
+const router = express.Router();
 
 router.get("/email", authController.getEmailController);
 router.get("/nickname", authController.getNicknameController);

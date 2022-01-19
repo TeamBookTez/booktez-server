@@ -1,8 +1,13 @@
 import assert from "assert";
-import reviewService from "../../service/review";
+
+// library
 import constant from "../../library/constant";
 
+// model
 import { User, Book, Review } from "../../models";
+
+// service
+import reviewService from "../../service/review";
 
 describe("reviewService test", async () => {
   // MARK: - before, after

@@ -10,7 +10,7 @@ import {
   checkPasswordValid,
 } from "../library/checkValidation";
 
-// models
+// model
 import { User } from "../models";
 
 /**
@@ -207,11 +207,11 @@ const postSignupService = async (
  *  @로그인_여부_검사
  *  @route GET /auth/check
  *  @access public
- *  @err 
+ *  @err
  */
-const getLoginFlagService = async(isLogin: Boolean) => {
-  return { isLogin }
-}
+const getLoginFlagService = async (isLogin: Boolean) => {
+  return { isLogin };
+};
 
 const authService = {
   getEmailService,

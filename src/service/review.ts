@@ -1,10 +1,7 @@
-import sequelize from "sequelize";
-import { Op } from "sequelize";
-
-// libraries
+// library
 import constant from "../library/constant";
 
-// models
+// model
 import { User, Book, Review } from "../models";
 
 /**

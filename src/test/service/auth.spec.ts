@@ -1,12 +1,18 @@
 import assert from "assert";
-import authService from "../../service/auth";
+
+// library
 import {
   checkNicknameValid,
   checkPasswordValid,
 } from "../../library/checkValidation";
-import { User } from "../../models";
 import isEmail from "validator/lib/isEmail";
 import constant from "../../library/constant";
+
+// model
+import { User } from "../../models";
+
+// service
+import authService from "../../service/auth";
 
 describe("auth test", function () {
   let user: User;

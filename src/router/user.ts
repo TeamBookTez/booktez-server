@@ -1,9 +1,11 @@
 import express from "express";
-import userController from "../controller/user";
 
 // middleware
 import upload from "../middleware/upload";
 import { auth } from "../middleware/authMiddleware";
+
+// controller
+import userController from "../controller/user";
 
 const router = express.Router();
 

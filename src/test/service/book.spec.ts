@@ -1,6 +1,12 @@
 import assert from "assert";
+
+// library
 import constant from "../../library/constant";
+
+// model
 import { Book, Review, User } from "../../models";
+
+// service
 import bookService from "../../service/book";
 
 describe("bookService test", () => {

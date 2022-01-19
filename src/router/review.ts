@@ -1,8 +1,10 @@
 import express from "express";
-import reviewController from "../controller/review";
 
 // middleware
 import { auth } from "../middleware/authMiddleware";
+
+// controller
+import reviewController from "../controller/review";
 
 const router = express.Router();
 

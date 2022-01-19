@@ -1,7 +1,7 @@
 import { error } from "console";
 import slackAPI from "./slackAPI";
 
-const slackWebhook = (req, message) => {
+const slackWebhook = (req, message: string) => {
   const slackMessage = `[ERROR] [${req.method.toUpperCase()}] ${
     req.originalUrl
   } ${message} 

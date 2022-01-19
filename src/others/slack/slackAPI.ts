@@ -1,6 +1,5 @@
-const axios = require("axios");
-
-const dotenv = require("dotenv");
+import axios from "axios";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -9,7 +8,7 @@ dotenv.config();
 const DEV_WEB_HOOK_ERROR_MONITORING = process.env.DEV_WEB_HOOK_ERROR_MONITORING;
 
 const sendMessageToSlack = (
-  message,
+  message: string,
   apiEndPoint = DEV_WEB_HOOK_ERROR_MONITORING
 ) => {
   // 슬랙 Webhook을 이용해 슬랙에 메시지를 보내는 코드
@@ -26,12 +25,6 @@ const sendMessageToSlack = (
     // 콘솔에 에러를 찍는 코드
   }
 };
-
-// 이 파일에서 정의한 변수 / 함수를 export 해서, 다른 곳에서 사용할 수 있게 해주는 코드
-// module.exports = {
-//   sendMessageToSlack,
-//   DEV_WEB_HOOK_ERROR_MONITORING,
-// };
 
 const slackAPI = {
   sendMessageToSlack,

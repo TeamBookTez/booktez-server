@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import { sequelize } from "./models";
 import router from "./router";
-import path from "path";
 
 const app = express();
 
@@ -11,7 +10,6 @@ app.use(express.json());
 
 // Port Host
 const PORT: number = parseInt(process.env.PORT as string, 10) || 3000 || 8080;
-const HOST: string = process.env.HOST || "localhost";
 
 // allow cors
 app.use(

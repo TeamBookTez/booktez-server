@@ -8,6 +8,7 @@
     "build": "tsc && node dist",
     "test": "nodemon",
     "mocha": "mocha src/test/**/*.ts -r ts-node/register",
+    "integrate": "npm run mocha && npm run dev",
     "postinstall": "npx patch-package"
   },
   "dependencies": {

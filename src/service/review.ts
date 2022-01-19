@@ -204,7 +204,7 @@ const patchReviewService = async (
   reviewId: number,
   answerOne: string,
   answerTwo: string,
-  answerThree: JSON
+  answerThree: object
 ) => {
   if (!reviewId || !answerOne || !answerTwo || !answerThree) {
     return constant.NULL_VALUE;

@@ -210,8 +210,109 @@ describe("reviewService test", async () => {
     });
   });
 
-  // TODO: - 독서 완료 후 답변 수정 테스트
-  describe("patchReview test", async () => {});
+  // MARK: - 독서 완료 후 답변 수정 테스트
+  describe("patchReview test", async () => {
+    it("success: patchReview returns changed data", async () => {
+      const answerOne: string = "모카 수정 질문 1";
+      const answerTwo: string = "모카 수정 질문 2";
+      const answerThree: object = {
+        root: [
+          {
+            depth: 1,
+            question: "모카 수정 질문 3",
+            answer: [
+              {
+                text: "유전자가 우월해서",
+                children: [
+                  {
+                    depth: 2,
+                    question: "왜 유전자가 우월할까?",
+                    answer: [
+                      {
+                        text: "세상은 우리를 그렇게 만들었다.",
+                        children: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            depth: 1,
+            question: "북테즈는 왜 이렇게 성격이 다 좋을까?",
+            answer: [
+              {
+                text: "유전자가 우월해서",
+                children: [
+                  {
+                    depth: 2,
+                    question: "왜 유전자가 우월할까?",
+                    answer: [
+                      {
+                        text: "세상은 우리를 그렇게 만들었다.",
+                        children: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            depth: 1,
+            question: "북테즈는 왜 다 일을 잘할까?",
+            answer: [
+              {
+                text: "유전자가 우월해서",
+                children: [
+                  {
+                    depth: 2,
+                    question: "왜 유전자가 우월할까?",
+                    answer: [
+                      {
+                        text: "세상은 우리를 그렇게 만들었다.",
+                        children: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+      const resData = await reviewService.patchReviewService(
+        testReview.id,
+        answerOne,
+        answerTwo,
+        answerThree
+      );
+      const updatedReview = await Review.findOne({
+        where: {
+          id: testReview.id,
+        },
+      });
+      assert.strictEqual(resData, constant.SUCCESS);
+      assert.strictEqual(updatedReview.answerOne, answerOne);
+      assert.strictEqual(updatedReview.answerTwo, answerTwo);
+      assert.deepStrictEqual(updatedReview.answerThree, answerThree);
+    });
+    it("fail: return null when arguments are null", async () => {
+      assert.strictEqual(
+        await reviewService.patchReviewService(testReview.id, null, null, null),
+        constant.NULL_VALUE
+      );
+    });
+    it("fail: return wrong request value when request wrong", async () => {
+      assert.strictEqual(
+        await reviewService.patchReviewService(-100, "answerOne", "answerTwo", {
+          test: "hi",
+        }),
+        constant.WRONG_REQUEST_VALUE
+      );
+    });
+  });
 
   // MARK: - 리뷰 삭제 테스트
   describe("deleteReview test", async () => {

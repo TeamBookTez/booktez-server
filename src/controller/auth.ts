@@ -116,7 +116,7 @@ const getNicknameController = async (req: Request, res: Response) => {
       return response.dataResponse(
         res,
         returnCode.OK,
-        "10자 이내 영문/한글/숫자로 입력해주세요.",
+        "2-10자 이내의 영문/한글/숫자로 입력해주세요.",
         true,
         { isValid: false }
       );

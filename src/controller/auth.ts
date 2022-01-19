@@ -304,11 +304,42 @@ const postSignupController = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *  @로그인_여부_검사
+ *  @route GET /auth/check
+ *  @access public
+ *  @err 
+ */
+const getLoginFlagController = async(req: Request, res: Response) => {
+  try {
+    const resData = await authService.getLoginFlagService(
+      req.user ? true : false
+    )
+    return response.dataResponse(
+      res, 
+      returnCode.OK,
+      "로그인 여부 확인 성공.", 
+      true, 
+      resData
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+}
+
 const authController = {
   getEmailController,
   getNicknameController,
   postLoginController,
   postSignupController,
+  getLoginFlagController,
 };
 
 export default authController;

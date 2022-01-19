@@ -203,11 +203,22 @@ const postSignupService = async (
   return token;
 };
 
+/**
+ *  @로그인_여부_검사
+ *  @route GET /auth/check
+ *  @access public
+ *  @err 
+ */
+const getLoginFlagService = async(isLogin: Boolean) => {
+  return { isLogin }
+}
+
 const authService = {
   getEmailService,
   getNicknameService,
   postLoginService,
   postSignupService,
+  getLoginFlagService,
 };
 
 export default authService;

@@ -3,7 +3,7 @@ import userService from "../../service/user";
 import constant from "../../library/constant";
 import User from "../../models/User";
 
-describe("userService test", async() => {
+describe("userService test", async () => {
   let user;
   const email = "mocha@test.com";
   const nickname = "mocha";
@@ -17,15 +17,14 @@ describe("userService test", async() => {
     });
   });
 
+  // 어쩌구.destroy
   after("delete user", async () => {
     await User.destroy({ where: { id: user.id } });
   });
 
-  const createdUser: any = await User.findOne({ where: { id: user.id } });
-
   describe("getMyInfo test", () => {
-
     it("success: getMyInfo returns user Info correctly", async () => {
+      const createdUser: any = await User.findOne({ where: { id: user.id } });
       const testedUser: any = await userService.getMyInfoService(user.id);
       assert.ok(createdUser.img === testedUser.img);
       assert.ok(createdUser.nickname === testedUser.nickname);
@@ -39,17 +38,37 @@ describe("userService test", async() => {
         constant.NON_EXISTENT_USER
       );
     });
-
   });
 
-  // describe("patchImg test", () => {
-  //   let originImg
-  //   before("save original img", async () => {
-  //     originImg = createdUser.img
-  //   });
-  //   after("put origin img", async () => {
-  //     await User.update()
-  //   });
-  //   it("", () => {});
-  // });
+  describe("patchImg test", () => {
+    it("success: pathImgService changes user profile image correctly ", async () => {
+      const newImg =
+        "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/user_profile/1642154795489.jpeg";
+      await userService.patchImgService(
+        user.id,
+        newImg
+      );
+      const updatedUser: any = await User.findOne({
+        where: { id: user.id },
+      });
+      assert.strictEqual(updatedUser.img, newImg);
+    });
+
+    it("fail: patchImgService returns NULL_VALUE", async () => {
+      const createdUser: any = await User.findOne({ where: { id: user.id } });
+      assert.strictEqual(
+        await userService.patchImgService(createdUser.id, null),
+        constant.NULL_VALUE
+      );
+    });
+
+    it("fail: patchImgService returns NON_EXISTENT_USER", async () => {
+      const newImg =
+        "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/user_profile/1642154795489.jpeg";
+      assert.strictEqual(
+        await userService.patchImgService(null, newImg),
+        constant.NON_EXISTENT_USER
+      );
+    });
+  });
 });

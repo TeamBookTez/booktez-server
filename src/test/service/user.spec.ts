@@ -5,9 +5,9 @@ import User from "../../models/User";
 
 describe("userService test", async () => {
   let user;
-  const email = "mocha@test.com";
-  const nickname = "mocha";
-  const password = "mocha123!!";
+  const email: string = "mocha@test.com";
+  const nickname: string = "mocha";
+  const password: string = "mocha123!!";
 
   before("create user", async () => {
     user = await User.create({
@@ -63,7 +63,7 @@ describe("userService test", async () => {
     });
 
     it("fail: patchImgService returns NON_EXISTENT_USER", async () => {
-      const newImg =
+      const newImg: string =
         "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/user_profile/1642154795489.jpeg";
       assert.strictEqual(
         await userService.patchImgService(null, newImg),

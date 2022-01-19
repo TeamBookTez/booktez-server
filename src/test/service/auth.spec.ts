@@ -9,7 +9,7 @@ import isEmail from "validator/lib/isEmail";
 import constant from "../../library/constant";
 
 describe("auth test", function () {
-  let user;
+  let user: User;
 
   // getEmailService test - 이메일 유효성 검사
   describe("getEmailService test", async () => {
@@ -47,7 +47,7 @@ describe("auth test", function () {
   // getNicknameService test - 닉네임 유효성 검사
   describe("getNicknameService test", async () => {
     // 테스트 이메일
-    let user;
+    let user: User;
     const mochaNickname: string = "mochatest";
 
     // 닉네임이 이미 사용중인 경우
@@ -80,9 +80,9 @@ describe("auth test", function () {
 
   // postLoginService test - 로그인
   describe("postLoginService test", () => {
-    let mochaEmail = "mochatest@naver.com";
-    let mochaNickname = "mochaNickkk";
-    let mochaPwd = "mocha!234";
+    const mochaEmail: string = "mochatest@naver.com";
+    const mochaNickname: string = "mochaNickkk";
+    const mochaPwd: string = "mocha!234";
 
     // 존재하지 않는 이메일
     it("fail: email not found", async () => {
@@ -139,10 +139,10 @@ describe("auth test", function () {
 
     // 성공
     it("success", async () => {
-      let user;
-      const mochaEmail = "mochatest@naver.com";
-      const mochaNickname = "mochaNickkk";
-      const mochaPwd = "mocha!234";
+      let user: User;
+      const mochaEmail: string = "mochatest@naver.com";
+      const mochaNickname: string = "mochaNickkk";
+      const mochaPwd: string = "mocha!234";
 
       assert.ok(async function () {
         await authService.postSignupService(

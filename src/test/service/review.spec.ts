@@ -317,7 +317,7 @@ describe("reviewService test", async () => {
   // MARK: - 리뷰 삭제 테스트
   describe("deleteReview test", async () => {
     it("success: deleteReview deletes review correctly", async () => {
-      const testReviewId = testReview.id;
+      const testReviewId: number = testReview.id;
       await reviewService.deleteReviewService(testUser.id, testReview.id);
       const deletedReview: any = await Review.findOne({
         where: { id: testReviewId },

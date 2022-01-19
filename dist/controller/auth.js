@@ -65,7 +65,7 @@ const getNicknameController = (req, res) => __awaiter(void 0, void 0, void 0, fu
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
         if (resData === constant_1.default.WRONG_NICKNAME_CONVENTION) {
-            return response_1.default.dataResponse(res, returnCode_1.default.OK, "10자 이내 영문/한글/숫자로 입력해주세요.", true, { isValid: false });
+            return response_1.default.dataResponse(res, returnCode_1.default.OK, "2-10자 이내의 영문/한글/숫자로 입력해주세요.", true, { isValid: false });
         }
         if (resData === constant_1.default.NICKNAME_ALREADY_EXIST) {
             return response_1.default.dataResponse(res, returnCode_1.default.OK, "이미 사용 중인 닉네임입니다.", true, { isValid: false });

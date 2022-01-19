@@ -28,7 +28,7 @@ describe("reviewService test", async () => {
   });
   after("delete user, book", async () => {
     await User.destroy({ where: { id: testUser.id } });
-    
+    await Book.destroy({where: {id: testBook.id}});
   });
   describe("patchReviewBefore test", async () => {
     it("success: patchReviewBefore returns reviewId correctly", async () => {
@@ -44,7 +44,7 @@ describe("reviewService test", async () => {
       assert.ok(patchedReview.reviewId === testReview.id);
     });
 
-    it("fail: try to patch review which is not existent", async () => {
+    it("fail: try to patch review which doesn't exist", async () => {
       const nonExistentReview: any =
         await reviewService.patchReviewBeforeController(
           -50,
@@ -79,7 +79,7 @@ describe("reviewService test", async () => {
         testReview.questionList
       );
     });
-    it("fail: try to get questionList whose reviewId is not existent", async () => {
+    it("fail: try to get questionList whose reviewId doesn't exist", async () => {
       assert.strictEqual(
         await reviewService.getQuestionService(testUser.id, -50),
         constant.WRONG_REQUEST_VALUE
@@ -96,36 +96,19 @@ describe("reviewService test", async () => {
         publicationDt: "",
       };
 
-      class answerThree {
-        "root": [
-          {
-            depth: 1;
-            question: "북테즈는 왜 전부 이쁘고 잘생겼을까?";
-            answer: [
-              {
-                text: "유전자가 우월해서";
-                children: [
-                  {
-                    depth: 2;
-                    question: "왜 유전자가 우월할까?";
-                    answer: [
-                      {
-                        text: "세상은 우리를 그렇게 만들었다.";
-                        children: [];
-                      }
-                    ];
-                  }
-                ];
-              }
-            ];
-          }
-        ];
-      }
-
-      let convertedAnswerThree = Object.assign(new answerThree(), JSON);
     });
   });
-  describe("getReview test", async () => {});
+  describe("getReview test", async() => {
+    it("success: getReview returns review data correctly", async() => {
+      // 맘에 안들어
+      // 먼가 .. 책 정보 잘가져오는지도 알아야할 것 같은 .. 몰라 .. 샹 ..
+      const foundReview = await Review.findOne({where: {id: testReview.id}});
+      assert.strictEqual(foundReview.userId, testUser.id);
+});
+    it("fail: try to get review which doesn't exist", async() => {
+      assert.strictEqual(await reviewService.getReviewService(testUser.id, -50), constant.WRONG_REQUEST_VALUE);
+    });
+  });
   describe("patchReview test", async () => {});
   describe("deleteReview test", async () => {
     it("success: deleteReview deletes review correctly", async () => {

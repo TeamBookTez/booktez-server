@@ -139,7 +139,7 @@ describe("reviewService test", async () => {
       // 일단 두 경우 모두 WRONG_REQUEST로 빠지니까 글케 박아두자
       assert.strictEqual(
         await reviewService.deleteReviewService(testUser.id, deletedReview.id),
-        constant.WRONG_REQUEST_VALUE
+        constant.VALUE_ALREADY_DELETED
       );
     });
   });

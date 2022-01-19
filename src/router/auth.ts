@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Middleware
 import { isLogin } from "../middleware/authMiddleware";
-c
+
 // Controller
 import authController from "../controller/auth";
 

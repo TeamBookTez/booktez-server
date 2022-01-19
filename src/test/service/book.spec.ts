@@ -1,11 +1,11 @@
 import assert from "assert";
 import constant from "../../library/constant";
-import { Book, Review, User } from "../../models";
+import sequelize, { Book, Review, User } from "../../models";
 import bookService from "../../service/book";
 
 describe("bookService test", () => {
   describe("postBookService test", () => {
-    it("error: null value given", async () => {
+    it("fail: null value given", async () => {
       assert.strictEqual(
         await bookService.postBookService(
           true,
@@ -20,7 +20,7 @@ describe("bookService test", () => {
         constant.NULL_VALUE
       );
     });
-    it("error: not logged in user", async () => {
+    it("fail: not logged in user", async () => {
       assert.strictEqual(
         await bookService.postBookService(
           false,
@@ -35,11 +35,11 @@ describe("bookService test", () => {
         constant.ANONYMOUS_USER
       );
     });
-    it("error: review already exist", async () => {
+    it("fail: review already exist", async () => {
       const book = await Book.create({
         isbn: "12345",
-        title: "test",
-        author: ["test"],
+        title: "mocha",
+        author: ["mocha"],
       });
       const review = await Review.create({
         userId: 1,
@@ -97,8 +97,49 @@ describe("bookService test", () => {
     });
   });
   describe("getBookService test", () => {
-    it("false: length is less than 2", async () => {
-      //   assert.ok(!checkNicknameValid("룡"));
+    it("success", async () => {
+      const mochaUser = await User.create({
+        email: "mocha@test.com",
+        password: "!234qwer",
+        nickname: "mocha",
+      });
+      const mochaBook = await Book.create({
+        isbn: "12345",
+        title: "mocha",
+        author: ["mocha"],
+      });
+      const mochaReview = await Review.create({
+        userId: mochaUser.id,
+        bookId: mochaBook.id,
+        reviewSt: 2,
+        finishSt: false,
+        isDeleted: false,
+      });
+
+      const resultBooks = await bookService.getBookService(mochaUser.id);
+
+      const resultBook = resultBooks.books[0];
+
+      assert.strictEqual(mochaBook.thumbnail, resultBook.thumbnail);
+      assert.strictEqual(mochaBook.title, resultBook.title);
+      assert.strictEqual(mochaBook.author[0], resultBook.author[0]);
+      assert.strictEqual(mochaReview.reviewSt, resultBook.state);
+
+      await User.destroy({
+        where: {
+          id: mochaUser.id,
+        },
+      });
+      await Book.destroy({
+        where: {
+          id: mochaBook.id,
+        },
+      });
+      await Review.destroy({
+        where: {
+          id: mochaReview.id,
+        },
+      });
     });
   });
 });

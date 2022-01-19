@@ -7,7 +7,7 @@ export const checkNicknameValid = (nickname: string): boolean => {
     return false;
   }
 
-  if (nickname.length > 8) {
+  if (nickname.length > 10) {
     return false;
   }
 

@@ -1,46 +1,74 @@
 import assert from "assert";
 import userService from "../../service/user";
+import constant from "../../library/constant";
 import User from "../../models/User";
-import { getAssociationsByRelation } from "sequelize-typescript";
 
-describe("userService test", () => {
+describe("userService test", async () => {
   let user;
   const email = "mocha@test.com";
   const nickname = "mocha";
   const password = "mocha123!!";
 
-  before("create user", async() =>{
+  before("create user", async () => {
     user = await User.create({
       email,
       nickname,
-      password
+      password,
     });
   });
 
-  after("delete user", async() => {
-    await User.destroy({where: {id: user.id}});
+  // 어쩌구.destroy
+  after("delete user", async () => {
+    await User.destroy({ where: { id: user.id } });
   });
 
   describe("getMyInfo test", () => {
-    it("getMyInfo returns user Info correctly", async() => {
-      const createdUser: any = await User.findOne({where: {id: user.id}});
+    it("success: getMyInfo returns user Info correctly", async () => {
+      const createdUser: any = await User.findOne({ where: { id: user.id } });
       const testedUser: any = await userService.getMyInfoService(user.id);
       assert.ok(createdUser.img === testedUser.img);
       assert.ok(createdUser.nickname === testedUser.nickname);
       assert.ok(createdUser.email === testedUser.email);
       assert.ok(testedUser.reviewCount === 0);
+    });
 
-      const test = await userService.getMyInfoService(null);
+    it("fail: getMyInfo returns NULL_VALUE when userId is null", async () => {
+      assert.strictEqual(
+        await userService.getMyInfoService(null),
+        constant.NON_EXISTENT_USER
+      );
     });
   });
 
   describe("patchImg test", () => {
-    before("save original img", async() => {
-
+    it("success: pathImgService changes user profile image correctly ", async () => {
+      const newImg =
+        "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/user_profile/1642154795489.jpeg";
+      await userService.patchImgService(
+        user.id,
+        newImg
+      );
+      const updatedUser: any = await User.findOne({
+        where: { id: user.id },
+      });
+      assert.strictEqual(updatedUser.img, newImg);
     });
-    after("put origin img", async() => {
 
+    it("fail: patchImgService returns NULL_VALUE", async () => {
+      const createdUser: any = await User.findOne({ where: { id: user.id } });
+      assert.strictEqual(
+        await userService.patchImgService(createdUser.id, null),
+        constant.NULL_VALUE
+      );
     });
-    it("", () => {});
+
+    it("fail: patchImgService returns NON_EXISTENT_USER", async () => {
+      const newImg =
+        "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/user_profile/1642154795489.jpeg";
+      assert.strictEqual(
+        await userService.patchImgService(null, newImg),
+        constant.NON_EXISTENT_USER
+      );
+    });
   });
 });

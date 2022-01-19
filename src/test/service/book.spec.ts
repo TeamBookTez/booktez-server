@@ -1,6 +1,6 @@
 import assert from "assert";
 import constant from "../../library/constant";
-import sequelize, { Book, Review, User } from "../../models";
+import { Book, Review, User } from "../../models";
 import bookService from "../../service/book";
 
 describe("bookService test", () => {
@@ -122,7 +122,7 @@ describe("bookService test", () => {
 
       assert.strictEqual(mochaBook.thumbnail, resultBook.thumbnail);
       assert.strictEqual(mochaBook.title, resultBook.title);
-      assert.strictEqual(mochaBook.author[0], resultBook.author[0]);
+      assert.deepStrictEqual(mochaBook.author, resultBook.author);
       assert.strictEqual(mochaReview.reviewSt, resultBook.state);
 
       await User.destroy({

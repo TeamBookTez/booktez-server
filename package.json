@@ -9,6 +9,7 @@
     "test": "nodemon",
     "mocha": "mocha src/test/**/*.ts -r ts-node/register",
     "integrate": "npm run mocha && npm run dev",
+    "integrate-ubuntu": "npm run mocha && node dist",
     "postinstall": "npx patch-package"
   },
   "dependencies": {

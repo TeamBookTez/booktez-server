@@ -6,19 +6,19 @@ import {
 
 describe("checkValidation test", () => {
   describe("checkNicknameValid test", () => {
-    it("false: length is less than 2", () => {
+    it("fail: length is less than 2", () => {
       assert.ok(!checkNicknameValid("룡"));
     });
-    it("false: length is longer than 10", () => {
+    it("fail: length is longer than 10", () => {
       assert.ok(!checkNicknameValid("12345678901"));
     });
-    it("false: include space", () => {
+    it("fail: include space", () => {
       assert.ok(!checkNicknameValid("do ng"));
     });
-    it("false: include special character", () => {
+    it("fail: include special character", () => {
       assert.ok(!checkNicknameValid("닉#네임"));
     });
-    it("true: 2-8 letters, no special character", () => {
+    it("success: 2-8 letters, no special character", () => {
       assert.ok(checkNicknameValid("닉네임"));
     });
   });

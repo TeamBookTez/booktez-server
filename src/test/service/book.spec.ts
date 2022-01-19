@@ -36,12 +36,12 @@ describe("bookService test", () => {
       );
     });
     it("fail: review already exist", async () => {
-      const book = await Book.create({
+      const book: Book = await Book.create({
         isbn: "12345",
         title: "mocha",
         author: ["mocha"],
       });
-      const review = await Review.create({
+      const review: Review = await Review.create({
         userId: 1,
         bookId: book.id,
         reviewSt: 2,
@@ -98,17 +98,17 @@ describe("bookService test", () => {
   });
   describe("getBookService test", () => {
     it("success", async () => {
-      const mochaUser = await User.create({
+      const mochaUser: User = await User.create({
         email: "mocha@test.com",
         password: "!234qwer",
         nickname: "mocha",
       });
-      const mochaBook = await Book.create({
+      const mochaBook: Book = await Book.create({
         isbn: "12345",
         title: "mocha",
         author: ["mocha"],
       });
-      const mochaReview = await Review.create({
+      const mochaReview: Review = await Review.create({
         userId: mochaUser.id,
         bookId: mochaBook.id,
         reviewSt: 2,

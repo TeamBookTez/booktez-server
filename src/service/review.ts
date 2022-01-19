@@ -104,7 +104,7 @@ const getQuestionService = async (userId: number, reviewId: number) => {
 const patchReviewNowService = async (
   reviewId: number,
   userId: number,
-  answerThree: JSON,
+  answerThree: object,
   progress: number
 ) => {
   if (!reviewId || !userId || !answerThree || !progress) {
@@ -251,7 +251,7 @@ const deleteReviewService = async (userId: number, reviewId: number) => {
 
   // 해당 review 조회
   const review = await Review.findOne({
-    where: { id: reviewId, userId: user.id, isDeleted: false },
+    where: { id: reviewId, userId: user.id },
   });
 
   // 2. 존재하지 않는 review

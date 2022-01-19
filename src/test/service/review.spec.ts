@@ -5,6 +5,7 @@ import constant from "../../library/constant";
 import { User, Book, Review } from "../../models";
 
 describe("reviewService test", async () => {
+  // MARK: - before, after
   let testUser, testBook, testReview;
   before("create user, book, empty review", async () => {
     testUser = await User.create({
@@ -30,6 +31,8 @@ describe("reviewService test", async () => {
     await User.destroy({ where: { id: testUser.id } });
     await Book.destroy({where: {id: testBook.id}});
   });
+
+  //MARK: - 독서 전 작성 테스트
   describe("patchReviewBefore test", async () => {
     it("success: patchReviewBefore returns reviewId correctly", async () => {
       const patchedReview: any =
@@ -45,15 +48,6 @@ describe("reviewService test", async () => {
     });
 
     it("fail: try to patch review which doesn't exist", async () => {
-      const nonExistentReview: any =
-        await reviewService.patchReviewBeforeController(
-          -50,
-          testUser.id,
-          testReview.answerOne,
-          testReview.answerTwo,
-          testReview.questionList,
-          3
-        );
       assert.strictEqual(
         await reviewService.patchReviewBeforeController(
           -50,
@@ -67,13 +61,15 @@ describe("reviewService test", async () => {
       );
     });
   });
+
+  // MARK: - 질문리스트 조회 테스트
   describe("getQuestionList test", async () => {
     it("success: getQuestionList returns question list correctly", async () => {
       const questionList: any = await reviewService.getQuestionService(
         testUser.id,
         testReview.id
       );
-      // 오 여기 그냥 strict로 하면 안됨 ㄷ ㄷ 정확히 먼 차이인지 찾아보자 ~
+      // TODO: - strictEqual Vs deepStrictEqual
       assert.deepStrictEqual(
         questionList.questionList,
         testReview.questionList
@@ -86,6 +82,8 @@ describe("reviewService test", async () => {
       );
     });
   });
+
+  // TODO: - 독서 중 작성 테스트
   describe("patchReviewNow test", async () => {
     it("success: patchReviewNow returns reviewId and bookData correctly", async () => {
       const testBookData = {
@@ -95,21 +93,26 @@ describe("reviewService test", async () => {
         translators: [],
         publicationDt: "",
       };
-
     });
   });
+
+  // MARK: - 독후감 조회 테스트
   describe("getReview test", async() => {
-    it("success: getReview returns review data correctly", async() => {
-      // 맘에 안들어
-      // 먼가 .. 책 정보 잘가져오는지도 알아야할 것 같은 .. 몰라 .. 샹 ..
+    it("success: getReview returns book title and review data correctly", async() => {
       const foundReview = await Review.findOne({where: {id: testReview.id}});
+      const foundBook = await Book.findOne({where: {id: foundReview.bookId}});
       assert.strictEqual(foundReview.userId, testUser.id);
+      assert.strictEqual(foundBook.title, testBook.title);
 });
     it("fail: try to get review which doesn't exist", async() => {
       assert.strictEqual(await reviewService.getReviewService(testUser.id, -50), constant.WRONG_REQUEST_VALUE);
     });
   });
+
+  // MARK: - 독서 완료 후 답변 수정 테스트
   describe("patchReview test", async () => {});
+
+  // MARK: - 리뷰 삭제 테스트
   describe("deleteReview test", async () => {
     it("success: deleteReview deletes review correctly", async () => {
       const testReviewId = testReview.id;
@@ -132,11 +135,6 @@ describe("reviewService test", async () => {
       const deletedReview: any = await Review.findOne({
         where: { id: testReview.id },
       });
-      // 존재하지 않는 review, 이미 삭제된 review 모호 ..
-      // 만약 이 두 경우를 나눌거라면 리뷰를 조회해오는 where에서
-      // "isDeleted: false" -> 여기는 빼야하지 않을까?
-
-      // 일단 두 경우 모두 WRONG_REQUEST로 빠지니까 글케 박아두자
       assert.strictEqual(
         await reviewService.deleteReviewService(testUser.id, deletedReview.id),
         constant.VALUE_ALREADY_DELETED

@@ -15,11 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isLogin = exports.auth = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
-// libraries
-const response_1 = __importDefault(require("../library/response"));
-const returnCode_1 = __importDefault(require("../library/returnCode"));
 // slack
 const slack_1 = __importDefault(require("../others/slack/slack"));
+// library
+const response_1 = __importDefault(require("../library/response"));
+const returnCode_1 = __importDefault(require("../library/returnCode"));
 // model
 const User_1 = __importDefault(require("../models/User"));
 const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

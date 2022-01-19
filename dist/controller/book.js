@@ -14,11 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // slack
 const slack_1 = __importDefault(require("../others/slack/slack"));
-// libraries
+// library
 const constant_1 = __importDefault(require("../library/constant"));
 const response_1 = __importDefault(require("../library/response"));
 const returnCode_1 = __importDefault(require("../library/returnCode"));
-// services
+// service
 const book_1 = __importDefault(require("../service/book"));
 /**
  *  @서재에 책 추가하기

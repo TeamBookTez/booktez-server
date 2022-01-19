@@ -13,9 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
-// libraries
+// library
 const constant_1 = __importDefault(require("../library/constant"));
-// models
+// model
 const models_1 = require("../models");
 /**
  *  @서재,리뷰에 책 추가하기

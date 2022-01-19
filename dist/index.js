@@ -21,7 +21,6 @@ app.use(express_1.default.urlencoded());
 app.use(express_1.default.json());
 // Port Host
 const PORT = parseInt(process.env.PORT, 10) || 3000 || 8080;
-const HOST = process.env.HOST || "localhost";
 // allow cors
 app.use((0, cors_1.default)({
     credentials: true,

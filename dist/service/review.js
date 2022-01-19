@@ -12,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// libraries
+// library
 const constant_1 = __importDefault(require("../library/constant"));
-// models
+// model
 const models_1 = require("../models");
 /**
  *  @독서중 독서 전 작성
@@ -209,7 +209,7 @@ const deleteReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void
     const user = yield models_1.User.findOne({ where: { id: userId, isDeleted: false } });
     // 해당 review 조회
     const review = yield models_1.Review.findOne({
-        where: { id: reviewId, userId: user.id, isDeleted: false },
+        where: { id: reviewId, userId: user.id },
     });
     // 2. 존재하지 않는 review
     if (!review) {

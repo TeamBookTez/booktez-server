@@ -14,11 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // slack
 const slack_1 = __importDefault(require("../others/slack/slack"));
-// libraries
+// library
 const constant_1 = __importDefault(require("../library/constant"));
 const response_1 = __importDefault(require("../library/response"));
 const returnCode_1 = __importDefault(require("../library/returnCode"));
-// services
+// service
 const auth_1 = __importDefault(require("../service/auth"));
 /**
  *  @이메일_유효성_검사
@@ -146,11 +146,29 @@ const postSignupController = (req, res) => __awaiter(void 0, void 0, void 0, fun
         return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
     }
 });
+/**
+ *  @로그인_여부_검사
+ *  @route GET /auth/check
+ *  @access public
+ *  @err
+ */
+const getLoginFlagController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield auth_1.default.getLoginFlagService(req.user ? true : false);
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "로그인 여부 확인 성공.", true, resData);
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
 const authController = {
     getEmailController,
     getNicknameController,
     postLoginController,
     postSignupController,
+    getLoginFlagController,
 };
 exports.default = authController;
 //# sourceMappingURL=auth.js.map

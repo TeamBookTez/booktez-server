@@ -19,7 +19,7 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const isEmail_1 = __importDefault(require("validator/lib/isEmail"));
 const constant_1 = __importDefault(require("../library/constant"));
 const checkValidation_1 = require("../library/checkValidation");
-// models
+// model
 const models_1 = require("../models");
 /**
  *  @이메일_유효성_검사
@@ -183,11 +183,21 @@ const postSignupService = (email, nickname, password) => __awaiter(void 0, void 
     });
     return token;
 });
+/**
+ *  @로그인_여부_검사
+ *  @route GET /auth/check
+ *  @access public
+ *  @err
+ */
+const getLoginFlagService = (isLogin) => __awaiter(void 0, void 0, void 0, function* () {
+    return { isLogin };
+});
 const authService = {
     getEmailService,
     getNicknameService,
     postLoginService,
     postSignupService,
+    getLoginFlagService,
 };
 exports.default = authService;
 //# sourceMappingURL=auth.js.map

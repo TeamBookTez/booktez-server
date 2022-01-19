@@ -8,7 +8,7 @@ const checkNicknameValid = (nickname) => {
     if (nickname.length < 2) {
         return false;
     }
-    if (nickname.length > 8) {
+    if (nickname.length > 10) {
         return false;
     }
     return true;

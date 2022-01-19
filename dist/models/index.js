@@ -12,13 +12,8 @@ const Book_1 = __importDefault(require("./Book"));
 exports.Book = Book_1.default;
 const Review_1 = __importDefault(require("./Review"));
 exports.Review = Review_1.default;
-const db = {};
 dotenv_1.default.config();
-exports.sequelize = new sequelize_typescript_1.Sequelize(
-// config.development.database,
-// config.development.username,
-// config.development.password,
-{
+exports.sequelize = new sequelize_typescript_1.Sequelize({
     host: process.env.DB_HOST || "localhost",
     database: process.env.DB_DB,
     dialect: "postgres",

@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // slack
 const slack_1 = __importDefault(require("../others/slack/slack"));
-// libraries
+// library
 const response_1 = __importDefault(require("../library/response"));
 const returnCode_1 = __importDefault(require("../library/returnCode"));
 const constant_1 = __importDefault(require("../library/constant"));

@@ -1,15 +1,18 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const axios = require("axios");
-const dotenv = require("dotenv");
-dotenv.config();
+const axios_1 = __importDefault(require("axios"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 // 슬랙 Webhook에서 발급받은 endpoint를 .env 파일에서 끌어옴
 // endpoint 자체는 깃허브에 올라가면 안 되기 때문!
 const DEV_WEB_HOOK_ERROR_MONITORING = process.env.DEV_WEB_HOOK_ERROR_MONITORING;
 const sendMessageToSlack = (message, apiEndPoint = DEV_WEB_HOOK_ERROR_MONITORING) => {
     // 슬랙 Webhook을 이용해 슬랙에 메시지를 보내는 코드
     try {
-        axios
+        axios_1.default
             .post(apiEndPoint, { text: message })
             .then((response) => { })
             .catch((e) => {
@@ -22,11 +25,6 @@ const sendMessageToSlack = (message, apiEndPoint = DEV_WEB_HOOK_ERROR_MONITORING
         // 콘솔에 에러를 찍는 코드
     }
 };
-// 이 파일에서 정의한 변수 / 함수를 export 해서, 다른 곳에서 사용할 수 있게 해주는 코드
-// module.exports = {
-//   sendMessageToSlack,
-//   DEV_WEB_HOOK_ERROR_MONITORING,
-// };
 const slackAPI = {
     sendMessageToSlack,
     DEV_WEB_HOOK_ERROR_MONITORING,

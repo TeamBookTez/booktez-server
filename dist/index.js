@@ -26,7 +26,9 @@ app.use((0, cors_1.default)({
     credentials: true,
     origin: [
         "http://localhost:3000",
-        //"북테즈 도메인",
+        "https://dev.book-stairs.com",
+        "https://api.book-stairs.com",
+        "https://book-stairs.com"
     ],
 }));
 // route

@@ -61,12 +61,12 @@ SOPT 29th APPJAM
 ```
 <br/>
 
-# Git 전략
+# 🌲 Git 전략
 ![gitbranch](https://user-images.githubusercontent.com/61549796/150546516-a52e8b8a-3a74-48a7-b4ca-494596bef4a2.png)
 
 <br/>
 
-# 아키텍쳐
+# 🏗 아키텍쳐
 ![architecture](https://user-images.githubusercontent.com/61549796/150546699-4c44489a-709c-48f9-8821-7b178aee74b9.png)
 
 <br/>

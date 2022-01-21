@@ -28,6 +28,8 @@ const postBookService = async (
     return constant.NULL_VALUE;
   }
 
+  isbn = isbn.trim();
+
   if (!isLogin) {
     return constant.ANONYMOUS_USER;
   }

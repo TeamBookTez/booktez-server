@@ -2,7 +2,7 @@ name: SERVER distribute
 
 on:
   push:
-    branches: [ develop ]
+    branches: [develop]
 
 jobs:
   build:
@@ -20,4 +20,4 @@ jobs:
             cd booktez-server
             sudo git pull origin develop
             sudo npm install
-            pm2 restart 0
+            sudo npx pm2 restart 0

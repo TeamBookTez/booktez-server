@@ -29,6 +29,7 @@ const postBookService = (isLogin, userId, isbn, thumbnail, title, author, transl
     if (!isbn || !title || !author || !translator || !publicationDate) {
         return constant_1.default.NULL_VALUE;
     }
+    isbn = isbn.trim();
     if (!isLogin) {
         return constant_1.default.ANONYMOUS_USER;
     }

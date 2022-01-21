@@ -23,6 +23,12 @@ SOPT 29th APPJAM
 
 <br/>
 
+# 🐉 워크플로우
+
+![워크플로우](https://user-images.githubusercontent.com/61549796/150529139-ece76c3d-dd7d-4f6e-bde0-6067adb67e72.png)
+
+<br />
+
 # 🛠 기술 스택
 
 
@@ -31,6 +37,8 @@ SOPT 29th APPJAM
 
 ```json
 "dependencies": {
+  "@types/express-serve-static-core": "^4.17.28",
+  "aws-sdk": "^2.1057.0",
   "axios": "^0.24.0",
   "bcryptjs": "^2.4.3",
   "cors": "^2.8.5",
@@ -46,53 +54,77 @@ SOPT 29th APPJAM
   "pg-hstore": "^2.3.4",
   "reflect-metadata": "^0.1.13",
   "request": "^2.88.2",
-  "sequelize": "^6.12.5",
+  "sequelize": "^6.13.0",
   "sequelize-cli": "^6.3.0",
   "sequelize-typescript": "^2.1.0"
 }
 ```
 <br/>
 
+# Git 전략
+![gitbranch](https://user-images.githubusercontent.com/61549796/150546516-a52e8b8a-3a74-48a7-b4ca-494596bef4a2.png)
+
+<br/>
+
+# 아키텍쳐
+![architecture](https://user-images.githubusercontent.com/61549796/150546699-4c44489a-709c-48f9-8821-7b178aee74b9.png)
+
+<br/>
+
 # 🗂 프로젝트 폴더 구조
 ```
-📦 Back-end
-┣ 📂 src
-┃ ┣ 📂 config
-┃ ┃ ┣ 📜 config.ts
-┃ ┃ ┗ 📜 index.ts
-┃ ┣ 📂 controller
-┃ ┃ ┗ 📜 auth.ts
-┃ ┣ 📂 library
-┃ ┃ ┣ 📜 constant.ts
-┃ ┃ ┣ 📜 response.ts
-┃ ┃ ┗ 📜 returnCode.ts
-┃ ┣ 📂 models
-┃ ┃ ┣ 📜 Book.ts
-┃ ┃ ┣ 📜 index.ts
-┃ ┃ ┣ 📜 Review.ts
-┃ ┃ ┗ 📜 User.ts
-┃ ┣ 📂 others
-┃ ┃ ┣ 📂 slack
-┃ ┃ ┃ ┣ 📜 sampleEndpoint.ts
-┃ ┃ ┃ ┣ 📜 slack.ts
-┃ ┃ ┃ ┗ 📜 slackAPI.ts
-┃ ┣ 📂 router
-┃ ┃ ┣ 📜 index.ts
-┃ ┃ ┗ 📜 auth.ts
-┃ ┣ 📂service
-┃ ┃ ┗ 📜 auth.ts
-┃ ┗ 📜index.ts
-┣ 📜 .gitignore
-┣ 📜 nodemon.json
-┣ 📜 package.json
-┣ 📜 prettierrc.json
-┣ 📜 README.md
-┗ 📜 tsconfig.json
+📦src
+ ┣ 📂config
+ ┃ ┣ 📜config.ts
+ ┃ ┗ 📜index.ts
+ ┣ 📂controller
+ ┃ ┣ 📜auth.ts
+ ┃ ┣ 📜book.ts
+ ┃ ┣ 📜review.ts
+ ┃ ┗ 📜user.ts
+ ┣ 📂library
+ ┃ ┣ 📜checkValidation.ts
+ ┃ ┣ 📜constant.ts
+ ┃ ┣ 📜response.ts
+ ┃ ┗ 📜returnCode.ts
+ ┣ 📂middleware
+ ┃ ┣ 📜authMiddleware.ts
+ ┃ ┗ 📜upload.ts
+ ┣ 📂models
+ ┃ ┣ 📜Book.ts
+ ┃ ┣ 📜Review.ts
+ ┃ ┣ 📜User.ts
+ ┃ ┗ 📜index.ts
+ ┣ 📂others
+ ┃ ┗ 📂slack
+ ┃ ┃ ┣ 📜slack.ts
+ ┃ ┃ ┗ 📜slackAPI.ts
+ ┣ 📂router
+ ┃ ┣ 📜auth.ts
+ ┃ ┣ 📜book.ts
+ ┃ ┣ 📜index.ts
+ ┃ ┣ 📜review.ts
+ ┃ ┗ 📜user.ts
+ ┣ 📂service
+ ┃ ┣ 📜auth.ts
+ ┃ ┣ 📜book.ts
+ ┃ ┣ 📜review.ts
+ ┃ ┗ 📜user.ts
+ ┣ 📂test
+ ┃ ┣ 📂library
+ ┃ ┃ ┗ 📜checkValidation.spec.ts
+ ┃ ┗ 📂service
+ ┃ ┃ ┣ 📜auth.spec.ts
+ ┃ ┃ ┣ 📜book.spec.ts
+ ┃ ┃ ┣ 📜review.spec.ts
+ ┃ ┃ ┗ 📜user.spec.ts
+ ┣ 📜.sequelizerc.ts
+ ┗ 📜index.ts
 ```
 <br/>
 
 # 🪜 ERD
-<img width="652" alt="스크린샷 2022-01-12 오전 3 06 30" src="https://user-images.githubusercontent.com/68222629/148997682-050bd9da-4942-41a8-b53b-b6df2685dcc3.png">
+![image](https://user-images.githubusercontent.com/68222629/150541524-3583fe28-fd09-4e4b-813f-37fb0c37e99d.png)
 
 <br/>
 
@@ -115,4 +147,27 @@ SOPT 29th APPJAM
 | :---: | :---: | :---: |
 | [![FVCproductions](https://avatars.githubusercontent.com/u/64517473?v=4)]()    | [![FVCproductions](https://avatars.githubusercontent.com/u/61549796?v=4)]() |[![FVCproductions](https://avatars.githubusercontent.com/u/68222629?v=4)]() |
 | 서버 개발자 | 서버 개발자 | 서버 개발자 |
- 프로젝트 세팅<br /> DB 설계|프로젝트 세팅<br /> DB 설계|프로젝트 세팅<br /> DB 설계|
+ 프로젝트 세팅<br />웹 배포<br />서버 배포<br />DB 설계|테스팅<br />서버 배포<br />DB 설계|디버깅<br />웹 배포<br />서버 배포<br />DB 설계|
+
+<br/>
+
+
+|            Route            |                       URI                       | HTTP<br>메서드 |               설명                | 담당 | 완료 |
+| :------------------------: | :--------------------------------------------- | :------------: | :-------------------------------: | :--: | :--: |
+|    Auth     |                  /auth/email/?email=                   |      `GET`      |           이메일 유효성 검사           | 동근 |  🧐  |
+|                            |                   /auth/nickname/?nickname=                   |      `GET`      |            닉네임 유효성 검사            | 서현 |  🧐  |
+|                            |                   /auth/login                   |      `POST`       |         유저 로그인          | 서현 |  🧐  |
+|                 |                  /auth/signup                   |      `POST`       |     회원가입      | 동근 |  🧐  |
+|                    |                /auth/check                |      `GET`       | 로그인 여부 판별  | 서현 |  🧐  |
+|            User            |                    /user/myInfo                     |      `GET`      |           내 정보 조회           | 서현 |  🧐  |
+|                            |            /user/img            |      `PATCH`      |     프로필 사진 수정     | 서현 |  🧐  |
+|              Book           |                 /book                 |      `POST`      |  서재 / 리뷰에 책 추가하기   | 동근 |  🧐  |
+|                            |            /book             |      `GET`       | 서재 책 전체 조회  | 동근 |  🧐  |
+|               Review             |                 /review/before/:reviewId                 |      `PATCH`      |       독서 전 단계        | 성용 |  🧐  |
+|                            |               /review/:reviewId/question-list               |      `GET`       |       질문 리스트 조회        | 성용 |  🧐  |
+|                            |               /review/now/:reviewId               |     `PATCH`     |        독서 중 단계         | 성용 |  🧐  |
+|                   |                /review/:reviewId                 |      `GET`       |   리뷰 조회   | 서현 |  🧐  |
+|                            |                     /review/:reviewId                     |      `PATCH`      |          리뷰 수정           | 동근 |  🧐  |
+|  |              /review/:reviewId              |      `DELETE`       |       리뷰 삭제        | 성용 |  🧐  |
+
+<br />

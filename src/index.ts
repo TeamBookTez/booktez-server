@@ -19,7 +19,7 @@ app.use(
       "http://localhost:3000",
       "https://dev.book-stairs.com",
       "https://api.book-stairs.com",
-      "https://book-stairs.com"
+      "https://book-stairs.com",
     ],
   })
 );
@@ -42,9 +42,9 @@ const server = app
   .listen(PORT, () => {
     console.log(
       `
-    ################################################
+    ##############################################
     🛡️  Server listening on port: ${PORT} 🛡️
-    ################################################
+    ##############################################
   `
     );
 

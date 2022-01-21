@@ -28,7 +28,7 @@ app.use((0, cors_1.default)({
         "http://localhost:3000",
         "https://dev.book-stairs.com",
         "https://api.book-stairs.com",
-        "https://book-stairs.com"
+        "https://book-stairs.com",
     ],
 }));
 // route
@@ -45,9 +45,9 @@ app.use(function (err, req, res, next) {
 const server = app
     .listen(PORT, () => {
     console.log(`
-    ################################################
+    ##############################################
     🛡️  Server listening on port: ${PORT} 🛡️
-    ################################################
+    ##############################################
   `);
     // 시퀄라이즈 연결
     models_1.sequelize

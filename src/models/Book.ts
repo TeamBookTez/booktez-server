@@ -48,9 +48,7 @@ export default class Book extends Model {
   translator: string[];
 
   @AllowNull(false)
-  @Default(
-    "https://bookstairs-bucket.s3.ap-northeast-2.amazonaws.com/defaultProfile.png"
-  )
+  @Default(process.env.DEFAULT_BOOK_IMG)
   @Column
   thumbnail: string;
 

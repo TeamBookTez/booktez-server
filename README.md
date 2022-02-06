@@ -156,6 +156,7 @@ SOPT 29th APPJAM
 
 <br/>
 
+
 # 📄 API
 
 | Route  | URI                             | HTTP<br>메서드 |           설명            | 담당 | 완료 |

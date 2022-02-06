@@ -175,3 +175,9 @@ SOPT 29th APPJAM
 |        | /review/:reviewId               |    `DELETE`    |         리뷰 삭제         | 성용 |  🧐  |
 
 <br />
+
+<br/>
+
+| Version | Content         | Detail |    Date    |
+| :-----: | :-------------- | :----: | :--------: |
+|  1.0.0  | initial version |  link  | 2022.02.06 |

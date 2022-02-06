@@ -2,7 +2,7 @@ name: SERVER distribute
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
 
 jobs:
   build:
@@ -18,6 +18,6 @@ jobs:
           port: ${{ secrets.REMOTE_SSH_PORT }}
           script: |
             cd booktez-server
-            sudo git pull origin develop
+            sudo git pull origin main
             sudo npm install
             sudo npx pm2 restart 0

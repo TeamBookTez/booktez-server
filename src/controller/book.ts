@@ -67,7 +67,7 @@ const postBookController = async (req: Request, res: Response) => {
       returnCode.OK,
       true,
       "책 선택이 완료되었습니다.",
-      { isLogin: resData }
+      resData
     );
   } catch (err) {
     slack.slackWebhook(req, err.message);

@@ -177,11 +177,47 @@ const getBookPreService = async (userId: number) => {
   return { books: books };
 };
 
+/**
+ *  @서재 독서중 책 조회
+ *  @route GET /book/peri
+ *  @access private
+ */
+const getBookPeriService = async (userId: number) => {
+  let books = [];
+  await Review.findAll({
+    attributes: ["id", "reviewSt"],
+    include: [
+      {
+        model: Book,
+        attributes: ["title", "author", "thumbnail"],
+      },
+    ],
+    where: {
+      userId,
+      reviewSt: 3,
+      isDeleted: false,
+    },
+    order: [["updatedAt", "DESC"]],
+  }).then((reviews) =>
+    reviews.forEach((review) => {
+      books.push({
+        reviewId: review.id,
+        thumbnail: review.book.thumbnail,
+        title: review.book.title,
+        author: review.book.author,
+        reviewSt: review.reviewSt,
+      });
+    })
+  );
+
+  return { books: books };
+};
+
 const bookService = {
   postBookService,
   getBookService,
   getBookPreService,
-  // getBookPeriService,
+  getBookPeriService,
   // getBookPostService,
 };
 

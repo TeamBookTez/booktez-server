@@ -169,7 +169,7 @@ const getBookPeriController = async (req: Request, res: Response) => {
  */
 const getBookPostController = async (req: Request, res: Response) => {
   try {
-    const resData = await bookService.getBookPostService(req.user.id);
+    const resData = await bookService.getBookService(req.user.id);
     return response.dataResponse(
       res,
       returnCode.OK,

@@ -133,7 +133,43 @@ const getBookService = async (userId: number) => {
         thumbnail: review.book.thumbnail,
         title: review.book.title,
         author: review.book.author,
-        state: review.reviewSt,
+        reviewSt: review.reviewSt,
+      });
+    })
+  );
+
+  return { books: books };
+};
+
+/**
+ *  @서재  독서전 책 조회
+ *  @route GET /book/pre
+ *  @access private
+ */
+const getBookPreService = async (userId: number) => {
+  let books = [];
+  await Review.findAll({
+    attributes: ["id", "reviewSt"],
+    include: [
+      {
+        model: Book,
+        attributes: ["title", "author", "thumbnail"],
+      },
+    ],
+    where: {
+      userId,
+      reviewSt: 2,
+      isDeleted: false,
+    },
+    order: [["updatedAt", "DESC"]],
+  }).then((reviews) =>
+    reviews.forEach((review) => {
+      books.push({
+        reviewId: review.id,
+        thumbnail: review.book.thumbnail,
+        title: review.book.title,
+        author: review.book.author,
+        reviewSt: review.reviewSt,
       });
     })
   );
@@ -144,6 +180,9 @@ const getBookService = async (userId: number) => {
 const bookService = {
   postBookService,
   getBookService,
+  getBookPreService,
+  // getBookPeriService,
+  // getBookPostService,
 };
 
 export default bookService;

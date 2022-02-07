@@ -92,8 +92,8 @@ const getBookController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
-      true,
       "서재 조회 성공",
+      true,
       resData
     );
   } catch (err) {
@@ -119,8 +119,8 @@ const getBookPreController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
-      true,
       "독서전 서재 조회 성공",
+      true,
       resData
     );
   } catch (err) {
@@ -146,8 +146,8 @@ const getBookPeriController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
-      true,
       "독서중 서재 조회 성공",
+      true,
       resData
     );
   } catch (err) {
@@ -173,8 +173,8 @@ const getBookPostController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
-      true,
       "독서완료 서재 조회 성공",
+      true,
       resData
     );
   } catch (err) {

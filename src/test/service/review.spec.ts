@@ -40,21 +40,20 @@ describe("reviewService test", async () => {
   //MARK: - 독서 전 작성 테스트
   describe("patchReviewBefore test", async () => {
     it("success: patchReviewBefore returns reviewId correctly", async () => {
-      const patchedReview: any =
-        await reviewService.patchReviewBeforeController(
-          testReview.id,
-          testUser.id,
-          testReview.answerOne,
-          testReview.answerTwo,
-          testReview.questionList,
-          3
-        );
+      const patchedReview: any = await reviewService.patchReviewPreService(
+        testReview.id,
+        testUser.id,
+        testReview.answerOne,
+        testReview.answerTwo,
+        testReview.questionList,
+        3
+      );
       assert.ok(patchedReview.reviewId === testReview.id);
     });
 
     it("fail: try to patch review which doesn't exist", async () => {
       assert.strictEqual(
-        await reviewService.patchReviewBeforeController(
+        await reviewService.patchReviewPreService(
           -50,
           testUser.id,
           testReview.answerOne,
@@ -158,7 +157,7 @@ describe("reviewService test", async () => {
           },
         ],
       };
-      await reviewService.patchReviewNowService(
+      await reviewService.patchReviewPeriService(
         testReview.id,
         testReview.userId,
         answerThree,
@@ -173,7 +172,7 @@ describe("reviewService test", async () => {
     });
     it("fail: return null when arguments are null", async () => {
       assert.strictEqual(
-        await reviewService.patchReviewNowService(
+        await reviewService.patchReviewPeriService(
           testReview.id,
           testReview.userId,
           null,
@@ -184,7 +183,7 @@ describe("reviewService test", async () => {
     });
     it("fail: return wrong request value when request wrong", async () => {
       assert.strictEqual(
-        await reviewService.patchReviewNowService(
+        await reviewService.patchReviewPeriService(
           -100,
           testReview.userId,
           { test: "hi" },

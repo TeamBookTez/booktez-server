@@ -28,6 +28,12 @@ router.patch("/now/:reviewId", auth, reviewController.patchReviewNowController);
 // 독후감 조회
 router.get("/:reviewId", auth, reviewController.getReviewController);
 
+// 독후감 전단계 조회
+router.get("/:reviewId/pre", auth, reviewController.getPreReviewController);
+
+// 독후감 중단계 조회
+router.get("/:reviewId/peri", auth, reviewController.getPeriReviewController);
+
 // 독서 후 수정
 router.patch("/:reviewId", auth, reviewController.patchReviewController);
 

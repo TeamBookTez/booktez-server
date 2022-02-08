@@ -226,6 +226,110 @@ const getReviewController = async (req: Request, res: Response) => {
 };
 
 /**
+ *  @독후감_전단계_조회하기
+ *  @route GET /review/:reviewId/pre
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getPreReviewController = async (req: Request, res: Response) => {
+  try {
+    const resData = await reviewService.getPreReviewService(
+      Number(req.user.id),
+      Number(req.params.reviewId)
+    );
+
+    if (resData === constant.NULL_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    }
+
+    if (resData === constant.WRONG_REQUEST_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "존재하지 않는 Review입니다."
+      );
+    }
+
+    return response.dataResponse(
+      res,
+      returnCode.OK,
+      "독후감 전단계 조회 성공.",
+      true,
+      resData
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
+ *  @독후감_중단계_조회하기
+ *  @route GET /review/:reviewId/peri
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getPeriReviewController = async (req: Request, res: Response) => {
+  try {
+    const resData = await reviewService.getPeriReviewService(
+      Number(req.user.id),
+      Number(req.params.reviewId)
+    );
+
+    if (resData === constant.NULL_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    }
+
+    if (resData === constant.WRONG_REQUEST_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "존재하지 않는 Review입니다."
+      );
+    }
+
+    return response.dataResponse(
+      res,
+      returnCode.OK,
+      "독후감 중단계 조회 성공.",
+      true,
+      resData
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
  *  @독서 완료 후 답변 수정
  *  @route PATCH /review/:reviewId
  *  @access private
@@ -344,6 +448,8 @@ const reviewController = {
   getQuestionController,
   patchReviewNowController,
   getReviewController,
+  getPreReviewController,
+  getPeriReviewController,
   patchReviewController,
   deleteReviewController,
 };

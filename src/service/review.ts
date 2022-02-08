@@ -6,13 +6,13 @@ import { User, Book, Review } from "../models";
 
 /**
  *  @독서중 독서 전 작성
- *  @route PATCH /review/before/:reviewId
+ *  @route PATCH /review/:reviewId/pre
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewBeforeController = async (
+const patchReviewPreService = async (
   reviewId: number,
   userId: number,
   answerOne: string,
@@ -92,13 +92,13 @@ const getQuestionService = async (userId: number, reviewId: number) => {
 /**
 
  *  @독서중 독서 중 작성
- *  @route PATCH /review/now/:reviewId
+ *  @route PATCH /review/:reviewId/peri
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewNowService = async (
+const patchReviewPeriService = async (
   reviewId: number,
   userId: number,
   answerThree: object,
@@ -273,9 +273,9 @@ const deleteReviewService = async (userId: number, reviewId: number) => {
 };
 
 const reviewService = {
-  patchReviewBeforeController,
+  patchReviewPreService,
   getQuestionService,
-  patchReviewNowService,
+  patchReviewPeriService,
   getReviewService,
   patchReviewService,
   deleteReviewService,

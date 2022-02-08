@@ -19,9 +19,9 @@ import reviewService from "../service/review";
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewBeforeController = async (req: Request, res: Response) => {
+const patchReviewPreController = async (req: Request, res: Response) => {
   try {
-    const resData = await reviewService.patchReviewBeforeController(
+    const resData = await reviewService.patchReviewPreService(
       Number(req.params.reviewId),
       req.user.id,
       req.body.answerOne,
@@ -127,9 +127,9 @@ const getQuestionController = async (req: Request, res: Response) => {
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewNowController = async (req: Request, res: Response) => {
+const patchReviewPeriController = async (req: Request, res: Response) => {
   try {
-    const resData = await reviewService.patchReviewNowService(
+    const resData = await reviewService.patchReviewPeriService(
       Number(req.params.reviewId),
       req.user.id,
       req.body.answerThree,
@@ -340,9 +340,9 @@ const deleteReviewController = async (req: Request, res: Response) => {
 };
 
 const reviewController = {
-  patchReviewBeforeController,
+  patchReviewPreController,
   getQuestionController,
-  patchReviewNowController,
+  patchReviewPeriController,
   getReviewController,
   patchReviewController,
   deleteReviewController,

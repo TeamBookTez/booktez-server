@@ -6,27 +6,30 @@ import { User, Book, Review } from "../models";
 
 /**
  *  @독서중 독서 전 작성
- *  @route PATCH /review/before/:reviewId
+ *  @route PATCH /review/:reviewId/pre
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewBeforeController = async (
+const patchReviewPreService = async (
   reviewId: number,
   userId: number,
   answerOne: string,
   answerTwo: string,
   questionList: string[],
-  progress: number
+  reviewSt: number
 ) => {
   if (
     !reviewId ||
     !userId ||
-    !answerOne ||
-    !answerTwo ||
-    !questionList ||
-    !progress
+    answerOne === undefined ||
+    answerOne === null ||
+    answerTwo === undefined ||
+    answerTwo === null ||
+    questionList === undefined ||
+    questionList === null ||
+    !reviewSt
   ) {
     return constant.NULL_VALUE;
   }
@@ -49,7 +52,7 @@ const patchReviewBeforeController = async (
     questionList,
     answerOne,
     answerTwo,
-    reviewSt: progress,
+    reviewSt,
     finishSt: false,
   });
 
@@ -92,19 +95,25 @@ const getQuestionService = async (userId: number, reviewId: number) => {
 /**
 
  *  @독서중 독서 중 작성
- *  @route PATCH /review/now/:reviewId
+ *  @route PATCH /review/:reviewId/peri
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewNowService = async (
+const patchReviewPeriService = async (
   reviewId: number,
   userId: number,
   answerThree: object,
-  progress: number
+  reviewSt: number
 ) => {
-  if (!reviewId || !userId || !answerThree || !progress) {
+  if (
+    !reviewId ||
+    !userId ||
+    answerThree === undefined ||
+    answerThree === null ||
+    !reviewSt
+  ) {
     return constant.NULL_VALUE;
   }
 
@@ -121,12 +130,12 @@ const patchReviewNowService = async (
     return constant.WRONG_REQUEST_VALUE;
   }
 
-  let finishSt = Number(progress) === 4 ? true : false;
+  let finishSt = Number(reviewSt) === 4 ? true : false;
 
   // 3. review update
   await review.update({
     answerThree,
-    reviewSt: progress,
+    reviewSt,
     finishSt,
   });
 
@@ -141,8 +150,8 @@ const patchReviewNowService = async (
     bookData: {
       thumbnail: book.thumbnail,
       title: book.title,
-      authors: book.author,
-      translators: book.translator,
+      author: book.author,
+      translator: book.translator,
       publicationDt: book.publicationDt,
     },
   };
@@ -184,8 +193,76 @@ const getReviewService = async (userId: number, reviewId: number) => {
     answerTwo: reviewToShow.answerTwo,
     questionList: reviewToShow.questionList,
     answerThree: reviewToShow.answerThree,
-    reviewState: reviewToShow.reviewSt,
-    finishState: reviewToShow.finishSt,
+    reviewSt: reviewToShow.reviewSt,
+    finishSt: reviewToShow.finishSt,
+  };
+};
+
+/**
+ *  @독후감_전단계_조회하기
+ *  @route GET /review/:reviewId/pre
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewPreService = async (userId: number, reviewId: number) => {
+  // 필요한 값이 없을 때
+  if (!userId || !reviewId) {
+    return constant.NULL_VALUE;
+  }
+  const reviewToShow = await Review.findOne({
+    where: {
+      id: reviewId,
+      userId,
+      isDeleted: false,
+    },
+  });
+
+  // 존재하지 않는 리뷰일 때
+  if (!reviewToShow) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
+  return {
+    answerOne: reviewToShow.answerOne,
+    answerTwo: reviewToShow.answerTwo,
+    questionList: reviewToShow.questionList,
+    reviewSt: reviewToShow.reviewSt,
+    finishSt: reviewToShow.finishSt,
+  };
+};
+
+/**
+ *  @독후감_중단계_조회하기
+ *  @route GET /review/:reviewId/peri
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewPeriService = async (userId: number, reviewId: number) => {
+  // 필요한 값이 없을 때
+  if (!userId || !reviewId) {
+    return constant.NULL_VALUE;
+  }
+  const reviewToShow = await Review.findOne({
+    where: {
+      id: reviewId,
+      userId,
+      isDeleted: false,
+    },
+  });
+
+  // 존재하지 않는 리뷰일 때
+  if (!reviewToShow) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
+  return {
+    answerThree: reviewToShow.answerThree,
+    reviewSt: reviewToShow.reviewSt,
+    finishSt: reviewToShow.finishSt,
   };
 };
 
@@ -203,7 +280,15 @@ const patchReviewService = async (
   answerTwo: string,
   answerThree: object
 ) => {
-  if (!reviewId || !answerOne || !answerTwo || !answerThree) {
+  if (
+    !reviewId ||
+    answerOne === undefined ||
+    answerOne === null ||
+    answerTwo === undefined ||
+    answerTwo === null ||
+    answerThree === undefined ||
+    answerThree === null
+  ) {
     return constant.NULL_VALUE;
   }
 
@@ -273,10 +358,12 @@ const deleteReviewService = async (userId: number, reviewId: number) => {
 };
 
 const reviewService = {
-  patchReviewBeforeController,
+  patchReviewPreService,
   getQuestionService,
-  patchReviewNowService,
+  patchReviewPeriService,
   getReviewService,
+  getReviewPreService,
+  getReviewPeriService,
   patchReviewService,
   deleteReviewService,
 };

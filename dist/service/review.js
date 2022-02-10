@@ -18,19 +18,22 @@ const constant_1 = __importDefault(require("../library/constant"));
 const models_1 = require("../models");
 /**
  *  @독서중 독서 전 작성
- *  @route PATCH /review/before/:reviewId
+ *  @route PATCH /review/:reviewId/pre
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewBeforeController = (reviewId, userId, answerOne, answerTwo, questionList, progress) => __awaiter(void 0, void 0, void 0, function* () {
+const patchReviewPreService = (reviewId, userId, answerOne, answerTwo, questionList, reviewSt) => __awaiter(void 0, void 0, void 0, function* () {
     if (!reviewId ||
         !userId ||
-        !answerOne ||
-        !answerTwo ||
-        !questionList ||
-        !progress) {
+        answerOne === undefined ||
+        answerOne === null ||
+        answerTwo === undefined ||
+        answerTwo === null ||
+        questionList === undefined ||
+        questionList === null ||
+        !reviewSt) {
         return constant_1.default.NULL_VALUE;
     }
     // review 체크
@@ -49,7 +52,7 @@ const patchReviewBeforeController = (reviewId, userId, answerOne, answerTwo, que
         questionList,
         answerOne,
         answerTwo,
-        reviewSt: progress,
+        reviewSt,
         finishSt: false,
     });
     yield review.save();
@@ -85,14 +88,18 @@ const getQuestionService = (userId, reviewId) => __awaiter(void 0, void 0, void 
 /**
 
  *  @독서중 독서 중 작성
- *  @route PATCH /review/now/:reviewId
+ *  @route PATCH /review/:reviewId/peri
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewNowService = (reviewId, userId, answerThree, progress) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!reviewId || !userId || !answerThree || !progress) {
+const patchReviewPeriService = (reviewId, userId, answerThree, reviewSt) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!reviewId ||
+        !userId ||
+        answerThree === undefined ||
+        answerThree === null ||
+        !reviewSt) {
         return constant_1.default.NULL_VALUE;
     }
     // user 확인
@@ -105,11 +112,11 @@ const patchReviewNowService = (reviewId, userId, answerThree, progress) => __awa
     if (!review) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
-    let finishSt = Number(progress) === 4 ? true : false;
+    let finishSt = Number(reviewSt) === 4 ? true : false;
     // 3. review update
     yield review.update({
         answerThree,
-        reviewSt: progress,
+        reviewSt,
         finishSt,
     });
     // 변경 리뷰 저장
@@ -121,8 +128,8 @@ const patchReviewNowService = (reviewId, userId, answerThree, progress) => __awa
         bookData: {
             thumbnail: book.thumbnail,
             title: book.title,
-            authors: book.author,
-            translators: book.translator,
+            author: book.author,
+            translator: book.translator,
             publicationDt: book.publicationDt,
         },
     };
@@ -160,8 +167,70 @@ const getReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void 0,
         answerTwo: reviewToShow.answerTwo,
         questionList: reviewToShow.questionList,
         answerThree: reviewToShow.answerThree,
-        reviewState: reviewToShow.reviewSt,
-        finishState: reviewToShow.finishSt,
+        reviewSt: reviewToShow.reviewSt,
+        finishSt: reviewToShow.finishSt,
+    };
+});
+/**
+ *  @독후감_전단계_조회하기
+ *  @route GET /review/:reviewId/pre
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewPreService = (userId, reviewId) => __awaiter(void 0, void 0, void 0, function* () {
+    // 필요한 값이 없을 때
+    if (!userId || !reviewId) {
+        return constant_1.default.NULL_VALUE;
+    }
+    const reviewToShow = yield models_1.Review.findOne({
+        where: {
+            id: reviewId,
+            userId,
+            isDeleted: false,
+        },
+    });
+    // 존재하지 않는 리뷰일 때
+    if (!reviewToShow) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
+    return {
+        answerOne: reviewToShow.answerOne,
+        answerTwo: reviewToShow.answerTwo,
+        questionList: reviewToShow.questionList,
+        reviewSt: reviewToShow.reviewSt,
+        finishSt: reviewToShow.finishSt,
+    };
+});
+/**
+ *  @독후감_중단계_조회하기
+ *  @route GET /review/:reviewId/peri
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewPeriService = (userId, reviewId) => __awaiter(void 0, void 0, void 0, function* () {
+    // 필요한 값이 없을 때
+    if (!userId || !reviewId) {
+        return constant_1.default.NULL_VALUE;
+    }
+    const reviewToShow = yield models_1.Review.findOne({
+        where: {
+            id: reviewId,
+            userId,
+            isDeleted: false,
+        },
+    });
+    // 존재하지 않는 리뷰일 때
+    if (!reviewToShow) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
+    return {
+        answerThree: reviewToShow.answerThree,
+        reviewSt: reviewToShow.reviewSt,
+        finishSt: reviewToShow.finishSt,
     };
 });
 /**
@@ -173,7 +242,13 @@ const getReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void 0,
  *      2. 리뷰가 존재하지 않을 때
  */
 const patchReviewService = (reviewId, answerOne, answerTwo, answerThree) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!reviewId || !answerOne || !answerTwo || !answerThree) {
+    if (!reviewId ||
+        answerOne === undefined ||
+        answerOne === null ||
+        answerTwo === undefined ||
+        answerTwo === null ||
+        answerThree === undefined ||
+        answerThree === null) {
         return constant_1.default.NULL_VALUE;
     }
     const reviewToChange = yield models_1.Review.findOne({
@@ -228,10 +303,12 @@ const deleteReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void
     return constant_1.default.SUCCESS;
 });
 const reviewService = {
-    patchReviewBeforeController,
+    patchReviewPreService,
     getQuestionService,
-    patchReviewNowService,
+    patchReviewPeriService,
     getReviewService,
+    getReviewPreService,
+    getReviewPeriService,
     patchReviewService,
     deleteReviewService,
 };

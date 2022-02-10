@@ -13,21 +13,21 @@ import reviewService from "../service/review";
 
 /**
  *  @독서중 독서 전 작성
- *  @route PATCH /review/before/:reviewId
+ *  @route PATCH /review/:reviewId/pre
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewBeforeController = async (req: Request, res: Response) => {
+const patchReviewPreController = async (req: Request, res: Response) => {
   try {
-    const resData = await reviewService.patchReviewBeforeController(
+    const resData = await reviewService.patchReviewPreService(
       Number(req.params.reviewId),
       req.user.id,
       req.body.answerOne,
       req.body.answerTwo,
       req.body.questionList,
-      req.body.progress
+      req.body.reviewSt
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -51,8 +51,8 @@ const patchReviewBeforeController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
+      "작성/수정이 완료되었습니다.",
       true,
-      "수정이 완료되었습니다.",
       resData
     );
   } catch (err) {
@@ -121,19 +121,19 @@ const getQuestionController = async (req: Request, res: Response) => {
 
 /**
  *  @독서중 독서 중 작성
- *  @route PATCH /review/now/:reviewId
+ *  @route PATCH /review/:reviewId/peri
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewNowController = async (req: Request, res: Response) => {
+const patchReviewPeriController = async (req: Request, res: Response) => {
   try {
-    const resData = await reviewService.patchReviewNowService(
+    const resData = await reviewService.patchReviewPeriService(
       Number(req.params.reviewId),
       req.user.id,
       req.body.answerThree,
-      req.body.progress
+      req.body.reviewSt
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -157,8 +157,8 @@ const patchReviewNowController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
+      "작성/수정이 완료되었습니다.",
       true,
-      "작성이 완료되었습니다.",
       resData
     );
   } catch (err) {
@@ -210,6 +210,110 @@ const getReviewController = async (req: Request, res: Response) => {
       res,
       returnCode.OK,
       "독후감 조회 성공.",
+      true,
+      resData
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
+ *  @독후감_전단계_조회하기
+ *  @route GET /review/:reviewId/pre
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewPreController = async (req: Request, res: Response) => {
+  try {
+    const resData = await reviewService.getReviewPreService(
+      Number(req.user.id),
+      Number(req.params.reviewId)
+    );
+
+    if (resData === constant.NULL_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    }
+
+    if (resData === constant.WRONG_REQUEST_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "존재하지 않는 Review입니다."
+      );
+    }
+
+    return response.dataResponse(
+      res,
+      returnCode.OK,
+      "독후감 전단계 조회 성공.",
+      true,
+      resData
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
+ *  @독후감_중단계_조회하기
+ *  @route GET /review/:reviewId/peri
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewPeriController = async (req: Request, res: Response) => {
+  try {
+    const resData = await reviewService.getReviewPeriService(
+      Number(req.user.id),
+      Number(req.params.reviewId)
+    );
+
+    if (resData === constant.NULL_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    }
+
+    if (resData === constant.WRONG_REQUEST_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "존재하지 않는 Review입니다."
+      );
+    }
+
+    return response.dataResponse(
+      res,
+      returnCode.OK,
+      "독후감 중단계 조회 성공.",
       true,
       resData
     );
@@ -340,10 +444,12 @@ const deleteReviewController = async (req: Request, res: Response) => {
 };
 
 const reviewController = {
-  patchReviewBeforeController,
+  patchReviewPreController,
   getQuestionController,
-  patchReviewNowController,
+  patchReviewPeriController,
   getReviewController,
+  getReviewPreController,
+  getReviewPeriController,
   patchReviewController,
   deleteReviewController,
 };

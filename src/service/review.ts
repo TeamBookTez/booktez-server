@@ -197,7 +197,7 @@ const getReviewService = async (userId: number, reviewId: number) => {
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const getPreReviewService = async (userId: number, reviewId: number) => {
+const getReviewPreService = async (userId: number, reviewId: number) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
@@ -232,7 +232,7 @@ const getPreReviewService = async (userId: number, reviewId: number) => {
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const getPeriReviewService = async (userId: number, reviewId: number) => {
+const getReviewPeriService = async (userId: number, reviewId: number) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
@@ -345,8 +345,8 @@ const reviewService = {
   getQuestionService,
   patchReviewPeriService,
   getReviewService,
-  getPreReviewService,
-  getPeriReviewService,
+  getReviewPreService,
+  getReviewPeriService,
   patchReviewService,
   deleteReviewService,
 };

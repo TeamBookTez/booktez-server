@@ -13,15 +13,15 @@ import reviewService from "../service/review";
 
 /**
  *  @독서중 독서 전 작성
- *  @route PATCH /review/before/:reviewId
+ *  @route PATCH /review/:reviewId/pre
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewBeforeController = async (req: Request, res: Response) => {
+const patchReviewPreController = async (req: Request, res: Response) => {
   try {
-    const resData = await reviewService.patchReviewBeforeController(
+    const resData = await reviewService.patchReviewPreService(
       Number(req.params.reviewId),
       req.user.id,
       req.body.answerOne,
@@ -121,15 +121,15 @@ const getQuestionController = async (req: Request, res: Response) => {
 
 /**
  *  @독서중 독서 중 작성
- *  @route PATCH /review/now/:reviewId
+ *  @route PATCH /review/:reviewId/peri
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewNowController = async (req: Request, res: Response) => {
+const patchReviewPeriController = async (req: Request, res: Response) => {
   try {
-    const resData = await reviewService.patchReviewNowService(
+    const resData = await reviewService.patchReviewPeriService(
       Number(req.params.reviewId),
       req.user.id,
       req.body.answerThree,
@@ -340,9 +340,9 @@ const deleteReviewController = async (req: Request, res: Response) => {
 };
 
 const reviewController = {
-  patchReviewBeforeController,
+  patchReviewPreController,
   getQuestionController,
-  patchReviewNowController,
+  patchReviewPeriController,
   getReviewController,
   patchReviewController,
   deleteReviewController,

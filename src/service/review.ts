@@ -23,9 +23,12 @@ const patchReviewPreService = async (
   if (
     !reviewId ||
     !userId ||
-    !answerOne ||
-    !answerTwo ||
-    !questionList ||
+    answerOne === undefined ||
+    answerOne === null ||
+    answerTwo === undefined ||
+    answerTwo === null ||
+    questionList === undefined ||
+    questionList === null ||
     !reviewSt
   ) {
     return constant.NULL_VALUE;
@@ -104,7 +107,13 @@ const patchReviewPeriService = async (
   answerThree: object,
   reviewSt: number
 ) => {
-  if (!reviewId || !userId || !answerThree || !reviewSt) {
+  if (
+    !reviewId ||
+    !userId ||
+    answerThree === undefined ||
+    answerThree === null ||
+    !reviewSt
+  ) {
     return constant.NULL_VALUE;
   }
 
@@ -203,7 +212,15 @@ const patchReviewService = async (
   answerTwo: string,
   answerThree: object
 ) => {
-  if (!reviewId || !answerOne || !answerTwo || !answerThree) {
+  if (
+    !reviewId ||
+    answerOne === undefined ||
+    answerOne === null ||
+    answerTwo === undefined ||
+    answerTwo === null ||
+    answerThree === undefined ||
+    answerThree === null
+  ) {
     return constant.NULL_VALUE;
   }
 

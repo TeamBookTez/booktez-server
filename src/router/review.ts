@@ -29,10 +29,10 @@ router.patch(
 router.get("/:reviewId", auth, reviewController.getReviewController);
 
 // 독후감 전단계 조회
-router.get("/:reviewId/pre", auth, reviewController.getPreReviewController);
+router.get("/:reviewId/pre", auth, reviewController.getReviewPreController);
 
 // 독후감 중단계 조회
-router.get("/:reviewId/peri", auth, reviewController.getPeriReviewController);
+router.get("/:reviewId/peri", auth, reviewController.getReviewPeriController);
 
 // 독서 후 수정
 router.patch("/:reviewId", auth, reviewController.patchReviewController);

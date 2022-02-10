@@ -185,3 +185,4 @@ SOPT 29th APPJAM
 | Version | Content         | Detail |    Date    |
 | :-----: | :-------------- | :----: | :--------: |
 |  1.0.0  | initial version |  link  | 2022.02.06 |
+|  1.0.1  | bug fix, add api |  link  | 2022.02.10 |

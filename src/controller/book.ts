@@ -28,7 +28,7 @@ const postBookController = async (req: Request, res: Response) => {
       req.body.title,
       req.body.author,
       req.body.translator,
-      req.body.publicationDate
+      req.body.publicationDt
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -65,8 +65,8 @@ const postBookController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
-      true,
       "책 선택이 완료되었습니다.",
+      true,
       resData
     );
   } catch (err) {
@@ -92,8 +92,89 @@ const getBookController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
-      true,
       "서재 조회 성공",
+      true,
+      resData
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
+ *  @서재  독서전 책 조회
+ *  @route GET /book/pre
+ *  @access private
+ */
+const getBookPreController = async (req: Request, res: Response) => {
+  try {
+    const resData = await bookService.getBookPreService(req.user.id);
+    return response.dataResponse(
+      res,
+      returnCode.OK,
+      "독서전 서재 조회 성공",
+      true,
+      resData
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
+ *  @서재 독서중 책 조회
+ *  @route GET /book/peri
+ *  @access private
+ */
+const getBookPeriController = async (req: Request, res: Response) => {
+  try {
+    const resData = await bookService.getBookPeriService(req.user.id);
+    return response.dataResponse(
+      res,
+      returnCode.OK,
+      "독서중 서재 조회 성공",
+      true,
+      resData
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
+/**
+ *  @서재 독서완료 책 조회
+ *  @route GET /book/post
+ *  @access private
+ */
+const getBookPostController = async (req: Request, res: Response) => {
+  try {
+    const resData = await bookService.getBookPostService(req.user.id);
+    return response.dataResponse(
+      res,
+      returnCode.OK,
+      "독서완료 서재 조회 성공",
+      true,
       resData
     );
   } catch (err) {
@@ -111,6 +192,9 @@ const getBookController = async (req: Request, res: Response) => {
 const bookController = {
   postBookController,
   getBookController,
+  getBookPreController,
+  getBookPeriController,
+  getBookPostController,
 };
 
 export default bookController;

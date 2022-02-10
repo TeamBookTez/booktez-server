@@ -9,11 +9,7 @@ import reviewController from "../controller/review";
 const router = express.Router();
 
 // 독서 전
-router.patch(
-  "/before/:reviewId",
-  auth,
-  reviewController.patchReviewBeforeController
-);
+router.patch("/:reviewId/pre", auth, reviewController.patchReviewPreController);
 
 // 질문리스트 조회
 router.get(
@@ -23,7 +19,11 @@ router.get(
 );
 
 // 독서 중
-router.patch("/now/:reviewId", auth, reviewController.patchReviewNowController);
+router.patch(
+  "/:reviewId/peri",
+  auth,
+  reviewController.patchReviewPeriController
+);
 
 // 독후감 조회
 router.get("/:reviewId", auth, reviewController.getReviewController);

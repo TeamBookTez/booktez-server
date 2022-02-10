@@ -233,9 +233,9 @@ const getReviewController = async (req: Request, res: Response) => {
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const getPreReviewController = async (req: Request, res: Response) => {
+const getReviewPreController = async (req: Request, res: Response) => {
   try {
-    const resData = await reviewService.getPreReviewService(
+    const resData = await reviewService.getReviewPreService(
       Number(req.user.id),
       Number(req.params.reviewId)
     );
@@ -285,9 +285,9 @@ const getPreReviewController = async (req: Request, res: Response) => {
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const getPeriReviewController = async (req: Request, res: Response) => {
+const getReviewPeriController = async (req: Request, res: Response) => {
   try {
-    const resData = await reviewService.getPeriReviewService(
+    const resData = await reviewService.getReviewPeriService(
       Number(req.user.id),
       Number(req.params.reviewId)
     );
@@ -448,8 +448,8 @@ const reviewController = {
   getQuestionController,
   patchReviewPeriController,
   getReviewController,
-  getPreReviewController,
-  getPeriReviewController,
+  getReviewPreController,
+  getReviewPeriController,
   patchReviewController,
   deleteReviewController,
 };

@@ -28,7 +28,7 @@ const postBookController = async (req: Request, res: Response) => {
       req.body.title,
       req.body.author,
       req.body.translator,
-      req.body.publicationDate
+      req.body.publicationDt
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -65,8 +65,8 @@ const postBookController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
-      true,
       "책 선택이 완료되었습니다.",
+      true,
       resData
     );
   } catch (err) {
@@ -92,8 +92,8 @@ const getBookController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
-      true,
       "서재 조회 성공",
+      true,
       resData
     );
   } catch (err) {

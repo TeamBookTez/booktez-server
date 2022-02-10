@@ -18,7 +18,7 @@ const patchReviewBeforeController = async (
   answerOne: string,
   answerTwo: string,
   questionList: string[],
-  progress: number
+  reviewSt: number
 ) => {
   if (
     !reviewId ||
@@ -26,7 +26,7 @@ const patchReviewBeforeController = async (
     !answerOne ||
     !answerTwo ||
     !questionList ||
-    !progress
+    !reviewSt
   ) {
     return constant.NULL_VALUE;
   }
@@ -49,7 +49,7 @@ const patchReviewBeforeController = async (
     questionList,
     answerOne,
     answerTwo,
-    reviewSt: progress,
+    reviewSt,
     finishSt: false,
   });
 
@@ -102,9 +102,9 @@ const patchReviewNowService = async (
   reviewId: number,
   userId: number,
   answerThree: object,
-  progress: number
+  reviewSt: number
 ) => {
-  if (!reviewId || !userId || !answerThree || !progress) {
+  if (!reviewId || !userId || !answerThree || !reviewSt) {
     return constant.NULL_VALUE;
   }
 
@@ -121,12 +121,12 @@ const patchReviewNowService = async (
     return constant.WRONG_REQUEST_VALUE;
   }
 
-  let finishSt = Number(progress) === 4 ? true : false;
+  let finishSt = Number(reviewSt) === 4 ? true : false;
 
   // 3. review update
   await review.update({
     answerThree,
-    reviewSt: progress,
+    reviewSt,
     finishSt,
   });
 
@@ -141,8 +141,8 @@ const patchReviewNowService = async (
     bookData: {
       thumbnail: book.thumbnail,
       title: book.title,
-      authors: book.author,
-      translators: book.translator,
+      author: book.author,
+      translator: book.translator,
       publicationDt: book.publicationDt,
     },
   };
@@ -184,8 +184,8 @@ const getReviewService = async (userId: number, reviewId: number) => {
     answerTwo: reviewToShow.answerTwo,
     questionList: reviewToShow.questionList,
     answerThree: reviewToShow.answerThree,
-    reviewState: reviewToShow.reviewSt,
-    finishState: reviewToShow.finishSt,
+    reviewSt: reviewToShow.reviewSt,
+    finishSt: reviewToShow.finishSt,
   };
 };
 

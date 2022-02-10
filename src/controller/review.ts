@@ -27,7 +27,7 @@ const patchReviewBeforeController = async (req: Request, res: Response) => {
       req.body.answerOne,
       req.body.answerTwo,
       req.body.questionList,
-      req.body.progress
+      req.body.reviewSt
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -51,8 +51,8 @@ const patchReviewBeforeController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
+      "작성/수정이 완료되었습니다.",
       true,
-      "수정이 완료되었습니다.",
       resData
     );
   } catch (err) {
@@ -133,7 +133,7 @@ const patchReviewNowController = async (req: Request, res: Response) => {
       Number(req.params.reviewId),
       req.user.id,
       req.body.answerThree,
-      req.body.progress
+      req.body.reviewSt
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -157,8 +157,8 @@ const patchReviewNowController = async (req: Request, res: Response) => {
     return response.dataResponse(
       res,
       returnCode.OK,
+      "작성/수정이 완료되었습니다.",
       true,
-      "작성이 완료되었습니다.",
       resData
     );
   } catch (err) {

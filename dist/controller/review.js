@@ -22,22 +22,22 @@ const constant_1 = __importDefault(require("../library/constant"));
 const review_1 = __importDefault(require("../service/review"));
 /**
  *  @독서중 독서 전 작성
- *  @route PATCH /review/before/:reviewId
+ *  @route PATCH /review/:reviewId/pre
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewBeforeController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const patchReviewPreController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.patchReviewBeforeController(Number(req.params.reviewId), req.user.id, req.body.answerOne, req.body.answerTwo, req.body.questionList, req.body.progress);
+        const resData = yield review_1.default.patchReviewPreService(Number(req.params.reviewId), req.user.id, req.body.answerOne, req.body.answerTwo, req.body.questionList, req.body.reviewSt);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "요청값이 잘못되었습니다.");
         }
         if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
-        return response_1.default.dataResponse(res, returnCode_1.default.OK, true, "수정이 완료되었습니다.", resData);
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "작성/수정이 완료되었습니다.", true, resData);
     }
     catch (err) {
         slack_1.default.slackWebhook(req, err.message);
@@ -72,22 +72,22 @@ const getQuestionController = (req, res) => __awaiter(void 0, void 0, void 0, fu
 });
 /**
  *  @독서중 독서 중 작성
- *  @route PATCH /review/now/:reviewId
+ *  @route PATCH /review/:reviewId/peri
  *  @access private
  *  @error
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
-const patchReviewNowController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const patchReviewPeriController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.patchReviewNowService(Number(req.params.reviewId), req.user.id, req.body.answerThree, req.body.progress);
+        const resData = yield review_1.default.patchReviewPeriService(Number(req.params.reviewId), req.user.id, req.body.answerThree, req.body.reviewSt);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "요청값이 없습니다.");
         }
         if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
-        return response_1.default.dataResponse(res, returnCode_1.default.OK, true, "작성이 완료되었습니다.", resData);
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "작성/수정이 완료되었습니다.", true, resData);
     }
     catch (err) {
         slack_1.default.slackWebhook(req, err.message);
@@ -113,6 +113,56 @@ const getReviewController = (req, res) => __awaiter(void 0, void 0, void 0, func
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
         return response_1.default.dataResponse(res, returnCode_1.default.OK, "독후감 조회 성공.", true, resData);
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
+/**
+ *  @독후감_전단계_조회하기
+ *  @route GET /review/:reviewId/pre
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewPreController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield review_1.default.getReviewPreService(Number(req.user.id), Number(req.params.reviewId));
+        if (resData === constant_1.default.NULL_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
+        }
+        if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
+        }
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "독후감 전단계 조회 성공.", true, resData);
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
+/**
+ *  @독후감_중단계_조회하기
+ *  @route GET /review/:reviewId/peri
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewPeriController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield review_1.default.getReviewPeriService(Number(req.user.id), Number(req.params.reviewId));
+        if (resData === constant_1.default.NULL_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
+        }
+        if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
+        }
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "독후감 중단계 조회 성공.", true, resData);
     }
     catch (err) {
         slack_1.default.slackWebhook(req, err.message);
@@ -175,10 +225,12 @@ const deleteReviewController = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 const reviewController = {
-    patchReviewBeforeController,
+    patchReviewPreController,
     getQuestionController,
-    patchReviewNowController,
+    patchReviewPeriController,
     getReviewController,
+    getReviewPreController,
+    getReviewPeriController,
     patchReviewController,
     deleteReviewController,
 };

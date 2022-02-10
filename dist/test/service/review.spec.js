@@ -49,11 +49,11 @@ describe("reviewService test", () => __awaiter(void 0, void 0, void 0, function*
     //MARK: - 독서 전 작성 테스트
     describe("patchReviewBefore test", () => __awaiter(void 0, void 0, void 0, function* () {
         it("success: patchReviewBefore returns reviewId correctly", () => __awaiter(void 0, void 0, void 0, function* () {
-            const patchedReview = yield review_1.default.patchReviewBeforeController(testReview.id, testUser.id, testReview.answerOne, testReview.answerTwo, testReview.questionList, 3);
+            const patchedReview = yield review_1.default.patchReviewPreService(testReview.id, testUser.id, testReview.answerOne, testReview.answerTwo, testReview.questionList, 3);
             assert_1.default.ok(patchedReview.reviewId === testReview.id);
         }));
         it("fail: try to patch review which doesn't exist", () => __awaiter(void 0, void 0, void 0, function* () {
-            assert_1.default.strictEqual(yield review_1.default.patchReviewBeforeController(-50, testUser.id, testReview.answerOne, testReview.answerTwo, testReview.questionList, 3), constant_1.default.DB_NOT_FOUND);
+            assert_1.default.strictEqual(yield review_1.default.patchReviewPreService(-50, testUser.id, testReview.answerOne, testReview.answerTwo, testReview.questionList, 3), constant_1.default.DB_NOT_FOUND);
         }));
     }));
     // MARK: - 질문리스트 조회 테스트
@@ -137,7 +137,7 @@ describe("reviewService test", () => __awaiter(void 0, void 0, void 0, function*
                     },
                 ],
             };
-            yield review_1.default.patchReviewNowService(testReview.id, testReview.userId, answerThree, 4);
+            yield review_1.default.patchReviewPeriService(testReview.id, testReview.userId, answerThree, 4);
             const updatedReview = yield models_1.Review.findOne({
                 where: {
                     id: testReview.id,
@@ -146,10 +146,10 @@ describe("reviewService test", () => __awaiter(void 0, void 0, void 0, function*
             assert_1.default.deepStrictEqual(updatedReview.answerThree, answerThree);
         }));
         it("fail: return null when arguments are null", () => __awaiter(void 0, void 0, void 0, function* () {
-            assert_1.default.strictEqual(yield review_1.default.patchReviewNowService(testReview.id, testReview.userId, null, 4), constant_1.default.NULL_VALUE);
+            assert_1.default.strictEqual(yield review_1.default.patchReviewPeriService(testReview.id, testReview.userId, null, 4), constant_1.default.NULL_VALUE);
         }));
         it("fail: return wrong request value when request wrong", () => __awaiter(void 0, void 0, void 0, function* () {
-            assert_1.default.strictEqual(yield review_1.default.patchReviewNowService(-100, testReview.userId, { test: "hi" }, 4), constant_1.default.WRONG_REQUEST_VALUE);
+            assert_1.default.strictEqual(yield review_1.default.patchReviewPeriService(-100, testReview.userId, { test: "hi" }, 4), constant_1.default.WRONG_REQUEST_VALUE);
         }));
     }));
     // MARK: - 독후감 조회 테스트

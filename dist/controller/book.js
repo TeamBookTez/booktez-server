@@ -29,7 +29,7 @@ const book_1 = __importDefault(require("../service/book"));
  */
 const postBookController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield book_1.default.postBookService(req.user ? true : false, req.user ? Number(req.user.id) : constant_1.default.ANONYMOUS_USER, req.body.isbn, req.body.thumbnail, req.body.title, req.body.author, req.body.translator, req.body.publicationDate);
+        const resData = yield book_1.default.postBookService(req.user ? true : false, req.user ? Number(req.user.id) : constant_1.default.ANONYMOUS_USER, req.body.isbn, req.body.thumbnail, req.body.title, req.body.author, req.body.translator, req.body.publicationDt);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
@@ -42,7 +42,7 @@ const postBookController = (req, res) => __awaiter(void 0, void 0, void 0, funct
         if (resData === constant_1.default.VALUE_ALREADY_EXIST) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "이미 독후감이 존재합니다.");
         }
-        return response_1.default.dataResponse(res, returnCode_1.default.OK, true, "책 선택이 완료되었습니다.", { isLogin: resData });
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "책 선택이 완료되었습니다.", true, resData);
     }
     catch (err) {
         slack_1.default.slackWebhook(req, err.message);
@@ -58,7 +58,55 @@ const postBookController = (req, res) => __awaiter(void 0, void 0, void 0, funct
 const getBookController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const resData = yield book_1.default.getBookService(req.user.id);
-        return response_1.default.dataResponse(res, returnCode_1.default.OK, true, "서재 조회 성공", resData);
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "서재 조회 성공", true, resData);
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
+/**
+ *  @서재  독서전 책 조회
+ *  @route GET /book/pre
+ *  @access private
+ */
+const getBookPreController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield book_1.default.getBookPreService(req.user.id);
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "독서전 서재 조회 성공", true, resData);
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
+/**
+ *  @서재 독서중 책 조회
+ *  @route GET /book/peri
+ *  @access private
+ */
+const getBookPeriController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield book_1.default.getBookPeriService(req.user.id);
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "독서중 서재 조회 성공", true, resData);
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
+/**
+ *  @서재 독서완료 책 조회
+ *  @route GET /book/post
+ *  @access private
+ */
+const getBookPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield book_1.default.getBookPostService(req.user.id);
+        return response_1.default.dataResponse(res, returnCode_1.default.OK, "독서완료 서재 조회 성공", true, resData);
     }
     catch (err) {
         slack_1.default.slackWebhook(req, err.message);
@@ -69,6 +117,9 @@ const getBookController = (req, res) => __awaiter(void 0, void 0, void 0, functi
 const bookController = {
     postBookController,
     getBookController,
+    getBookPreController,
+    getBookPeriController,
+    getBookPostController,
 };
 exports.default = bookController;
 //# sourceMappingURL=book.js.map

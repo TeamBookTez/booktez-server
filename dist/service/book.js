@@ -25,8 +25,8 @@ const models_1 = require("../models");
  *  @err   1. 필요한 값이 없을 때
  *         2. 리뷰가 이미 존재할 때
  */
-const postBookService = (isLogin, userId, isbn, thumbnail, title, author, translator, publicationDate) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!isbn || !title || !author || !translator || !publicationDate) {
+const postBookService = (isLogin, userId, isbn, thumbnail, title, author, translator, publicationDt) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!isbn || !title || !author || !translator || !publicationDt) {
         return constant_1.default.NULL_VALUE;
     }
     isbn = isbn.trim();
@@ -61,7 +61,8 @@ const postBookService = (isLogin, userId, isbn, thumbnail, title, author, transl
     }
     if (!bookExist) {
         book = yield models_1.Book.create(Object.assign(Object.assign(Object.assign(Object.assign({ isbn: isbnOne }, (isbnTwo && { isbnSub: isbnTwo })), { title,
-            author }), (thumbnail && { thumbnail })), { translator, publicationDt: publicationDate }));
+            author }), (thumbnail && { thumbnail })), { translator,
+            publicationDt }));
     }
     else {
         book = bookExist;
@@ -118,7 +119,103 @@ const getBookService = (userId) => __awaiter(void 0, void 0, void 0, function* (
             thumbnail: review.book.thumbnail,
             title: review.book.title,
             author: review.book.author,
-            state: review.reviewSt,
+            reviewSt: review.reviewSt,
+        });
+    }));
+    return { books: books };
+});
+/**
+ *  @서재  독서전 책 조회
+ *  @route GET /book/pre
+ *  @access private
+ */
+const getBookPreService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    let books = [];
+    yield models_1.Review.findAll({
+        attributes: ["id", "reviewSt"],
+        include: [
+            {
+                model: models_1.Book,
+                attributes: ["title", "author", "thumbnail"],
+            },
+        ],
+        where: {
+            userId,
+            reviewSt: 2,
+            isDeleted: false,
+        },
+        order: [["updatedAt", "DESC"]],
+    }).then((reviews) => reviews.forEach((review) => {
+        books.push({
+            reviewId: review.id,
+            thumbnail: review.book.thumbnail,
+            title: review.book.title,
+            author: review.book.author,
+            reviewSt: review.reviewSt,
+        });
+    }));
+    return { books: books };
+});
+/**
+ *  @서재 독서중 책 조회
+ *  @route GET /book/peri
+ *  @access private
+ */
+const getBookPeriService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    let books = [];
+    yield models_1.Review.findAll({
+        attributes: ["id", "reviewSt"],
+        include: [
+            {
+                model: models_1.Book,
+                attributes: ["title", "author", "thumbnail"],
+            },
+        ],
+        where: {
+            userId,
+            reviewSt: 3,
+            isDeleted: false,
+        },
+        order: [["updatedAt", "DESC"]],
+    }).then((reviews) => reviews.forEach((review) => {
+        books.push({
+            reviewId: review.id,
+            thumbnail: review.book.thumbnail,
+            title: review.book.title,
+            author: review.book.author,
+            reviewSt: review.reviewSt,
+        });
+    }));
+    return { books: books };
+});
+/**
+ *  @서재 독서완료 책 조회
+ *  @route GET /book/post
+ *  @access private
+ */
+const getBookPostService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    let books = [];
+    yield models_1.Review.findAll({
+        attributes: ["id", "reviewSt"],
+        include: [
+            {
+                model: models_1.Book,
+                attributes: ["title", "author", "thumbnail"],
+            },
+        ],
+        where: {
+            userId,
+            reviewSt: 4,
+            isDeleted: false,
+        },
+        order: [["updatedAt", "DESC"]],
+    }).then((reviews) => reviews.forEach((review) => {
+        books.push({
+            reviewId: review.id,
+            thumbnail: review.book.thumbnail,
+            title: review.book.title,
+            author: review.book.author,
+            reviewSt: review.reviewSt,
         });
     }));
     return { books: books };
@@ -126,6 +223,9 @@ const getBookService = (userId) => __awaiter(void 0, void 0, void 0, function* (
 const bookService = {
     postBookService,
     getBookService,
+    getBookPreService,
+    getBookPeriService,
+    getBookPostService,
 };
 exports.default = bookService;
 //# sourceMappingURL=book.js.map

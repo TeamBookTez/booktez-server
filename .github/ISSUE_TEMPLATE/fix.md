@@ -11,3 +11,7 @@ labels: fix
 ## 📝 To Do
 - [ ] logic A 변경
 - [ ] logic B 변경
+
+## ✅ Issue check list
+1. Assignees, Labels 확인하기
+2. Milestone 연결 확인하기

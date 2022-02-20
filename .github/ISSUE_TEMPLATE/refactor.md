@@ -11,3 +11,7 @@ labels: refactor
 ## 📝 To Do
 - [ ] file A 리팩토링
 - [ ] file B 리팩토링
+
+## ✅ Issue check list
+1. Assignees, Labels 확인하기
+2. Milestone 연결 확인하기

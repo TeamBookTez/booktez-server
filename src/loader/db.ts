@@ -14,10 +14,10 @@ const connectDB = async () => {
       console.log("User Collection is created!");
     });
     await Book.createCollection().then(function (collection) {
-      console.log("Challenge Collection is created!");
+      console.log("Book Collection is created!");
     });
     await Review.createCollection().then(function (collection) {
-      console.log("Concert Collection is created!");
+      console.log("Review Collection is created!");
     });
 
     console.log("Mongoose Connected ...");

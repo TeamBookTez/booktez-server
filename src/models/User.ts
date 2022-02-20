@@ -31,7 +31,7 @@ const UserSchema = new mongoose.Schema({
     required: false,
   },
   // 이메일 인증번호
-  emailCode: {
+  email_code: {
     type: String,
     required: false,
   },

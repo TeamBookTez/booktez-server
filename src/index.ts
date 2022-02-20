@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { sequelize } from "./models";
 import router from "./router";
 import connectDB from "./loader/db";
 

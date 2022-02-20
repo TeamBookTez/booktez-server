@@ -4,15 +4,11 @@ import config from "../config";
 // models
 import User from "../models/User";
 import Book from "../models/Book";
-import Review from "../models/Review";\
+import Review from "../models/Review";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(config.mongoURI, {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(config.mongoURI, {});
 
     User.createCollection().then(function (collection) {
       console.log("User Collection is created!");

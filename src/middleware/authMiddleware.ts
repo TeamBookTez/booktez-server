@@ -2,9 +2,6 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import config from "../config";
 
-// slack
-import slack from "../others/slack/slack";
-
 // library
 import response from "../library/response";
 import returnCode from "../library/returnCode";
@@ -49,7 +46,6 @@ export const auth = async (req: Request, res: Response, next) => {
     return next();
   } catch (err) {
     if (err.message === "jwt expired") {
-      slack.slackWebhook(req, err.message);
       return response.basicResponse(
         res,
         returnCode.UNAUTHORIZED,
@@ -57,7 +53,6 @@ export const auth = async (req: Request, res: Response, next) => {
         "만료된 토큰입니다"
       );
     } else {
-      slack.slackWebhook(req, err.message);
       return response.basicResponse(
         res,
         returnCode.UNAUTHORIZED,
@@ -97,7 +92,6 @@ export const isLogin = async (req: Request, res: Response, next) => {
 
     return next();
   } catch (err) {
-    slack.slackWebhook(req, err.message);
     return next();
   }
 };

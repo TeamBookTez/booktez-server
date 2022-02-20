@@ -1,63 +1,57 @@
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
-import {
-  Model,
-  Column,
-  Table,
-  PrimaryKey,
-  AutoIncrement,
-  Unique,
-  Default,
-  AllowNull,
-  HasMany,
-} from "sequelize-typescript";
+// interface
+import { IUser } from "../interface/IUser";
 
-import { Review } from ".";
+const UserSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  nickname: {
+    type: String,
+    required: true,
+  },
+  // 프로필 이미지
+  img: {
+    type: String,
+    required: false,
+    default: process.env.DEFAULT_IMG,
+  },
+  // 리프레시 토큰
+  refresh_token: {
+    type: String,
+    required: false,
+  },
+  // 이메일 인증번호
+  email_code: {
+    type: String,
+    required: false,
+  },
+  // 생성 일자
+  created_at: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+  // 수정 일자
+  updated_at: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+  is_deleted: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+});
 
-@Table({
-  tableName: "user",
-  freezeTableName: true,
-  underscored: true,
-  timestamps: true,
-  charset: "utf8", // 한국어 설정
-  collate: "utf8_general_ci", // 한국어 설정
-})
-export default class User extends Model {
-  @PrimaryKey
-  @AutoIncrement
-  @Unique
-  @Column
-  id: number;
-
-  @Unique
-  @Column
-  email: string;
-
-  @Column
-  password: string;
-
-  @Unique
-  @Column
-  nickname: string;
-
-  @Default(process.env.DEFAULT_IMG)
-  @Column
-  img: string;
-
-  @AllowNull
-  @Column
-  emailCode: string;
-
-  @AllowNull
-  @Column
-  token: string;
-
-  @AllowNull(false)
-  @Default(false)
-  @Column
-  isDeleted: boolean;
-
-  @HasMany(() => Review)
-  reviews: Review[];
-}
+export default mongoose.model<IUser & mongoose.Document>("user", UserSchema);

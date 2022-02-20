@@ -1,63 +1,49 @@
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
-import {
-  Model,
-  Column,
-  Table,
-  PrimaryKey,
-  AutoIncrement,
-  Unique,
-  Default,
-  AllowNull,
-  DataType,
-  HasMany,
-} from "sequelize-typescript";
-import { Review } from ".";
+// interface
+import { IBook } from "../interface/IBook";
 
-@Table({
-  tableName: "book",
-  freezeTableName: true,
-  underscored: true,
-  timestamps: true,
-  charset: "utf8", // 한국어 설정
-  collate: "utf8_general_ci", // 한국어 설정
-})
-export default class Book extends Model {
-  @PrimaryKey
-  @AutoIncrement
-  @Unique
-  @Column
-  id: number;
+const BookSchema = new mongoose.Schema({
+  // 도서 고유번호
+  isbn: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  // 도서 고유번호_sub
+  isbn_sub: {
+    type: String,
+    unique: true,
+    required: false,
+  },
 
-  @AllowNull(false)
-  @Unique
-  @Column
-  isbn: string;
+  title: {
+    type: String,
+    required: true,
+  },
+  // 저자
+  author: {
+    type: [String],
+    required: true,
+  },
+  // 엮은이
+  translator: {
+    type: [String],
+    required: false,
+  },
+  // 표지
+  thumbnail: {
+    type: String,
+    required: false,
+    default: process.env.DEFAULT_BOOK_IMG,
+  },
+  // 생성 일자
+  publication_dt: {
+    type: String,
+    required: false,
+  },
+});
 
-  @Unique
-  @Column
-  isbnSub: string;
-
-  @AllowNull(false)
-  @Column
-  title: string;
-
-  @AllowNull(false)
-  @Column(DataType.ARRAY(DataType.STRING))
-  author: string[];
-
-  @Column(DataType.ARRAY(DataType.STRING))
-  translator: string[];
-
-  @AllowNull(false)
-  @Default(process.env.DEFAULT_BOOK_IMG)
-  @Column
-  thumbnail: string;
-
-  @Column
-  publicationDt: string;
-
-  @HasMany(() => Review)
-  reviews: Review[];
-}
+export default mongoose.model<IBook & mongoose.Document>("book", BookSchema);

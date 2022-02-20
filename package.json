@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@types/express-serve-static-core": "^4.17.28",
+    "@types/mongoose": "^5.11.97",
     "aws-sdk": "^2.1057.0",
     "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",
@@ -24,6 +25,8 @@
     "gravatar": "^1.8.1",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
+    "mongoose": "^6.2.2",
+    "mongoose-validator": "^2.1.0",
     "multer": "^1.4.2",
     "multer-s3": "^2.9.0",
     "pg": "^8.7.1",

@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 
 export interface IUser {
   _id: mongoose.Schema.Types.ObjectId;
-  email: String;
-  password: String;
-  nickname: String;
-  img: String;
-  refresh_token: String;
-  email_code: String;
+  email: string;
+  password: string;
+  nickname: string;
+  img: string;
+  refresh_token: string;
+  email_code: string;
   created_at: Date;
   updated_at: Date;
-  is_deleted: Boolean;
+  is_deleted: boolean;
 }

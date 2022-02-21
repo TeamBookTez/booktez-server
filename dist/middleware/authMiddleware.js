@@ -15,8 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isLogin = exports.auth = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
-// slack
-const slack_1 = __importDefault(require("../others/slack/slack"));
 // library
 const response_1 = __importDefault(require("../library/response"));
 const returnCode_1 = __importDefault(require("../library/returnCode"));
@@ -44,11 +42,9 @@ const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     }
     catch (err) {
         if (err.message === "jwt expired") {
-            slack_1.default.slackWebhook(req, err.message);
             return response_1.default.basicResponse(res, returnCode_1.default.UNAUTHORIZED, false, "만료된 토큰입니다");
         }
         else {
-            slack_1.default.slackWebhook(req, err.message);
             return response_1.default.basicResponse(res, returnCode_1.default.UNAUTHORIZED, false, "적합하지 않은 토큰입니다");
         }
     }
@@ -77,7 +73,6 @@ const isLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         return next();
     }
     catch (err) {
-        slack_1.default.slackWebhook(req, err.message);
         return next();
     }
 });

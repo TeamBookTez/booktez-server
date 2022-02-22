@@ -96,69 +96,65 @@ const getQuestionService = async (
   return { questionList };
 };
 
-// /**
-//  *  @독서중 독서 중 작성
-//  *  @route PATCH /review/:reviewId/peri
-//  *  @access private
-//  *  @error
-//  *      1. 요청 값이 잘못됨
-//  *      2. 존재하지 않는 Review
-//  */
-// const patchReviewPeriService = async (
-//   reviewId: number,
-//   userId: number,
-//   answerThree: object,
-//   reviewSt: number
-// ) => {
-//   if (
-//     !reviewId ||
-//     !userId ||
-//     answerThree === undefined ||
-//     answerThree === null ||
-//     !reviewSt
-//   ) {
-//     return constant.NULL_VALUE;
-//   }
+/**
+ *  @독서중 독서 중 작성
+ *  @route PATCH /review/:reviewId/peri
+ *  @access private
+ *  @error
+ *      1. 요청 값이 잘못됨
+ *      2. 존재하지 않는 Review
+ */
+const patchReviewPeriService = async (
+  reviewId: mongoose.Types.ObjectId,
+  userId: mongoose.Types.ObjectId,
+  answerThree: object,
+  reviewSt: number
+) => {
+  if (
+    !reviewId ||
+    !userId ||
+    answerThree === undefined ||
+    answerThree === null ||
+    !reviewSt
+  ) {
+    return constant.NULL_VALUE;
+  }
 
-//   // user 확인
-//   const user = await User.findOne({ where: { id: userId, isDeleted: false } });
+  // 해당 review 조회
+  const review = await Review.findOne({
+    id: reviewId,
+    userId,
+    isDeleted: false,
+  });
 
-//   // 해당 review 조회
-//   const review = await Review.findOne({
-//     where: { id: reviewId, userId: user.id, isDeleted: false },
-//   });
+  // 2. 존재하지 않는 review
+  if (!review) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
 
-//   // 2. 존재하지 않는 review
-//   if (!review) {
-//     return constant.WRONG_REQUEST_VALUE;
-//   }
+  let finishSt = Number(reviewSt) === 4 ? true : false;
 
-//   let finishSt = Number(reviewSt) === 4 ? true : false;
+  // 3. review update
+  await review.update({
+    answerThree,
+    reviewSt,
+    finishSt,
+  });
 
-//   // 3. review update
-//   await review.update({
-//     answerThree,
-//     reviewSt,
-//     finishSt,
-//   });
+  // 책 확인
+  const book = await Book.findOne({ id: review.book_id });
 
-//   // 변경 리뷰 저장
-//   await review.save();
-
-//   // 책 확인
-//   const book = await Book.findOne({ where: { id: review.bookId } });
-
-//   return {
-//     reviewId: review.id,
-//     bookData: {
-//       thumbnail: book.thumbnail,
-//       title: book.title,
-//       author: book.author,
-//       translator: book.translator,
-//       publicationDt: book.publicationDt,
-//     },
-//   };
-// };
+  return {
+    reviewId: review.id,
+    bookData: {
+      thumbnail: book.thumbnail,
+      title: book.title,
+      author: book.author,
+      translator: book.translator,
+      publicationDt: book.publication_dt,
+    },
+  };
+};
 
 // /**
 //  *  @독후감 조회하기

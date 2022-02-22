@@ -324,59 +324,57 @@ const patchReviewPeriService = async (
 //   return constant.SUCCESS;
 // };
 
-// /**
-//  *  @독후감 삭제
-//  *  @route DELETE /review/:reviewId
-//  *  @access private
-//  *  @error
-//  *      1. 필요한 값이 없을 때
-//  *      2. 삭제될 리뷰가 없을 때
-//  *      3. 이미 삭제된 리뷰일 때
-//  */
-// const deleteReviewService = async (userId: number, reviewId: number) => {
-//   // 1. 필요한 값이 없을 때
-//   if (!userId || !reviewId) {
-//     return constant.NULL_VALUE;
-//   }
+/**
+ *  @독후감 삭제
+ *  @route DELETE /review/:reviewId
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 삭제될 리뷰가 없을 때
+ *      3. 이미 삭제된 리뷰일 때
+ */
+const deleteReviewService = async (
+  userId: mongoose.Types.ObjectId,
+  reviewId: mongoose.Types.ObjectId
+) => {
+  // 1. 필요한 값이 없을 때
+  if (!userId || !reviewId) {
+    return constant.NULL_VALUE;
+  }
 
-//   // user 확인
-//   const user = await User.findOne({ where: { id: userId, isDeleted: false } });
+  // 해당 review 조회
+  const review = await Review.findOne({
+    id: reviewId,
+    userId,
+  });
 
-//   // 해당 review 조회
-//   const review = await Review.findOne({
-//     where: { id: reviewId, userId: user.id },
-//   });
+  // 2. 존재하지 않는 review
+  if (!review) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
 
-//   // 2. 존재하지 않는 review
-//   if (!review) {
-//     return constant.WRONG_REQUEST_VALUE;
-//   }
+  // 3. 이미 삭제된 Review 입니다.
+  if (review.is_deleted) {
+    return constant.VALUE_ALREADY_DELETED;
+  }
 
-//   // 3. 이미 삭제된 Review 입니다.
-//   if (review.isDeleted) {
-//     return constant.VALUE_ALREADY_DELETED;
-//   }
+  // 독후감 삭제
+  await review.update({
+    isDeleted: true,
+  });
 
-//   // 독후감 삭제
-//   await review.update({
-//     isDeleted: true,
-//   });
-
-//   // 삭제 리뷰 저장
-//   await review.save();
-
-//   return constant.SUCCESS;
-// };
+  return constant.SUCCESS;
+};
 
 const reviewService = {
   patchReviewPreService,
-  // getQuestionService,
-  // patchReviewPeriService,
+  getQuestionService,
+  patchReviewPeriService,
   // getReviewService,
   // getReviewPreService,
   // getReviewPeriService,
   // patchReviewService,
-  // deleteReviewService,
+  deleteReviewService,
 };
 
 export default reviewService;

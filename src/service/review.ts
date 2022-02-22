@@ -61,40 +61,40 @@ const patchReviewPreService = async (
   return { reviewId: review.id };
 };
 
-// /**
-//  *  @질문리스트 조회하기
-//  *  @route GET /review/:reviewId/question-list
-//  *  @access private
-//  *  @error
-//  *      1. 필요한 값이 없습니다.
-//  *      2. 존재하지 않는 Review 입니다.
-//  */
-// const getQuestionService = async (
-//   userId: mongoose.Types.ObjectId,
-//   reviewId: mongoose.Types.ObjectId
-// ) => {
-//   // 필요한 값이 없을 때
-//   if (!userId || !reviewId) {
-//     return constant.NULL_VALUE;
-//   }
+/**
+ *  @질문리스트 조회하기
+ *  @route GET /review/:reviewId/question-list
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없습니다.
+ *      2. 존재하지 않는 Review 입니다.
+ */
+const getQuestionService = async (
+  userId: mongoose.Types.ObjectId,
+  reviewId: mongoose.Types.ObjectId
+) => {
+  // 필요한 값이 없을 때
+  if (!userId || !reviewId) {
+    return constant.NULL_VALUE;
+  }
 
-//   // review 조회
-//   const review = await Review.findOne({
-//     id: reviewId,
-//     user_id: userId,
-//     isDeleted: false,
-//   });
+  // review 조회
+  const review = await Review.findOne({
+    id: reviewId,
+    user_id: userId,
+    isDeleted: false,
+  });
 
-//   // 존재하지 않는 리뷰
-//   if (!review) {
-//     return constant.DB_NOT_FOUND;
-//   }
+  // 존재하지 않는 리뷰
+  if (!review) {
+    return constant.DB_NOT_FOUND;
+  }
 
-//   // 질문리스트 default response
-//   let questionList = review.question_list;
+  // 질문리스트
+  let questionList = review.question_list;
 
-//   return { questionList };
-// };
+  return { questionList };
+};
 
 // /**
 //  *  @독서중 독서 중 작성

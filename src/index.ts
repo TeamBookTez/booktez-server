@@ -28,7 +28,7 @@ app.use(
 );
 
 // route
-// app.use("/", router);
+app.use("/", router);
 
 // error handler
 app.use(function (err, req, res, next) {

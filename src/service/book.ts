@@ -217,7 +217,7 @@ const getBookPostService = async (userId: mongoose.Types.ObjectId) => {
     {
       user_id: userId,
       is_deleted: false,
-      review_st: 3,
+      review_st: 4,
     },
     { _id: true, book_id: true, review_st: true, __v: false }
   ).sort({ updated_at: -1 });

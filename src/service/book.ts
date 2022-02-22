@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 // library
 import constant from "../library/constant";
 
@@ -146,7 +148,7 @@ import Book from "../models/Book";
  *  @route GET /book/pre
  *  @access private
  */
-const getBookPreService = async (userId: string) => {
+const getBookPreService = async (userId: mongoose.Types.ObjectId) => {
   const reviews = await Review.find(
     {
       user_id: userId,
@@ -178,7 +180,7 @@ const getBookPreService = async (userId: string) => {
  *  @route GET /book/peri
  *  @access private
  */
-const getBookPeriService = async (userId: string) => {
+const getBookPeriService = async (userId: mongoose.Types.ObjectId) => {
   const reviews = await Review.find(
     {
       user_id: userId,
@@ -210,7 +212,7 @@ const getBookPeriService = async (userId: string) => {
  *  @route GET /book/post
  *  @access private
  */
-const getBookPostService = async (userId: number) => {
+const getBookPostService = async (userId: mongoose.Types.ObjectId) => {
   const reviews = await Review.find(
     {
       user_id: userId,

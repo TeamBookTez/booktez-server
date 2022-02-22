@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 // library
 import constant from "../library/constant";
 
@@ -15,8 +17,8 @@ import Book from "../models/Book";
  *      2. 존재하지 않는 Review
  */
 const patchReviewPreService = async (
-  reviewId: number,
-  userId: number,
+  reviewId: mongoose.Types.ObjectId,
+  userId: mongoose.Types.ObjectId,
   answerOne: string,
   answerTwo: string,
   questionList: string[],

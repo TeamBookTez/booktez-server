@@ -22,7 +22,7 @@ import reviewService from "../service/review";
 const patchReviewPreController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.patchReviewPreService(
-      Number(req.params.reviewId),
+      req.params.reviewId,
       req.user.id,
       req.body.answerOne,
       req.body.answerTwo,
@@ -78,8 +78,8 @@ const patchReviewPreController = async (req: Request, res: Response) => {
 const getQuestionController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.getQuestionService(
-      Number(req.user.id),
-      Number(req.params.reviewId)
+      req.user.id,
+      req.params.reviewId
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -130,7 +130,7 @@ const getQuestionController = async (req: Request, res: Response) => {
 const patchReviewPeriController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.patchReviewPeriService(
-      Number(req.params.reviewId),
+      req.params.reviewId,
       req.user.id,
       req.body.answerThree,
       req.body.reviewSt
@@ -394,8 +394,8 @@ const patchReviewController = async (req: Request, res: Response) => {
 const deleteReviewController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.deleteReviewService(
-      Number(req.user.id),
-      Number(req.params.reviewId)
+      req.user.id,
+      req.params.reviewId
     );
 
     if (resData === constant.NULL_VALUE) {

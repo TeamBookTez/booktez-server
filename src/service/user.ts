@@ -1,8 +1,10 @@
+import mongoose from "mongoose";
 // library
 import constant from "../library/constant";
 
 // model
-import { User, Review } from "../models";
+import User from "../models/User"
+import Review from "../models/Review"
 
 /**
  *  @유저정보조회
@@ -10,9 +12,10 @@ import { User, Review } from "../models";
  *  @access public
  *  @err 1. 존재하지 않는 유저
  */
-const getMyInfoService = async (userId: number) => {
+const getMyInfoService = async (userId: string) => {
   const user = await User.findOne({
-    where: { id: userId, isDeleted: false },
+    id: userId, 
+    isDeleted: false
   });
 
   if (!user) {
@@ -23,7 +26,8 @@ const getMyInfoService = async (userId: number) => {
   const nickname = user.nickname;
   const email = user.email;
   const reviewCount = await Review.count({
-    where: { userId, isDeleted: false },
+    userId, 
+    isDeleted: false,
   });
 
   return { img, nickname, email, reviewCount };
@@ -36,7 +40,7 @@ const getMyInfoService = async (userId: number) => {
  *  @err 1. 잘못된 폼 데이터
  *       2. 존재하지 않는 유저
  */
-const patchImgService = async (userId: number, img: string) => {
+const patchImgService = async (userId: string, img: string) => {
   if (!img) {
     return constant.NULL_VALUE;
   }
@@ -45,14 +49,18 @@ const patchImgService = async (userId: number, img: string) => {
     return constant.WRONG_IMG_FORM;
   }
 
-  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
+  const user = await User.findOne(
+    { 
+      id: userId, 
+      isDeleted: false
+    }
+  );
 
   if (!user) {
     return constant.NON_EXISTENT_USER;
   }
 
   await user.update({ img });
-  await user.save();
 
   return { img: user.img };
 };

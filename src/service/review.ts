@@ -1,8 +1,12 @@
+import mongoose from "mongoose";
+
 // library
 import constant from "../library/constant";
 
 // model
-import { User, Book, Review } from "../models";
+import User from "../models/User";
+import Review from "../models/Review";
+import Book from "../models/Book";
 
 /**
  *  @독서중 독서 전 작성
@@ -12,9 +16,10 @@ import { User, Book, Review } from "../models";
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
+
 const patchReviewPreService = async (
-  reviewId: number,
-  userId: number,
+  reviewId: string,
+  userId: string,
   answerOne: string,
   answerTwo: string,
   questionList: string[],
@@ -36,11 +41,9 @@ const patchReviewPreService = async (
 
   // review 체크
   const review = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
+    id: reviewId,
+    user_id: userId,
+    isDeleted: false,
   });
 
   if (!review) {
@@ -56,8 +59,6 @@ const patchReviewPreService = async (
     finishSt: false,
   });
 
-  await review.save();
-
   return { reviewId: review.id };
 };
 
@@ -69,7 +70,7 @@ const patchReviewPreService = async (
  *      1. 필요한 값이 없습니다.
  *      2. 존재하지 않는 Review 입니다.
  */
-const getQuestionService = async (userId: number, reviewId: number) => {
+const getQuestionService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
@@ -77,29 +78,23 @@ const getQuestionService = async (userId: number, reviewId: number) => {
 
   // review 조회
   const review = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
+    id: reviewId,
+    user_id: userId,
+    isDeleted: false,
   });
 
-  // 존재하지 않는 리뷰일 때
+  // 존재하지 않는 리뷰
   if (!review) {
-    return constant.WRONG_REQUEST_VALUE;
+    return constant.DB_NOT_FOUND;
   }
 
-  // 질문리스트 default response
-  let questionList = review.questionList;
-  if (questionList.length == 0) {
-    questionList = [""];
-  }
+  // 질문리스트
+  let questionList = review.question_list;
 
   return { questionList };
 };
 
 /**
-
  *  @독서중 독서 중 작성
  *  @route PATCH /review/:reviewId/peri
  *  @access private
@@ -108,8 +103,8 @@ const getQuestionService = async (userId: number, reviewId: number) => {
  *      2. 존재하지 않는 Review
  */
 const patchReviewPeriService = async (
-  reviewId: number,
-  userId: number,
+  reviewId: string,
+  userId: string,
   answerThree: object,
   reviewSt: number
 ) => {
@@ -123,12 +118,11 @@ const patchReviewPeriService = async (
     return constant.NULL_VALUE;
   }
 
-  // user 확인
-  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
-
   // 해당 review 조회
   const review = await Review.findOne({
-    where: { id: reviewId, userId: user.id, isDeleted: false },
+    id: reviewId,
+    userId,
+    isDeleted: false,
   });
 
   // 2. 존재하지 않는 review
@@ -145,11 +139,8 @@ const patchReviewPeriService = async (
     finishSt,
   });
 
-  // 변경 리뷰 저장
-  await review.save();
-
   // 책 확인
-  const book = await Book.findOne({ where: { id: review.bookId } });
+  const book = await Book.findOne({ id: review.book_id });
 
   return {
     reviewId: review.id,
@@ -158,7 +149,7 @@ const patchReviewPeriService = async (
       title: book.title,
       author: book.author,
       translator: book.translator,
-      publicationDt: book.publicationDt,
+      publicationDt: book.publication_dt,
     },
   };
 };
@@ -171,17 +162,15 @@ const patchReviewPeriService = async (
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const getReviewService = async (userId: number, reviewId: number) => {
+const getReviewService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
   const reviewToShow = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
+    id: reviewId,
+    userId,
+    isDeleted: false,
   });
 
   // 존재하지 않는 리뷰일 때
@@ -190,23 +179,68 @@ const getReviewService = async (userId: number, reviewId: number) => {
   }
 
   const bookToShow = await Book.findOne({
-    where: { id: reviewToShow.bookId },
+    where: { id: reviewToShow.book_id },
   });
 
   // 질문리스트 default response
-  let questionList = reviewToShow.questionList;
-  if (questionList.length == 0) {
+  let questionList = reviewToShow.question_list;
+  if (questionList.length < 1) {
     questionList = [""];
   }
 
   return {
     bookTitle: bookToShow.title,
-    answerOne: reviewToShow.answerOne,
-    answerTwo: reviewToShow.answerTwo,
+    answerOne: reviewToShow.answer_one,
+    answerTwo: reviewToShow.answer_two,
     questionList,
-    answerThree: reviewToShow.answerThree,
-    reviewSt: reviewToShow.reviewSt,
-    finishSt: reviewToShow.finishSt,
+    answerThree: reviewToShow.answer_three,
+    reviewSt: reviewToShow.review_st,
+    finishSt: reviewToShow.finish_St,
+  };
+};
+
+/**
+ *  @독후감 조회하기
+ *  @route GET /review/:reviewId
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const getReviewService = async (userId: string, reviewId: string) => {
+  // 필요한 값이 없을 때
+  if (!userId || !reviewId) {
+    return constant.NULL_VALUE;
+  }
+  const reviewToShow = await Review.findOne({
+    id: reviewId,
+    userId,
+    isDeleted: false,
+  });
+
+  // 존재하지 않는 리뷰일 때
+  if (!reviewToShow) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
+  const bookToShow = await Book.findOne({
+    where: { id: reviewToShow.book_id },
+  });
+
+  // 질문리스트 default response
+  let questionList = reviewToShow.question_list;
+  if (questionList.length < 1) {
+    questionList = [""];
+  }
+
+  return {
+    bookTitle: bookToShow.title,
+    answerOne: reviewToShow.answer_one,
+    answerTwo: reviewToShow.answer_two,
+    questionList,
+    answerThree: reviewToShow.answer_three,
+    reviewSt: reviewToShow.review_st,
+    finishSt: reviewToShow.finish_St,
   };
 };
 
@@ -218,17 +252,15 @@ const getReviewService = async (userId: number, reviewId: number) => {
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const getReviewPreService = async (userId: number, reviewId: number) => {
+const getReviewPreService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
   const reviewToShow = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
+    id: reviewId,
+    userId,
+    isDeleted: false,
   });
 
   // 존재하지 않는 리뷰일 때
@@ -237,19 +269,20 @@ const getReviewPreService = async (userId: number, reviewId: number) => {
   }
 
   // 질문리스트 default response
-  let questionList = reviewToShow.questionList;
-  if (questionList.length == 0) {
+  let questionList = reviewToShow.question_list;
+  if (questionList.length < 1) {
     questionList = [""];
   }
 
   return {
-    answerOne: reviewToShow.answerOne,
-    answerTwo: reviewToShow.answerTwo,
+    answerOne: reviewToShow.answer_one,
+    answerTwo: reviewToShow.answer_two,
     questionList,
-    reviewSt: reviewToShow.reviewSt,
-    finishSt: reviewToShow.finishSt,
+    reviewSt: reviewToShow.review_st,
+    finishSt: reviewToShow.finish_St,
   };
 };
+
 
 /**
  *  @독후감_중단계_조회하기
@@ -259,17 +292,15 @@ const getReviewPreService = async (userId: number, reviewId: number) => {
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const getReviewPeriService = async (userId: number, reviewId: number) => {
+const getReviewPeriService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
   const reviewToShow = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
+    id: reviewId,
+    userId,
+    isDeleted: false,
   });
 
   // 존재하지 않는 리뷰일 때
@@ -278,9 +309,9 @@ const getReviewPeriService = async (userId: number, reviewId: number) => {
   }
 
   return {
-    answerThree: reviewToShow.answerThree,
-    reviewSt: reviewToShow.reviewSt,
-    finishSt: reviewToShow.finishSt,
+    answerThree: reviewToShow.answer_three,
+    reviewSt: reviewToShow.review_st,
+    finishSt: reviewToShow.finish_St,
   };
 };
 
@@ -292,44 +323,44 @@ const getReviewPeriService = async (userId: number, reviewId: number) => {
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const patchReviewService = async (
-  reviewId: number,
-  answerOne: string,
-  answerTwo: string,
-  answerThree: object
-) => {
-  if (
-    !reviewId ||
-    answerOne === undefined ||
-    answerOne === null ||
-    answerTwo === undefined ||
-    answerTwo === null ||
-    answerThree === undefined ||
-    answerThree === null
-  ) {
-    return constant.NULL_VALUE;
-  }
+// const patchReviewService = async (
+//   reviewId: number,
+//   answerOne: string,
+//   answerTwo: string,
+//   answerThree: object
+// ) => {
+//   if (
+//     !reviewId ||
+//     answerOne === undefined ||
+//     answerOne === null ||
+//     answerTwo === undefined ||
+//     answerTwo === null ||
+//     answerThree === undefined ||
+//     answerThree === null
+//   ) {
+//     return constant.NULL_VALUE;
+//   }
 
-  const reviewToChange = await Review.findOne({
-    where: { id: reviewId, isDeleted: false },
-  });
-  if (!reviewToChange) {
-    return constant.WRONG_REQUEST_VALUE;
-  }
+//   const reviewToChange = await Review.findOne({
+//     where: { id: reviewId, isDeleted: false },
+//   });
+//   if (!reviewToChange) {
+//     return constant.WRONG_REQUEST_VALUE;
+//   }
 
-  await Review.update(
-    {
-      answerOne,
-      answerTwo,
-      answerThree,
-    },
-    {
-      where: { id: reviewId, isDeleted: false },
-    }
-  );
+//   await Review.update(
+//     {
+//       answerOne,
+//       answerTwo,
+//       answerThree,
+//     },
+//     {
+//       where: { id: reviewId, isDeleted: false },
+//     }
+//   );
 
-  return constant.SUCCESS;
-};
+//   return constant.SUCCESS;
+// };
 
 /**
  *  @독후감 삭제
@@ -340,18 +371,16 @@ const patchReviewService = async (
  *      2. 삭제될 리뷰가 없을 때
  *      3. 이미 삭제된 리뷰일 때
  */
-const deleteReviewService = async (userId: number, reviewId: number) => {
+const deleteReviewService = async (userId: string, reviewId: string) => {
   // 1. 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
 
-  // user 확인
-  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
-
   // 해당 review 조회
   const review = await Review.findOne({
-    where: { id: reviewId, userId: user.id },
+    id: reviewId,
+    userId,
   });
 
   // 2. 존재하지 않는 review
@@ -360,7 +389,7 @@ const deleteReviewService = async (userId: number, reviewId: number) => {
   }
 
   // 3. 이미 삭제된 Review 입니다.
-  if (review.isDeleted) {
+  if (review.is_deleted) {
     return constant.VALUE_ALREADY_DELETED;
   }
 
@@ -368,9 +397,6 @@ const deleteReviewService = async (userId: number, reviewId: number) => {
   await review.update({
     isDeleted: true,
   });
-
-  // 삭제 리뷰 저장
-  await review.save();
 
   return constant.SUCCESS;
 };
@@ -382,8 +408,9 @@ const reviewService = {
   getReviewService,
   getReviewPreService,
   getReviewPeriService,
-  patchReviewService,
+  // patchReviewService,
   deleteReviewService,
 };
+
 
 export default reviewService;

@@ -1,12 +1,13 @@
-import { Op } from "sequelize";
+import mongoose from "mongoose";
 
 // library
 import constant from "../library/constant";
 import { keysToSnake } from "../library/convertSnakeToCamel";
 
 // model
-import Book from "../models/Book";
+import User from "../models/User";
 import Review from "../models/Review";
+import Book from "../models/Book";
 
 /**
  *  @서재,리뷰에 책 추가하기
@@ -165,120 +166,108 @@ const getBookService = async (userId: string) => {
   return { books: books };
 };
 
-// /**
-//  *  @서재  독서전 책 조회
-//  *  @route GET /book/pre
-//  *  @access private
-//  */
-// const getBookPreService = async (userId: number) => {
-//   let books = [];
-//   await Review.findAll({
-//     attributes: ["id", "reviewSt"],
-//     include: [
-//       {
-//         model: Book,
-//         attributes: ["title", "author", "thumbnail"],
-//       },
-//     ],
-//     where: {
-//       userId,
-//       reviewSt: 2,
-//       isDeleted: false,
-//     },
-//     order: [["updatedAt", "DESC"]],
-//   }).then((reviews) =>
-//     reviews.forEach((review) => {
-//       books.push({
-//         reviewId: review.id,
-//         thumbnail: review.book.thumbnail,
-//         title: review.book.title,
-//         author: review.book.author,
-//         reviewSt: review.reviewSt,
-//       });
-//     })
-//   );
+/**
+ *  @서재  독서전 책 조회
+ *  @route GET /book/pre
+ *  @access private
+ */
+const getBookPreService = async (userId: string) => {
+  const reviews = await Review.find(
+    {
+      user_id: userId,
+      is_deleted: false,
+      review_st: 2,
+    },
+    { _id: true, book_id: true, review_st: true, __v: false }
+  ).sort({ updated_at: -1 });
 
-//   return { books: books };
-// };
+  const books = await Promise.all(
+    reviews.map(async function (review) {
+      const findBook = await Book.findById(review.book_id);
+      const book = {
+        reviewId: review.id,
+        thumbnail: findBook.thumbnail,
+        title: findBook.title,
+        author: findBook.author,
+        reviewSt: review.review_st,
+      };
 
-// /**
-//  *  @서재 독서중 책 조회
-//  *  @route GET /book/peri
-//  *  @access private
-//  */
-// const getBookPeriService = async (userId: number) => {
-//   let books = [];
-//   await Review.findAll({
-//     attributes: ["id", "reviewSt"],
-//     include: [
-//       {
-//         model: Book,
-//         attributes: ["title", "author", "thumbnail"],
-//       },
-//     ],
-//     where: {
-//       userId,
-//       reviewSt: 3,
-//       isDeleted: false,
-//     },
-//     order: [["updatedAt", "DESC"]],
-//   }).then((reviews) =>
-//     reviews.forEach((review) => {
-//       books.push({
-//         reviewId: review.id,
-//         thumbnail: review.book.thumbnail,
-//         title: review.book.title,
-//         author: review.book.author,
-//         reviewSt: review.reviewSt,
-//       });
-//     })
-//   );
+      return book;
+    })
+  );
+  return { books: books };
+};
 
-//   return { books: books };
-// };
+/**
+ *  @서재 독서중 책 조회
+ *  @route GET /book/peri
+ *  @access private
+ */
+const getBookPeriService = async (userId: string) => {
+  const reviews = await Review.find(
+    {
+      user_id: userId,
+      is_deleted: false,
+      review_st: 3,
+    },
+    { _id: true, book_id: true, review_st: true, __v: false }
+  ).sort({ updated_at: -1 });
 
-// /**
-//  *  @서재 독서완료 책 조회
-//  *  @route GET /book/post
-//  *  @access private
-//  */
-// const getBookPostService = async (userId: number) => {
-//   let books = [];
-//   await Review.findAll({
-//     attributes: ["id", "reviewSt"],
-//     include: [
-//       {
-//         model: Book,
-//         attributes: ["title", "author", "thumbnail"],
-//       },
-//     ],
-//     where: {
-//       userId,
-//       reviewSt: 4,
-//       isDeleted: false,
-//     },
-//     order: [["updatedAt", "DESC"]],
-//   }).then((reviews) =>
-//     reviews.forEach((review) => {
-//       books.push({
-//         reviewId: review.id,
-//         thumbnail: review.book.thumbnail,
-//         title: review.book.title,
-//         author: review.book.author,
-//         reviewSt: review.reviewSt,
-//       });
-//     })
-//   );
+  const books = await Promise.all(
+    reviews.map(async function (review) {
+      const findBook = await Book.findById(review.book_id);
+      const book = {
+        reviewId: review.id,
+        thumbnail: findBook.thumbnail,
+        title: findBook.title,
+        author: findBook.author,
+        reviewSt: review.review_st,
+      };
 
-//   return { books: books };
-// };
+      return book;
+    })
+  );
+  return { books: books };
+};
+
+/**
+ *  @서재 독서완료 책 조회
+ *  @route GET /book/post
+ *  @access private
+ */
+const getBookPostService = async (userId: string) => {
+  const reviews = await Review.find(
+    {
+      user_id: userId,
+      is_deleted: false,
+      review_st: 4,
+    },
+    { _id: true, book_id: true, review_st: true, __v: false }
+  ).sort({ updated_at: -1 });
+
+  const books = await Promise.all(
+    reviews.map(async function (review) {
+      const findBook = await Book.findById(review.book_id);
+      const book = {
+        reviewId: review.id,
+        thumbnail: findBook.thumbnail,
+        title: findBook.title,
+        author: findBook.author,
+        reviewSt: review.review_st,
+      };
+
+      return book;
+    })
+  );
+  return { books: books };
+};
 
 const bookService = {
   postBookService,
   getBookService,
-  // getBookPreService,
-  // getBookPeriService,
-  // getBookPostService,
+  getBookPreService,
+  getBookPeriService,
+  getBookPostService,
 };
 
 export default bookService;

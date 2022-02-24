@@ -1,4 +1,5 @@
 import index from "../config";
+import mongoose from "mongoose";
 
 // library
 import jwt from "jsonwebtoken";
@@ -48,80 +49,81 @@ const getEmailService = async (email?: string) => {
   return constant.SUCCESS;
 };
 
-// /**
-//  *  @닉네임_유효성_검사
-//  *  @route GET /auth/nickname?nickname=
-//  *  @access public
-//  *  @err 1. 필요한 값이 없습니다.
-//  */
-// const getNicknameService = async (nickname?: string) => {
-//   // 잘못된 요청값이 들어왔을 때 (query !== nickname)
-//   if (nickname === undefined) {
-//     return constant.WRONG_REQUEST_VALUE;
-//   }
+/**
+ *  @닉네임_유효성_검사
+ *  @route GET /auth/nickname?nickname=
+ *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ */
+const getNicknameService = async (nickname?: string) => {
+  // 잘못된 요청값이 들어왔을 때 (query !== nickname)
+  if (nickname === undefined) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
 
-//   // 필요한 값이 존재하지 않는 경우
-//   if (!nickname) {
-//     return constant.NULL_VALUE;
-//   }
+  // 필요한 값이 존재하지 않는 경우
+  if (!nickname) {
+    return constant.NULL_VALUE;
+  }
 
-//   // nickname 형식이 잘못되었을 때
-//   if (!checkNicknameValid(nickname)) {
-//     return constant.WRONG_NICKNAME_CONVENTION;
-//   }
+  // nickname 형식이 잘못되었을 때
+  if (!checkNicknameValid(nickname)) {
+    return constant.WRONG_NICKNAME_CONVENTION;
+  }
 
-//   // nickname이 이미 존재할 때
-//   const nicknameExist = await User.findAll({
-//     where: {
-//       nickname,
-//       isDeleted: false,
-//     },
-//   });
+  // nickname이 이미 존재할 때
+  const nicknameExist = await User.find({
+    nickname,
+    isDeleted: false,
+  });
 
-//   if (nicknameExist.length > 0) {
-//     return constant.NICKNAME_ALREADY_EXIST;
-//   }
+  if (nicknameExist.length > 0) {
+    return constant.NICKNAME_ALREADY_EXIST;
+  }
 
-//   return constant.SUCCESS;
-// };
+  return constant.SUCCESS;
+};
 
-// /**
-//  *  @로그인
-//  *  @route Post auth/login
-//  *  @access public
-//  *  @err 1. 필요한 값이 없습니다.
-//  *       2. 존재하지 않는 이메일입니다.
-//  *       3. 비밀번호가 일치하지 않습니다.
-//  */
-// const postLoginService = async (email: string, password: string) => {
-//   // 요청 바디 부족
-//   if (!email || !password) {
-//     return constant.NULL_VALUE;
-//   }
+/**
+ *  @로그인
+ *  @route Post auth/login
+ *  @access public
+ *  @err 1. 필요한 값이 없습니다.
+ *       2. 존재하지 않는 이메일입니다.
+ *       3. 비밀번호가 일치하지 않습니다.
+ */
+const postLoginService = async (email: string, password: string) => {
+  // 요청 바디 부족
+  if (!email || !password) {
+    return constant.NULL_VALUE;
+  }
 
-//   // 존재하지 않는 이메일
-//   const user = await User.findOne({ where: { email, isDeleted: false } });
-//   if (!user) {
-//     return constant.EMAIL_NOT_FOUND;
-//   }
+  // 존재하지 않는 이메일
+  const user = await User.findOne({
+    email,
+    isDeleted: false,
+  });
+  if (!user) {
+    return constant.EMAIL_NOT_FOUND;
+  }
 
-//   // 비밀번호 일치 X
-//   const isMatch = await bcrypt.compare(password, user.password);
-//   if (!isMatch) {
-//     return constant.PW_NOT_CORRECT;
-//   }
+  // 비밀번호 일치 X
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return constant.PW_NOT_CORRECT;
+  }
 
-//   // 성공 시
-//   // 토큰 만들기
-//   const payload = {
-//     user: {
-//       id: user.id,
-//     },
-//   };
-//   const nickname = user.nickname;
-//   const token = jwt.sign(payload, index.jwtSecret, { expiresIn: "14d" });
-//   return { nickname, token };
-// };
+  // 성공 시
+  // 토큰 만들기
+  const payload = {
+    user: {
+      id: user.id,
+    },
+  };
+  const nickname = user.nickname;
+  const token = jwt.sign(payload, index.jwtSecret, { expiresIn: "14d" });
+  return { nickname, token };
+};
 
 /**
  *  @회원가입
@@ -208,8 +210,8 @@ const getLoginFlagService = async (isLogin: Boolean) => {
 
 const authService = {
   getEmailService,
-  // getNicknameService,
-  // postLoginService,
+  getNicknameService,
+  postLoginService,
   postSignupService,
   getLoginFlagService,
 };

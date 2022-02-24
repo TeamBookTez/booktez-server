@@ -6,15 +6,15 @@ export const toCamel = (s) => {
   });
 };
 
-export const isArray = function (a) {
+export const isArray = (a) => {
   return Array.isArray(a);
 };
 
-export const isObject = function (o) {
+export const isObject = (o) => {
   return o === Object(o) && !isArray(o) && typeof o !== "function";
 };
 
-export const keysToCamel = function (o) {
+export const keysToCamel = (o) => {
   if (isObject(o)) {
     const n = {};
 
@@ -32,7 +32,7 @@ export const keysToCamel = function (o) {
   return o;
 };
 
-export const keysToSnake = function (o) {
+export const keysToSnake = (o) => {
   if (isObject(o)) {
     const n = {};
 

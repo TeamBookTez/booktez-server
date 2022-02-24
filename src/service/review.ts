@@ -17,8 +17,8 @@ import Book from "../models/Book";
  *      2. 존재하지 않는 Review
  */
 const patchReviewPreService = async (
-  reviewId: mongoose.Types.ObjectId,
-  userId: mongoose.Types.ObjectId,
+  reviewId: string,
+  userId: string,
   answerOne: string,
   answerTwo: string,
   questionList: string[],
@@ -69,10 +69,7 @@ const patchReviewPreService = async (
  *      1. 필요한 값이 없습니다.
  *      2. 존재하지 않는 Review 입니다.
  */
-const getQuestionService = async (
-  userId: mongoose.Types.ObjectId,
-  reviewId: mongoose.Types.ObjectId
-) => {
+const getQuestionService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
@@ -105,8 +102,8 @@ const getQuestionService = async (
  *      2. 존재하지 않는 Review
  */
 const patchReviewPeriService = async (
-  reviewId: mongoose.Types.ObjectId,
-  userId: mongoose.Types.ObjectId,
+  reviewId: string,
+  userId: string,
   answerThree: object,
   reviewSt: number
 ) => {
@@ -333,10 +330,7 @@ const patchReviewPeriService = async (
  *      2. 삭제될 리뷰가 없을 때
  *      3. 이미 삭제된 리뷰일 때
  */
-const deleteReviewService = async (
-  userId: mongoose.Types.ObjectId,
-  reviewId: mongoose.Types.ObjectId
-) => {
+const deleteReviewService = async (userId: string, reviewId: string) => {
   // 1. 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;

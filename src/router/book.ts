@@ -10,8 +10,8 @@ const router = express.Router();
 
 router.post("/", isLogin, bookController.postBookController);
 router.get("/", auth, bookController.getBookController);
-router.get("/pre", auth, bookController.getBookPreController);
-router.get("/peri", auth, bookController.getBookPeriController);
-router.get("/post", auth, bookController.getBookPostController);
+// router.get("/pre", auth, bookController.getBookPreController);
+// router.get("/peri", auth, bookController.getBookPeriController);
+// router.get("/post", auth, bookController.getBookPostController);
 
 module.exports = router;

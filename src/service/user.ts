@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 import constant from "../library/constant";
 
 // model
-import User from "../models/User"
-import Review from "../models/Review"
+import User from "../models/User";
+import Review from "../models/Review";
 
 /**
  *  @유저정보조회
@@ -14,8 +14,8 @@ import Review from "../models/Review"
  */
 const getMyInfoService = async (userId: string) => {
   const user = await User.findOne({
-    id: userId, 
-    isDeleted: false
+    id: userId,
+    isDeleted: false,
   });
 
   if (!user) {
@@ -26,7 +26,7 @@ const getMyInfoService = async (userId: string) => {
   const nickname = user.nickname;
   const email = user.email;
   const reviewCount = await Review.count({
-    userId, 
+    userId,
     isDeleted: false,
   });
 
@@ -49,12 +49,10 @@ const patchImgService = async (userId: string, img: string) => {
     return constant.WRONG_IMG_FORM;
   }
 
-  const user = await User.findOne(
-    { 
-      id: userId, 
-      isDeleted: false
-    }
-  );
+  const user = await User.findOne({
+    id: userId,
+    isDeleted: false,
+  });
 
   if (!user) {
     return constant.NON_EXISTENT_USER;
@@ -62,7 +60,7 @@ const patchImgService = async (userId: string, img: string) => {
 
   await user.update({ img });
 
-  return { img: user.img };
+  return { img };
 };
 
 const userService = {

@@ -2,146 +2,169 @@ import mongoose from "mongoose";
 
 // library
 import constant from "../library/constant";
+import { keysToSnake } from "../library/convertSnakeToCamel";
 
 // model
 import User from "../models/User";
 import Review from "../models/Review";
 import Book from "../models/Book";
 
-// /**
-//  *  @서재,리뷰에 책 추가하기
-//  *  @route POST /book
-//  *  @access public
-//  *  @access private
-//  *  @err   1. 필요한 값이 없을 때
-//  *         2. 리뷰가 이미 존재할 때
-//  */
-// const postBookService = async (
-//   isLogin: boolean,
-//   userId: number,
-//   isbn: string,
-//   thumbnail: string,
-//   title: string,
-//   author: string[],
-//   translator: string[],
-//   publicationDt: string
-// ) => {
-//   if (!isbn || !title || !author || !translator || !publicationDt) {
-//     return constant.NULL_VALUE;
-//   }
+/**
+ *  @서재,리뷰에 책 추가하기
+ *  @route POST /book
+ *  @access public
+ *  @access private
+ *  @err   1. 필요한 값이 없을 때
+ *         2. 리뷰가 이미 존재할 때
+ */
+const postBookService = async (
+  isLogin: boolean,
+  userId: string,
+  isbn: string,
+  thumbnail: string,
+  title: string,
+  author: string[],
+  translator: string[],
+  publicationDt: string
+) => {
+  if (!isbn || !title || !author || !translator || !publicationDt) {
+    return constant.NULL_VALUE;
+  }
 
-//   isbn = isbn.trim();
+  isbn = isbn.trim();
 
-//   if (!isLogin) {
-//     return constant.ANONYMOUS_USER;
-//   }
+  if (!isLogin) {
+    return constant.ANONYMOUS_USER;
+  }
 
-//   let isbnOne: string, isbnTwo: string;
-//   let bookExist;
-//   let book;
+  let isbnOne: string, isbnTwo: string;
+  let bookExist;
+  let book;
 
-//   if (/\s/.test(isbn)) {
-//     // isbn이 2개일 경우
-//     [isbnOne, isbnTwo] = isbn.split(" ");
+  if (/\s/.test(isbn)) {
+    // isbn이 2개일 경우
+    [isbnOne, isbnTwo] = isbn.split(" ");
 
-//     bookExist = await Book.findOne({
-//       where: {
-//         [Op.or]: [
-//           { isbn: isbnOne },
-//           { isbn: isbnTwo },
-//           { isbnSub: isbnOne },
-//           { isbnSub: isbnTwo },
-//         ],
-//       },
-//     });
-//   } else {
-//     // isbn 1개
-//     isbnOne = isbn;
-//     bookExist = await Book.findOne({
-//       where: {
-//         [Op.or]: [{ isbn: isbnOne }, { isbnSub: isbnOne }],
-//       },
-//     });
-//   }
+    bookExist = await Book.exists({
+      $or: [
+        { isbn: isbnOne },
+        { isbn: isbnTwo },
+        keysToSnake({ isbnSub: isbnOne }),
+        keysToSnake({ isbnSub: isbnTwo }),
+      ],
+    });
+  } else {
+    // isbn 1개
+    isbnOne = isbn;
+    bookExist = await Book.exists({
+      $or: [{ isbn: isbnOne }, keysToSnake({ isbnSub: isbnOne })],
+    });
+  }
 
-//   if (!bookExist) {
-//     book = await Book.create({
-//       isbn: isbnOne,
-//       ...(isbnTwo && { isbnSub: isbnTwo }),
-//       title,
-//       author,
-//       ...(thumbnail && { thumbnail }),
-//       translator,
-//       publicationDt,
-//     });
-//   } else {
-//     book = bookExist;
-//   }
+  console.log(bookExist);
 
-//   // review 중복 체크
-//   const exist = await Review.findOne({
-//     where: {
-//       bookId: book.id,
-//       userId,
-//       isDeleted: false,
-//     },
-//   });
+  if (!bookExist) {
+    console.log("not exist");
+    console.log(
+      keysToSnake({
+        isbn: isbnOne,
+        ...(isbnTwo && { isbnSub: isbnTwo }),
+        title,
+        author,
+        ...(thumbnail && { thumbnail }),
+        translator,
+        publicationDt,
+      })
+    );
 
-//   if (exist) {
-//     return constant.VALUE_ALREADY_EXIST;
-//   }
+    book = await Book.create(
+      keysToSnake({
+        isbn: isbnOne,
+        ...(isbnTwo && { isbnSub: isbnTwo }),
+        title,
+        author,
+        ...(thumbnail && { thumbnail }),
+        translator,
+        publicationDt,
+      })
+    );
 
-//   // create review
-//   const review = await Review.create({
-//     userId: userId,
-//     bookId: book.id,
-//     questionList: [],
-//     answerOne: "",
-//     answerTwo: "",
-//     reviewSt: 2,
-//     finishSt: false,
-//   });
+    console.log("gogo");
 
-//   return {
-//     isLogin,
-//     reviewId: review.id,
-//   };
-// };
+    // book = await Book.create({
+    //   isbn: isbnOne,
+    //   ...(isbnTwo && { isbnSub: isbnTwo }),
+    //   title,
+    //   author,
+    //   ...(thumbnail && { thumbnail }),
+    //   translator,
+    //   publicationDt,
+    // });
+  } else {
+    book = bookExist;
+  }
 
-// /**
-//  *  @서재 책 조회
-//  *  @route GET /book
-//  *  @access private
-//  */
-// const getBookService = async (userId: number) => {
-//   let books = [];
-//   await Review.findAll({
-//     attributes: ["id", "reviewSt"],
-//     include: [
-//       {
-//         model: Book,
-//         attributes: ["title", "author", "thumbnail"],
-//       },
-//     ],
-//     where: {
-//       userId,
-//       isDeleted: false,
-//     },
-//     order: [["updatedAt", "DESC"]],
-//   }).then((reviews) =>
-//     reviews.forEach((review) => {
-//       books.push({
-//         reviewId: review.id,
-//         thumbnail: review.book.thumbnail,
-//         title: review.book.title,
-//         author: review.book.author,
-//         reviewSt: review.reviewSt,
-//       });
-//     })
-//   );
+  // review 중복 체크
+  const exist = await Review.findOne({
+    where: {
+      bookId: book.id,
+      userId,
+      isDeleted: false,
+    },
+  });
 
-//   return { books: books };
-// };
+  if (exist) {
+    return constant.VALUE_ALREADY_EXIST;
+  }
+
+  // create review
+  const review = await Review.create({
+    userId: userId,
+    bookId: book.id,
+    questionList: [],
+    answerOne: "",
+    answerTwo: "",
+    reviewSt: 2,
+    finishSt: false,
+  });
+
+  return {
+    isLogin,
+    reviewId: review.id,
+  };
+};
+
+/**
+ *  @서재 책 조회
+ *  @route GET /book
+ *  @access private
+ */
+const getBookService = async (userId: string) => {
+  const reviews = await Review.find(
+    keysToSnake({
+      userId,
+      isDeleted: false,
+    }),
+    keysToSnake({ _id: true, bookId: true, reviewSt: true, __v: false })
+  ).sort(keysToSnake({ updatedAt: -1 }));
+
+  const books = await Promise.all(
+    reviews.map(async (review) => {
+      const findBook = await Book.findById(review.book_id);
+      const book = {
+        reviewId: review.id,
+        thumbnail: findBook.thumbnail,
+        title: findBook.title,
+        author: findBook.author,
+        reviewSt: review.review_st,
+      };
+
+      return book;
+    })
+  );
+
+  return { books: books };
+};
 
 /**
  *  @서재  독서전 책 조회
@@ -240,8 +263,8 @@ const getBookPostService = async (userId: string) => {
 };
 
 const bookService = {
-  // postBookService,
-  // getBookService,
+  postBookService,
+  getBookService,
   getBookPreService,
   getBookPeriService,
   getBookPostService,

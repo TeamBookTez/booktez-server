@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // library
 import constant from "../library/constant";
-import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
+import { keysToSnake } from "../library/convertSnakeToCamel";
 
 // model
 import User from "../models/User";

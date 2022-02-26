@@ -15,7 +15,7 @@ const BookSchema = new mongoose.Schema({
   // 도서 고유번호_sub
   isbn_sub: {
     type: String,
-    unique: true,
+    unique: false,
     required: false,
   },
 

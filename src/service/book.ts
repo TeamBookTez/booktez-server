@@ -150,7 +150,7 @@ const getBookPreService = async (userId: string) => {
       is_deleted: false,
       review_st: 2,
     },
-    { _id: true, book_id: true, review_st: true, __v: false }
+    { _id: true, book_id: true, review_st: true }
   ).sort({ updated_at: -1 });
 
   const books = await Promise.all(
@@ -182,7 +182,7 @@ const getBookPeriService = async (userId: string) => {
       is_deleted: false,
       review_st: 3,
     },
-    { _id: true, book_id: true, review_st: true, __v: false }
+    { _id: true, book_id: true, review_st: true }
   ).sort({ updated_at: -1 });
 
   const books = await Promise.all(
@@ -214,7 +214,7 @@ const getBookPostService = async (userId: string) => {
       is_deleted: false,
       review_st: 4,
     },
-    { _id: true, book_id: true, review_st: true, __v: false }
+    { _id: true, book_id: true, review_st: true }
   ).sort({ updated_at: -1 });
 
   const books = await Promise.all(

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 // library
 import constant from "../library/constant";
+import { keysToSnake } from "../library/convertSnakeToCamel";
 
 // model
 import User from "../models/User";
@@ -40,23 +41,27 @@ const patchReviewPreService = async (
   }
 
   // review 체크
-  const review = await Review.findOne({
-    id: reviewId,
-    user_id: userId,
-    isDeleted: false,
-  });
+  const review = await Review.findOne(
+    keysToSnake({
+      id: reviewId,
+      userId,
+      isDeleted: false,
+    })
+  );
 
   if (!review) {
     return constant.DB_NOT_FOUND;
   }
 
   // review 수정
-  await review.update({
-    questionList,
-    answerOne,
-    answerTwo,
-    reviewSt,
-    finishSt: false,
+  await review.updateOne({
+    $set: keysToSnake({
+      questionList,
+      answerOne,
+      answerTwo,
+      reviewSt,
+      finishSt: false,
+    }),
   });
 
   return { reviewId: review.id };

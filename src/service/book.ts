@@ -117,7 +117,7 @@ const getBookService = async (userId: string) => {
       userId,
       isDeleted: false,
     }),
-    keysToSnake({ _id: true, bookId: true, reviewSt: true, __v: false })
+    keysToSnake({ _id: true, bookId: true, reviewSt: true })
   ).sort(keysToSnake({ updatedAt: -1 }));
 
   const books = await Promise.all(

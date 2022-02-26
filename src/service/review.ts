@@ -82,11 +82,13 @@ const getQuestionService = async (userId: string, reviewId: string) => {
   }
 
   // review 조회
-  const review = await Review.findOne({
-    id: reviewId,
-    user_id: userId,
-    isDeleted: false,
-  });
+  const review = await Review.findOne(
+    keysToSnake({
+      id: reviewId,
+      userId,
+      isDeleted: false,
+    })
+  );
 
   // 존재하지 않는 리뷰
   if (!review) {

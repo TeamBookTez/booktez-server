@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // library
 import constant from "../library/constant";
-import { keysToSnake } from "../library/convertSnakeToCamel";
+import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
 
 // model
 import User from "../models/User";
@@ -61,22 +61,7 @@ const postBookService = async (
     });
   }
 
-  console.log(bookExist);
-
   if (!bookExist) {
-    console.log("not exist");
-    console.log(
-      keysToSnake({
-        isbn: isbnOne,
-        ...(isbnTwo && { isbnSub: isbnTwo }),
-        title,
-        author,
-        ...(thumbnail && { thumbnail }),
-        translator,
-        publicationDt,
-      })
-    );
-
     book = await Book.create(
       keysToSnake({
         isbn: isbnOne,
@@ -88,18 +73,6 @@ const postBookService = async (
         publicationDt,
       })
     );
-
-    console.log("gogo");
-
-    // book = await Book.create({
-    //   isbn: isbnOne,
-    //   ...(isbnTwo && { isbnSub: isbnTwo }),
-    //   title,
-    //   author,
-    //   ...(thumbnail && { thumbnail }),
-    //   translator,
-    //   publicationDt,
-    // });
   } else {
     book = bookExist;
   }
@@ -118,15 +91,14 @@ const postBookService = async (
   }
 
   // create review
-  const review = await Review.create({
-    userId: userId,
-    bookId: book.id,
-    questionList: [],
-    answerOne: "",
-    answerTwo: "",
-    reviewSt: 2,
-    finishSt: false,
-  });
+  const review = await Review.create(
+    keysToSnake({
+      userId,
+      bookId: book,
+      reviewSt: 2,
+      finishSt: false,
+    })
+  );
 
   return {
     isLogin,

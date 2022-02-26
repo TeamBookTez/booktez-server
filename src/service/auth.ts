@@ -121,8 +121,9 @@ const postLoginService = async (email: string, password: string) => {
     },
   };
   const nickname = user.nickname;
+  const userEmail = user.email;
   const token = jwt.sign(payload, index.jwtSecret, { expiresIn: "14d" });
-  return { nickname, token };
+  return { email: userEmail, nickname, token };
 };
 
 /**

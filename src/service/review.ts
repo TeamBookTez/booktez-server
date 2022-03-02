@@ -126,11 +126,9 @@ const patchReviewPeriService = async (
   }
 
   // 해당 review 조회
-  const review = await Review.findOne({
-    id: reviewId,
-    userId,
-    isDeleted: false,
-  });
+  const review = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
   // 2. 존재하지 않는 review
   if (!review) {

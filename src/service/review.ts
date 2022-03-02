@@ -219,29 +219,25 @@ const getReviewPreService = async (userId: string, reviewId: string) => {
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
-  const reviewToShow = await Review.findOne({
-    id: reviewId,
-    userId,
-    isDeleted: false,
-  });
+  const reviewToShow = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
   // 존재하지 않는 리뷰일 때
   if (!reviewToShow) {
     return constant.WRONG_REQUEST_VALUE;
   }
 
-  // 질문리스트 default response
-  let questionList = reviewToShow.question_list;
-  if (questionList.length < 1) {
-    questionList = [""];
-  }
+  // snake to camel
+  const originReview = keysToCamel(reviewToShow);
+  const camelReview = keysToCamel(originReview.Doc);
 
   return {
-    answerOne: reviewToShow.answer_one,
-    answerTwo: reviewToShow.answer_two,
-    questionList,
-    reviewSt: reviewToShow.review_st,
-    finishSt: reviewToShow.finish_St,
+    answerOne: camelReview.answerOne,
+    answerTwo: camelReview.answerTwo,
+    questionList: camelReview.questionList,
+    reviewSt: camelReview.reviewSt,
+    finishSt: camelReview.finishSt,
   };
 };
 

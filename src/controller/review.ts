@@ -412,7 +412,7 @@ const deleteReviewController = async (req: Request, res: Response) => {
         res,
         returnCode.BAD_REQUEST,
         false,
-        "존재하지 않는 Review입니다."
+        "존재하지 않거나 삭제된 Review입니다."
       );
     }
 

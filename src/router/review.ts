@@ -35,7 +35,7 @@ router.get("/:reviewId/pre", auth, reviewController.getReviewPreController);
 router.get("/:reviewId/peri", auth, reviewController.getReviewPeriController);
 
 // 독서 후 수정
-// router.patch("/:reviewId", auth, reviewController.patchReviewController);
+router.patch("/:reviewId", auth, reviewController.patchReviewController);
 
 // 독서 후 삭제
 router.delete("/:reviewId", auth, reviewController.deleteReviewController);

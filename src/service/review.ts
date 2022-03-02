@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // library
 import constant from "../library/constant";
-import { keysToSnake } from "../library/convertSnakeToCamel";
+import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
 
 // model
 import User from "../models/User";
@@ -140,23 +140,36 @@ const patchReviewPeriService = async (
   let finishSt = Number(reviewSt) === 4 ? true : false;
 
   // 3. review update
-  await review.update({
-    answerThree,
-    reviewSt,
-    finishSt,
+  await review.updateOne({
+    $set: keysToSnake({
+      answerThree,
+      reviewSt,
+      finishSt,
+    }),
   });
 
   // 책 확인
-  const book = await Book.findOne({ id: review.book_id });
+  const book = await Book.findOne(
+    keysToSnake({ id: review.book_id }),
+    keysToSnake({
+      _id: false,
+      isbn: false,
+      isbnSub: false,
+    })
+  );
+
+  // snake to camel
+  const originBook = keysToCamel(book);
+  const camelBook = keysToCamel(originBook.Doc);
 
   return {
     reviewId: review.id,
     bookData: {
-      thumbnail: book.thumbnail,
-      title: book.title,
-      author: book.author,
-      translator: book.translator,
-      publicationDt: book.publication_dt,
+      title: camelBook.title,
+      author: camelBook.author,
+      translator: camelBook.translator,
+      thumbnail: camelBook.thumbnail,
+      publicationDt: camelBook.publicationDt,
     },
   };
 };

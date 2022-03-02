@@ -8,7 +8,6 @@ import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
 import User from "../models/User";
 import Review from "../models/Review";
 import Book from "../models/Book";
-import { String } from "aws-sdk/clients/apigateway";
 
 /**
  *  @독서중 독서 전 작성
@@ -88,8 +87,12 @@ const getQuestionService = async (userId: string, reviewId: string) => {
     return constant.DB_NOT_FOUND;
   }
 
+  // snake to camel
+  const originReview = keysToCamel(review);
+  const camelReview = keysToCamel(originReview.Doc);
+
   // 질문리스트
-  let questionList = review.question_list;
+  let questionList = camelReview.questionList;
 
   return { questionList };
 };

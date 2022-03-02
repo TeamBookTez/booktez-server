@@ -8,6 +8,7 @@ import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
 import User from "../models/User";
 import Review from "../models/Review";
 import Book from "../models/Book";
+import { String } from "aws-sdk/clients/apigateway";
 
 /**
  *  @독서중 독서 전 작성
@@ -287,44 +288,45 @@ const getReviewPeriService = async (userId: string, reviewId: string) => {
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-// const patchReviewService = async (
-//   reviewId: number,
-//   answerOne: string,
-//   answerTwo: string,
-//   answerThree: object
-// ) => {
-//   if (
-//     !reviewId ||
-//     answerOne === undefined ||
-//     answerOne === null ||
-//     answerTwo === undefined ||
-//     answerTwo === null ||
-//     answerThree === undefined ||
-//     answerThree === null
-//   ) {
-//     return constant.NULL_VALUE;
-//   }
+const patchReviewService = async (
+  reviewId: string,
+  answerOne: string,
+  answerTwo: string,
+  answerThree: object
+) => {
+  if (
+    !reviewId ||
+    answerOne === undefined ||
+    answerOne === null ||
+    answerTwo === undefined ||
+    answerTwo === null ||
+    answerThree === undefined ||
+    answerThree === null
+  ) {
+    return constant.NULL_VALUE;
+  }
 
-//   const reviewToChange = await Review.findOne({
-//     where: { id: reviewId, isDeleted: false },
-//   });
-//   if (!reviewToChange) {
-//     return constant.WRONG_REQUEST_VALUE;
-//   }
+  // find review
+  const reviewToChange = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ isDeleted: false }));
 
-//   await Review.update(
-//     {
-//       answerOne,
-//       answerTwo,
-//       answerThree,
-//     },
-//     {
-//       where: { id: reviewId, isDeleted: false },
-//     }
-//   );
+  // 존재하지 않는 리뷰
+  if (!reviewToChange) {
+    return constant.DB_NOT_FOUND;
+  }
 
-//   return constant.SUCCESS;
-// };
+  // review 수정
+  await reviewToChange.updateOne({
+    $set: keysToSnake({
+      answerOne,
+      answerTwo,
+      answerThree,
+    }),
+  });
+
+  return constant.SUCCESS;
+};
 
 /**
  *  @독후감 삭제
@@ -372,7 +374,7 @@ const reviewService = {
   getReviewService,
   getReviewPreService,
   getReviewPeriService,
-  // patchReviewService,
+  patchReviewService,
   deleteReviewService,
 };
 

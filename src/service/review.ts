@@ -142,9 +142,13 @@ const patchReviewPeriService = async (
     }),
   });
 
+  // snake to camel
+  const originReview = keysToCamel(review);
+  const camelReview = keysToCamel(originReview.Doc);
+
   // 책 확인
   const book = await Book.findOne(
-    keysToSnake({ id: review.book_id }),
+    keysToSnake({ id: camelReview.bookId }),
     keysToSnake({
       _id: false,
       isbn: false,

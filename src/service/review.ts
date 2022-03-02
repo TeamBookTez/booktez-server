@@ -344,24 +344,20 @@ const deleteReviewService = async (userId: string, reviewId: string) => {
   }
 
   // 해당 review 조회
-  const review = await Review.findOne({
-    id: reviewId,
-    userId,
-  });
+  const review = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
-  // 2. 존재하지 않는 review
+  // 2. 존재하지 않거나 삭제된 review
   if (!review) {
     return constant.WRONG_REQUEST_VALUE;
   }
 
-  // 3. 이미 삭제된 Review 입니다.
-  if (review.is_deleted) {
-    return constant.VALUE_ALREADY_DELETED;
-  }
-
   // 독후감 삭제
-  await review.update({
-    isDeleted: true,
+  await review.updateOne({
+    $set: keysToSnake({
+      isDeleted: true,
+    }),
   });
 
   return constant.SUCCESS;

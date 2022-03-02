@@ -42,13 +42,9 @@ const patchReviewPreService = async (
   }
 
   // review 체크
-  const review = await Review.findOne(
-    keysToSnake({
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    })
-  );
+  const review = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
   if (!review) {
     return constant.DB_NOT_FOUND;

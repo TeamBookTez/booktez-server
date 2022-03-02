@@ -91,7 +91,7 @@ const getQuestionController = async (req: Request, res: Response) => {
       );
     }
 
-    if (resData === constant.WRONG_REQUEST_VALUE) {
+    if (resData === constant.DB_NOT_FOUND) {
       return response.basicResponse(
         res,
         returnCode.BAD_REQUEST,

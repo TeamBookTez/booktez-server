@@ -329,58 +329,58 @@ const getReviewPeriController = async (req: Request, res: Response) => {
   }
 };
 
-// /**
-//  *  @독서 완료 후 답변 수정
-//  *  @route PATCH /review/:reviewId
-//  *  @access private
-//  *  @error
-//  *      1. 필요한 값이 없을 때
-//  *      2. 리뷰가 존재하지 않을 때
-//  */
-// const patchReviewController = async (req: Request, res: Response) => {
-//   try {
-//     const resData = await reviewService.patchReviewService(
-//       req.params.reviewId,
-//       req.body.answerOne,
-//       req.body.answerTwo,
-//       req.body.answerThree
-//     );
+/**
+ *  @독서 완료 후 답변 수정
+ *  @route PATCH /review/:reviewId
+ *  @access private
+ *  @error
+ *      1. 필요한 값이 없을 때
+ *      2. 리뷰가 존재하지 않을 때
+ */
+const patchReviewController = async (req: Request, res: Response) => {
+  try {
+    const resData = await reviewService.patchReviewService(
+      req.params.reviewId,
+      req.body.answerOne,
+      req.body.answerTwo,
+      req.body.answerThree
+    );
 
-//     if (resData === constant.NULL_VALUE) {
-//       return response.basicResponse(
-//         res,
-//         returnCode.BAD_REQUEST,
-//         false,
-//         "필요한 값이 없습니다."
-//       );
-//     }
+    if (resData === constant.NULL_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    }
 
-//     if (resData === constant.WRONG_REQUEST_VALUE) {
-//       return response.basicResponse(
-//         res,
-//         returnCode.BAD_REQUEST,
-//         false,
-//         "존재하지 않는 Review입니다."
-//       );
-//     }
+    if (resData === constant.DB_NOT_FOUND) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "존재하지 않는 Review입니다."
+      );
+    }
 
-//     return response.basicResponse(
-//       res,
-//       returnCode.OK,
-//       true,
-//       "수정이 완료되었습니다."
-//     );
-//   } catch (err) {
-//     slack.slackWebhook(req, err.message);
-//     console.error(err.message);
-//     return response.basicResponse(
-//       res,
-//       returnCode.INTERNAL_SERVER_ERROR,
-//       false,
-//       "서버 오류"
-//     );
-//   }
-// };
+    return response.basicResponse(
+      res,
+      returnCode.OK,
+      true,
+      "수정이 완료되었습니다."
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
 
 /**
  *  @독후감 삭제
@@ -450,7 +450,7 @@ const reviewController = {
   getReviewController,
   getReviewPreController,
   getReviewPeriController,
-  // patchReviewController,
+  patchReviewController,
   deleteReviewController,
 };
 

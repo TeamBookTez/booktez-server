@@ -1,72 +1,77 @@
-import {
-  Model,
-  Column,
-  Table,
-  PrimaryKey,
-  AutoIncrement,
-  Unique,
-  Default,
-  AllowNull,
-  BelongsTo,
-  ForeignKey,
-  DataType,
-} from "sequelize-typescript";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
-import { User, Book } from ".";
+// interface
+import { IReview } from "../interface/IReview";
 
-@Table({
-  tableName: "review",
-  freezeTableName: true,
-  underscored: true,
-  timestamps: true,
-  charset: "utf8", // 한국어 설정
-  collate: "utf8_general_ci", // 한국어 설정
-})
-export default class Review extends Model {
-  @PrimaryKey
-  @AutoIncrement
-  @Unique
-  @Column
-  id: number;
+const ReviewSchema = new mongoose.Schema({
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
+  },
+  book_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "book",
+    required: true,
+  },
+  question_list: {
+    type: [String],
+    required: false,
+    default: [""],
+  },
+  answer_one: {
+    type: String,
+    required: false,
+    default: "",
+  },
+  answer_two: {
+    type: String,
+    required: false,
+    default: "",
+  },
+  answer_three: {
+    type: Object,
+    required: false,
+    default: {
+      type: "",
+      content: "",
+      children: [{ type: "", content: "", children: [] }],
+    },
+  },
+  // 리뷰 상태
+  review_st: {
+    type: Number,
+    required: true,
+    default: 2,
+  },
+  // 리뷰 종료 상태
+  finish_st: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  // 생성 일자
+  created_at: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+  // 수정 일자
+  updated_at: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+  is_deleted: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+});
 
-  @ForeignKey(() => User)
-  @Column
-  userId: number;
-
-  @ForeignKey(() => Book)
-  @Column
-  bookId: number;
-
-  @Column(DataType.ARRAY(DataType.STRING))
-  questionList: string[];
-
-  @Column(DataType.TEXT)
-  answerOne: string;
-
-  @Column(DataType.TEXT)
-  answerTwo: string;
-
-  @Column(DataType.JSON)
-  answerThree: JSON;
-
-  @Default(2)
-  @AllowNull(false)
-  @Column
-  reviewSt: number;
-
-  @Default(false)
-  @AllowNull(false)
-  @Column
-  finishSt: boolean;
-
-  @AllowNull(false)
-  @Default(false)
-  @Column
-  isDeleted: boolean;
-
-  @BelongsTo(() => User)
-  user: User;
-
-  @BelongsTo(() => Book)
-  book: Book;
-}
+export default mongoose.model<IReview & mongoose.Document>(
+  "review",
+  ReviewSchema
+);

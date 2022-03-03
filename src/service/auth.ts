@@ -1,4 +1,5 @@
 import index from "../config";
+import mongoose from "mongoose";
 
 // library
 import jwt from "jsonwebtoken";
@@ -9,9 +10,10 @@ import {
   checkNicknameValid,
   checkPasswordValid,
 } from "../library/checkValidation";
+import { keysToSnake } from "../library/convertSnakeToCamel";
 
 // model
-import { User } from "../models";
+import User from "../models/User";
 
 /**
  *  @이메일_유효성_검사
@@ -36,13 +38,11 @@ const getEmailService = async (email?: string) => {
   }
 
   // email이 이미 존재할 때
-  const emailExist = await User.findAll({
-    where: {
-      email,
-      isDeleted: false,
-    },
-  });
-  if (emailExist.length > 0) {
+  // TODO: DB에서 isDeleted string으로 되있는 것 변경
+  const emailExist = await User.exists(
+    keysToSnake({ email, isDeleted: false })
+  );
+  if (emailExist) {
     return constant.EMAIL_ALREADY_EXIST;
   }
 
@@ -72,11 +72,9 @@ const getNicknameService = async (nickname?: string) => {
   }
 
   // nickname이 이미 존재할 때
-  const nicknameExist = await User.findAll({
-    where: {
-      nickname,
-      isDeleted: false,
-    },
+  const nicknameExist = await User.find({
+    nickname,
+    isDeleted: false,
   });
 
   if (nicknameExist.length > 0) {
@@ -101,7 +99,10 @@ const postLoginService = async (email: string, password: string) => {
   }
 
   // 존재하지 않는 이메일
-  const user = await User.findOne({ where: { email, isDeleted: false } });
+  const user = await User.findOne({
+    email,
+    isDeleted: false,
+  });
   if (!user) {
     return constant.EMAIL_NOT_FOUND;
   }
@@ -120,8 +121,9 @@ const postLoginService = async (email: string, password: string) => {
     },
   };
   const nickname = user.nickname;
+  const userEmail = user.email;
   const token = jwt.sign(payload, index.jwtSecret, { expiresIn: "14d" });
-  return { email: user.email, nickname, token };
+  return { email: userEmail, nickname, token };
 };
 
 /**
@@ -161,24 +163,18 @@ const postSignupService = async (
   }
 
   // email이 이미 존재할 때
-  const emailExist = await User.findAll({
-    where: {
-      email,
-      isDeleted: false,
-    },
-  });
-  if (emailExist.length > 0) {
+  const emailExist = await User.exists(
+    keysToSnake({ email, isDeleted: false })
+  );
+  if (emailExist) {
     return constant.EMAIL_ALREADY_EXIST;
   }
 
   // nickname이 이미 존재할 때
-  const nicknameExist = await User.findAll({
-    where: {
-      nickname,
-      isDeleted: false,
-    },
-  });
-  if (nicknameExist.length > 0) {
+  const nicknameExist = await User.exists(
+    keysToSnake({ nickname, isDeleted: false })
+  );
+  if (nicknameExist) {
     return constant.NICKNAME_ALREADY_EXIST;
   }
 

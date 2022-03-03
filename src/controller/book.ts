@@ -22,7 +22,7 @@ const postBookController = async (req: Request, res: Response) => {
   try {
     const resData = await bookService.postBookService(
       req.user ? true : false,
-      req.user ? Number(req.user.id) : constant.ANONYMOUS_USER,
+      req.user ? req.user.id : constant.ANONYMOUS_USER,
       req.body.isbn,
       req.body.thumbnail,
       req.body.title,

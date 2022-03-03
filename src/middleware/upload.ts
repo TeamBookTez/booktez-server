@@ -14,7 +14,7 @@ const upload = multer({
     bucket: config.awsBucket + "/user_profile",
     contentType: multerS3.AUTO_CONTENT_TYPE,
     acl: "public-read",
-    key: function (req, file, cb) {
+    key: (req, file, cb) => {
       cb(null, `${Date.now()}.${file.originalname.split(".").pop()}`);
     },
   }),

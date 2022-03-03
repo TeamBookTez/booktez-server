@@ -308,18 +308,18 @@ const postSignupController = async (req: Request, res: Response) => {
  *  @로그인_여부_검사
  *  @route GET /auth/check
  *  @access public
- *  @err 
+ *  @err
  */
-const getLoginFlagController = async(req: Request, res: Response) => {
+const getLoginFlagController = async (req: Request, res: Response) => {
   try {
     const resData = await authService.getLoginFlagService(
       req.user ? true : false
-    )
+    );
     return response.dataResponse(
-      res, 
+      res,
       returnCode.OK,
-      "로그인 여부 확인 성공.", 
-      true, 
+      "로그인 여부 확인 성공.",
+      true,
       resData
     );
   } catch (err) {
@@ -332,7 +332,7 @@ const getLoginFlagController = async(req: Request, res: Response) => {
       "서버 오류"
     );
   }
-}
+};
 
 const authController = {
   getEmailController,

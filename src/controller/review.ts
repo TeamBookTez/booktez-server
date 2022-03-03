@@ -22,7 +22,7 @@ import reviewService from "../service/review";
 const patchReviewPreController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.patchReviewPreService(
-      Number(req.params.reviewId),
+      req.params.reviewId,
       req.user.id,
       req.body.answerOne,
       req.body.answerTwo,
@@ -78,8 +78,8 @@ const patchReviewPreController = async (req: Request, res: Response) => {
 const getQuestionController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.getQuestionService(
-      Number(req.user.id),
-      Number(req.params.reviewId)
+      req.user.id,
+      req.params.reviewId
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -91,7 +91,7 @@ const getQuestionController = async (req: Request, res: Response) => {
       );
     }
 
-    if (resData === constant.WRONG_REQUEST_VALUE) {
+    if (resData === constant.DB_NOT_FOUND) {
       return response.basicResponse(
         res,
         returnCode.BAD_REQUEST,
@@ -130,7 +130,7 @@ const getQuestionController = async (req: Request, res: Response) => {
 const patchReviewPeriController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.patchReviewPeriService(
-      Number(req.params.reviewId),
+      req.params.reviewId,
       req.user.id,
       req.body.answerThree,
       req.body.reviewSt
@@ -184,8 +184,8 @@ const patchReviewPeriController = async (req: Request, res: Response) => {
 const getReviewController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.getReviewService(
-      Number(req.user.id),
-      Number(req.params.reviewId)
+      req.user.id,
+      req.params.reviewId
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -236,8 +236,8 @@ const getReviewController = async (req: Request, res: Response) => {
 const getReviewPreController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.getReviewPreService(
-      Number(req.user.id),
-      Number(req.params.reviewId)
+      req.user.id,
+      req.params.reviewId
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -288,8 +288,8 @@ const getReviewPreController = async (req: Request, res: Response) => {
 const getReviewPeriController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.getReviewPeriService(
-      Number(req.user.id),
-      Number(req.params.reviewId)
+      req.user.id,
+      req.params.reviewId
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -340,7 +340,7 @@ const getReviewPeriController = async (req: Request, res: Response) => {
 const patchReviewController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.patchReviewService(
-      Number(req.params.reviewId),
+      req.params.reviewId,
       req.body.answerOne,
       req.body.answerTwo,
       req.body.answerThree
@@ -355,7 +355,7 @@ const patchReviewController = async (req: Request, res: Response) => {
       );
     }
 
-    if (resData === constant.WRONG_REQUEST_VALUE) {
+    if (resData === constant.DB_NOT_FOUND) {
       return response.basicResponse(
         res,
         returnCode.BAD_REQUEST,
@@ -394,8 +394,8 @@ const patchReviewController = async (req: Request, res: Response) => {
 const deleteReviewController = async (req: Request, res: Response) => {
   try {
     const resData = await reviewService.deleteReviewService(
-      Number(req.user.id),
-      Number(req.params.reviewId)
+      req.user.id,
+      req.params.reviewId
     );
 
     if (resData === constant.NULL_VALUE) {
@@ -412,7 +412,7 @@ const deleteReviewController = async (req: Request, res: Response) => {
         res,
         returnCode.BAD_REQUEST,
         false,
-        "존재하지 않는 Review입니다."
+        "존재하지 않거나 삭제된 Review입니다."
       );
     }
 

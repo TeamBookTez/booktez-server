@@ -1,8 +1,13 @@
+import mongoose from "mongoose";
+
 // library
 import constant from "../library/constant";
+import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
 
 // model
-import { User, Book, Review } from "../models";
+import User from "../models/User";
+import Review from "../models/Review";
+import Book from "../models/Book";
 
 /**
  *  @독서중 독서 전 작성
@@ -12,9 +17,10 @@ import { User, Book, Review } from "../models";
  *      1. 요청 값이 잘못됨
  *      2. 존재하지 않는 Review
  */
+
 const patchReviewPreService = async (
-  reviewId: number,
-  userId: number,
+  reviewId: string,
+  userId: string,
   answerOne: string,
   answerTwo: string,
   questionList: string[],
@@ -35,28 +41,24 @@ const patchReviewPreService = async (
   }
 
   // review 체크
-  const review = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
-  });
+  const review = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
   if (!review) {
     return constant.DB_NOT_FOUND;
   }
 
   // review 수정
-  await review.update({
-    questionList,
-    answerOne,
-    answerTwo,
-    reviewSt,
-    finishSt: false,
+  await review.updateOne({
+    $set: keysToSnake({
+      questionList,
+      answerOne,
+      answerTwo,
+      reviewSt,
+      finishSt: false,
+    }),
   });
-
-  await review.save();
 
   return { reviewId: review.id };
 };
@@ -69,37 +71,33 @@ const patchReviewPreService = async (
  *      1. 필요한 값이 없습니다.
  *      2. 존재하지 않는 Review 입니다.
  */
-const getQuestionService = async (userId: number, reviewId: number) => {
+const getQuestionService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
 
   // review 조회
-  const review = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
-  });
+  const review = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
-  // 존재하지 않는 리뷰일 때
+  // 존재하지 않는 리뷰
   if (!review) {
-    return constant.WRONG_REQUEST_VALUE;
+    return constant.DB_NOT_FOUND;
   }
 
-  // 질문리스트 default response
-  let questionList = review.questionList;
-  if (questionList.length == 0) {
-    questionList = [""];
-  }
+  // snake to camel
+  const originReview = keysToCamel(review);
+  const camelReview = keysToCamel(originReview.Doc);
+
+  // 질문리스트
+  let questionList = camelReview.questionList;
 
   return { questionList };
 };
 
 /**
-
  *  @독서중 독서 중 작성
  *  @route PATCH /review/:reviewId/peri
  *  @access private
@@ -108,8 +106,8 @@ const getQuestionService = async (userId: number, reviewId: number) => {
  *      2. 존재하지 않는 Review
  */
 const patchReviewPeriService = async (
-  reviewId: number,
-  userId: number,
+  reviewId: string,
+  userId: string,
   answerThree: object,
   reviewSt: number
 ) => {
@@ -123,13 +121,10 @@ const patchReviewPeriService = async (
     return constant.NULL_VALUE;
   }
 
-  // user 확인
-  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
-
   // 해당 review 조회
-  const review = await Review.findOne({
-    where: { id: reviewId, userId: user.id, isDeleted: false },
-  });
+  const review = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
   // 2. 존재하지 않는 review
   if (!review) {
@@ -139,26 +134,40 @@ const patchReviewPeriService = async (
   let finishSt = Number(reviewSt) === 4 ? true : false;
 
   // 3. review update
-  await review.update({
-    answerThree,
-    reviewSt,
-    finishSt,
+  await review.updateOne({
+    $set: keysToSnake({
+      answerThree,
+      reviewSt,
+      finishSt,
+    }),
   });
 
-  // 변경 리뷰 저장
-  await review.save();
+  // snake to camel
+  const originReview = keysToCamel(review);
+  const camelReview = keysToCamel(originReview.Doc);
 
   // 책 확인
-  const book = await Book.findOne({ where: { id: review.bookId } });
+  const book = await Book.findOne(
+    keysToSnake({ id: camelReview.bookId }),
+    keysToSnake({
+      _id: false,
+      isbn: false,
+      isbnSub: false,
+    })
+  );
+
+  // snake to camel
+  const originBook = keysToCamel(book);
+  const camelBook = keysToCamel(originBook.Doc);
 
   return {
     reviewId: review.id,
     bookData: {
-      thumbnail: book.thumbnail,
-      title: book.title,
-      author: book.author,
-      translator: book.translator,
-      publicationDt: book.publicationDt,
+      title: camelBook.title,
+      author: camelBook.author,
+      translator: camelBook.translator,
+      thumbnail: camelBook.thumbnail,
+      publicationDt: camelBook.publicationDt,
     },
   };
 };
@@ -171,42 +180,36 @@ const patchReviewPeriService = async (
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const getReviewService = async (userId: number, reviewId: number) => {
+const getReviewService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
-  const reviewToShow = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
-  });
+
+  // review 조회
+  const reviewToShow = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
   // 존재하지 않는 리뷰일 때
   if (!reviewToShow) {
     return constant.WRONG_REQUEST_VALUE;
   }
+  // snake to camel
+  const originReview = keysToCamel(reviewToShow);
+  const camelReview = keysToCamel(originReview.Doc);
 
-  const bookToShow = await Book.findOne({
-    where: { id: reviewToShow.bookId },
-  });
-
-  // 질문리스트 default response
-  let questionList = reviewToShow.questionList;
-  if (questionList.length == 0) {
-    questionList = [""];
-  }
+  // book 조회
+  const bookToShow = await Book.findById(camelReview.bookId);
 
   return {
     bookTitle: bookToShow.title,
-    answerOne: reviewToShow.answerOne,
-    answerTwo: reviewToShow.answerTwo,
-    questionList,
-    answerThree: reviewToShow.answerThree,
-    reviewSt: reviewToShow.reviewSt,
-    finishSt: reviewToShow.finishSt,
+    answerOne: camelReview.answerOne,
+    answerTwo: camelReview.answerTwo,
+    questionList: camelReview.questionList,
+    answerThree: camelReview.answerThree,
+    reviewSt: camelReview.reviewSt,
+    finishSt: camelReview.finishSt,
   };
 };
 
@@ -218,36 +221,30 @@ const getReviewService = async (userId: number, reviewId: number) => {
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const getReviewPreService = async (userId: number, reviewId: number) => {
+const getReviewPreService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
-  const reviewToShow = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
-  });
+  const reviewToShow = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
   // 존재하지 않는 리뷰일 때
   if (!reviewToShow) {
     return constant.WRONG_REQUEST_VALUE;
   }
 
-  // 질문리스트 default response
-  let questionList = reviewToShow.questionList;
-  if (questionList.length == 0) {
-    questionList = [""];
-  }
+  // snake to camel
+  const originReview = keysToCamel(reviewToShow);
+  const camelReview = keysToCamel(originReview.Doc);
 
   return {
-    answerOne: reviewToShow.answerOne,
-    answerTwo: reviewToShow.answerTwo,
-    questionList,
-    reviewSt: reviewToShow.reviewSt,
-    finishSt: reviewToShow.finishSt,
+    answerOne: camelReview.answerOne,
+    answerTwo: camelReview.answerTwo,
+    questionList: camelReview.questionList,
+    reviewSt: camelReview.reviewSt,
+    finishSt: camelReview.finishSt,
   };
 };
 
@@ -259,28 +256,28 @@ const getReviewPreService = async (userId: number, reviewId: number) => {
  *      1. 필요한 값이 없을 때
  *      2. 리뷰가 존재하지 않을 때
  */
-const getReviewPeriService = async (userId: number, reviewId: number) => {
+const getReviewPeriService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
-  const reviewToShow = await Review.findOne({
-    where: {
-      id: reviewId,
-      userId,
-      isDeleted: false,
-    },
-  });
+
+  const reviewToShow = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
   // 존재하지 않는 리뷰일 때
   if (!reviewToShow) {
     return constant.WRONG_REQUEST_VALUE;
   }
+  // snake to camel
+  const originReview = keysToCamel(reviewToShow);
+  const camelReview = keysToCamel(originReview.Doc);
 
   return {
-    answerThree: reviewToShow.answerThree,
-    reviewSt: reviewToShow.reviewSt,
-    finishSt: reviewToShow.finishSt,
+    answerThree: camelReview.answerThree,
+    reviewSt: camelReview.reviewSt,
+    finishSt: camelReview.finishSt,
   };
 };
 
@@ -293,7 +290,7 @@ const getReviewPeriService = async (userId: number, reviewId: number) => {
  *      2. 리뷰가 존재하지 않을 때
  */
 const patchReviewService = async (
-  reviewId: number,
+  reviewId: string,
   answerOne: string,
   answerTwo: string,
   answerThree: object
@@ -310,23 +307,24 @@ const patchReviewService = async (
     return constant.NULL_VALUE;
   }
 
-  const reviewToChange = await Review.findOne({
-    where: { id: reviewId, isDeleted: false },
-  });
+  // find review
+  const reviewToChange = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ isDeleted: false }));
+
+  // 존재하지 않는 리뷰
   if (!reviewToChange) {
-    return constant.WRONG_REQUEST_VALUE;
+    return constant.DB_NOT_FOUND;
   }
 
-  await Review.update(
-    {
+  // review 수정
+  await reviewToChange.updateOne({
+    $set: keysToSnake({
       answerOne,
       answerTwo,
       answerThree,
-    },
-    {
-      where: { id: reviewId, isDeleted: false },
-    }
-  );
+    }),
+  });
 
   return constant.SUCCESS;
 };
@@ -340,37 +338,28 @@ const patchReviewService = async (
  *      2. 삭제될 리뷰가 없을 때
  *      3. 이미 삭제된 리뷰일 때
  */
-const deleteReviewService = async (userId: number, reviewId: number) => {
+const deleteReviewService = async (userId: string, reviewId: string) => {
   // 1. 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
 
-  // user 확인
-  const user = await User.findOne({ where: { id: userId, isDeleted: false } });
-
   // 해당 review 조회
-  const review = await Review.findOne({
-    where: { id: reviewId, userId: user.id },
-  });
+  const review = await Review.findById(
+    new mongoose.Types.ObjectId(reviewId)
+  ).where(keysToSnake({ userId, isDeleted: false }));
 
-  // 2. 존재하지 않는 review
+  // 2. 존재하지 않거나 삭제된 review
   if (!review) {
     return constant.WRONG_REQUEST_VALUE;
   }
 
-  // 3. 이미 삭제된 Review 입니다.
-  if (review.isDeleted) {
-    return constant.VALUE_ALREADY_DELETED;
-  }
-
   // 독후감 삭제
-  await review.update({
-    isDeleted: true,
+  await review.updateOne({
+    $set: keysToSnake({
+      isDeleted: true,
+    }),
   });
-
-  // 삭제 리뷰 저장
-  await review.save();
 
   return constant.SUCCESS;
 };

@@ -70,7 +70,7 @@ const postBookController = async (req: Request, res: Response) => {
       resData
     );
   } catch (err) {
-    // slack.slackWebhook(req, err.message);
+    slack.slackWebhook(req, err.message);
     console.error(err.message);
     return response.basicResponse(
       res,

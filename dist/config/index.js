@@ -19,6 +19,7 @@ exports.default = {
     /**
      * Your secret sauce
      */
+    mongoURI: process.env.MONGODB_URI,
     jwtSecret: process.env.JWT_SECRET,
     jwtAlgorithm: process.env.JWT_ALGO,
     // S3 버킷 연결 부분

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isLogin = exports.auth = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
+const convertSnakeToCamel_1 = require("../library/convertSnakeToCamel");
 // library
 const response_1 = __importDefault(require("../library/response"));
 const returnCode_1 = __importDefault(require("../library/returnCode"));
@@ -31,9 +32,7 @@ const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const token = req.headers.authorization;
         const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwtSecret);
-        const user = yield User_1.default.findOne({
-            where: { id: decoded.user.id, isDeleted: false },
-        });
+        const user = yield User_1.default.findById(decoded.user.id).where((0, convertSnakeToCamel_1.keysToSnake)({ isDeleted: false }));
         if (!user) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "유저가 존재하지 않습니다.");
         }
@@ -63,9 +62,7 @@ const isLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         // 로그인 상태
         const token = req.headers.authorization;
         const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwtSecret);
-        const user = yield User_1.default.findOne({
-            where: { id: decoded.user.id, isDeleted: false },
-        });
+        const user = yield User_1.default.findById(decoded.user.id).where((0, convertSnakeToCamel_1.keysToSnake)({ isDeleted: false }));
         if (!user) {
             return next();
         }

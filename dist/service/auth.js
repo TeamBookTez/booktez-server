@@ -19,8 +19,9 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const isEmail_1 = __importDefault(require("validator/lib/isEmail"));
 const constant_1 = __importDefault(require("../library/constant"));
 const checkValidation_1 = require("../library/checkValidation");
+const convertSnakeToCamel_1 = require("../library/convertSnakeToCamel");
 // model
-const models_1 = require("../models");
+const User_1 = __importDefault(require("../models/User"));
 /**
  *  @이메일_유효성_검사
  *  @route GET /auth/email?email=
@@ -41,13 +42,9 @@ const getEmailService = (email) => __awaiter(void 0, void 0, void 0, function* (
         return constant_1.default.WRONG_EMAIL_CONVENTION;
     }
     // email이 이미 존재할 때
-    const emailExist = yield models_1.User.findAll({
-        where: {
-            email,
-            isDeleted: false,
-        },
-    });
-    if (emailExist.length > 0) {
+    // TODO: DB에서 isDeleted string으로 되있는 것 변경
+    const emailExist = yield User_1.default.exists((0, convertSnakeToCamel_1.keysToSnake)({ email, isDeleted: false }));
+    if (emailExist) {
         return constant_1.default.EMAIL_ALREADY_EXIST;
     }
     return constant_1.default.SUCCESS;
@@ -72,11 +69,9 @@ const getNicknameService = (nickname) => __awaiter(void 0, void 0, void 0, funct
         return constant_1.default.WRONG_NICKNAME_CONVENTION;
     }
     // nickname이 이미 존재할 때
-    const nicknameExist = yield models_1.User.findAll({
-        where: {
-            nickname,
-            isDeleted: false,
-        },
+    const nicknameExist = yield User_1.default.find({
+        nickname,
+        isDeleted: false,
     });
     if (nicknameExist.length > 0) {
         return constant_1.default.NICKNAME_ALREADY_EXIST;
@@ -97,7 +92,10 @@ const postLoginService = (email, password) => __awaiter(void 0, void 0, void 0, 
         return constant_1.default.NULL_VALUE;
     }
     // 존재하지 않는 이메일
-    const user = yield models_1.User.findOne({ where: { email, isDeleted: false } });
+    const user = yield User_1.default.findOne({
+        email,
+        isDeleted: false,
+    });
     if (!user) {
         return constant_1.default.EMAIL_NOT_FOUND;
     }
@@ -114,8 +112,9 @@ const postLoginService = (email, password) => __awaiter(void 0, void 0, void 0, 
         },
     };
     const nickname = user.nickname;
+    const userEmail = user.email;
     const token = jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: "14d" });
-    return { email: user.email, nickname, token };
+    return { email: userEmail, nickname, token };
 });
 /**
  *  @회원가입
@@ -146,29 +145,19 @@ const postSignupService = (email, nickname, password) => __awaiter(void 0, void 
         return constant_1.default.WRONG_PASSWORD_CONVENTION;
     }
     // email이 이미 존재할 때
-    const emailExist = yield models_1.User.findAll({
-        where: {
-            email,
-            isDeleted: false,
-        },
-    });
-    if (emailExist.length > 0) {
+    const emailExist = yield User_1.default.exists((0, convertSnakeToCamel_1.keysToSnake)({ email, isDeleted: false }));
+    if (emailExist) {
         return constant_1.default.EMAIL_ALREADY_EXIST;
     }
     // nickname이 이미 존재할 때
-    const nicknameExist = yield models_1.User.findAll({
-        where: {
-            nickname,
-            isDeleted: false,
-        },
-    });
-    if (nicknameExist.length > 0) {
+    const nicknameExist = yield User_1.default.exists((0, convertSnakeToCamel_1.keysToSnake)({ nickname, isDeleted: false }));
+    if (nicknameExist) {
         return constant_1.default.NICKNAME_ALREADY_EXIST;
     }
     // 새로운 유저 생성 & 토큰 발급
     const salt = yield bcryptjs_1.default.genSalt(10);
     const hashedPassword = yield bcryptjs_1.default.hash(password, salt);
-    const user = yield models_1.User.create({
+    const user = yield User_1.default.create({
         email,
         password: hashedPassword,
         nickname,

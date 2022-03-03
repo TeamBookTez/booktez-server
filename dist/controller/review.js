@@ -30,7 +30,7 @@ const review_1 = __importDefault(require("../service/review"));
  */
 const patchReviewPreController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.patchReviewPreService(Number(req.params.reviewId), req.user.id, req.body.answerOne, req.body.answerTwo, req.body.questionList, req.body.reviewSt);
+        const resData = yield review_1.default.patchReviewPreService(req.params.reviewId, req.user.id, req.body.answerOne, req.body.answerTwo, req.body.questionList, req.body.reviewSt);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "요청값이 잘못되었습니다.");
         }
@@ -55,11 +55,11 @@ const patchReviewPreController = (req, res) => __awaiter(void 0, void 0, void 0,
  */
 const getQuestionController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.getQuestionService(Number(req.user.id), Number(req.params.reviewId));
+        const resData = yield review_1.default.getQuestionService(req.user.id, req.params.reviewId);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
-        if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+        if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
         return response_1.default.dataResponse(res, returnCode_1.default.OK, "질문리스트 조회 성공.", true, resData);
@@ -80,7 +80,7 @@ const getQuestionController = (req, res) => __awaiter(void 0, void 0, void 0, fu
  */
 const patchReviewPeriController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.patchReviewPeriService(Number(req.params.reviewId), req.user.id, req.body.answerThree, req.body.reviewSt);
+        const resData = yield review_1.default.patchReviewPeriService(req.params.reviewId, req.user.id, req.body.answerThree, req.body.reviewSt);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "요청값이 없습니다.");
         }
@@ -105,7 +105,7 @@ const patchReviewPeriController = (req, res) => __awaiter(void 0, void 0, void 0
  */
 const getReviewController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.getReviewService(Number(req.user.id), Number(req.params.reviewId));
+        const resData = yield review_1.default.getReviewService(req.user.id, req.params.reviewId);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
@@ -130,7 +130,7 @@ const getReviewController = (req, res) => __awaiter(void 0, void 0, void 0, func
  */
 const getReviewPreController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.getReviewPreService(Number(req.user.id), Number(req.params.reviewId));
+        const resData = yield review_1.default.getReviewPreService(req.user.id, req.params.reviewId);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
@@ -155,7 +155,7 @@ const getReviewPreController = (req, res) => __awaiter(void 0, void 0, void 0, f
  */
 const getReviewPeriController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.getReviewPeriService(Number(req.user.id), Number(req.params.reviewId));
+        const resData = yield review_1.default.getReviewPeriService(req.user.id, req.params.reviewId);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
@@ -180,11 +180,11 @@ const getReviewPeriController = (req, res) => __awaiter(void 0, void 0, void 0, 
  */
 const patchReviewController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.patchReviewService(Number(req.params.reviewId), req.body.answerOne, req.body.answerTwo, req.body.answerThree);
+        const resData = yield review_1.default.patchReviewService(req.params.reviewId, req.body.answerOne, req.body.answerTwo, req.body.answerThree);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
-        if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+        if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
         return response_1.default.basicResponse(res, returnCode_1.default.OK, true, "수정이 완료되었습니다.");
@@ -206,12 +206,12 @@ const patchReviewController = (req, res) => __awaiter(void 0, void 0, void 0, fu
  */
 const deleteReviewController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield review_1.default.deleteReviewService(Number(req.user.id), Number(req.params.reviewId));
+        const resData = yield review_1.default.deleteReviewService(req.user.id, req.params.reviewId);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
         if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
-            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않거나 삭제된 Review입니다.");
         }
         if (resData === constant_1.default.VALUE_ALREADY_DELETED) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "이미 삭제된 Review 입니다.");

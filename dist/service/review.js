@@ -12,10 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
 // library
 const constant_1 = __importDefault(require("../library/constant"));
-// model
-const models_1 = require("../models");
+const convertSnakeToCamel_1 = require("../library/convertSnakeToCamel");
+const Review_1 = __importDefault(require("../models/Review"));
+const Book_1 = __importDefault(require("../models/Book"));
 /**
  *  @독서중 독서 전 작성
  *  @route PATCH /review/:reviewId/pre
@@ -37,25 +39,20 @@ const patchReviewPreService = (reviewId, userId, answerOne, answerTwo, questionL
         return constant_1.default.NULL_VALUE;
     }
     // review 체크
-    const review = yield models_1.Review.findOne({
-        where: {
-            id: reviewId,
-            userId,
-            isDeleted: false,
-        },
-    });
+    const review = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     if (!review) {
         return constant_1.default.DB_NOT_FOUND;
     }
     // review 수정
-    yield review.update({
-        questionList,
-        answerOne,
-        answerTwo,
-        reviewSt,
-        finishSt: false,
+    yield review.updateOne({
+        $set: (0, convertSnakeToCamel_1.keysToSnake)({
+            questionList,
+            answerOne,
+            answerTwo,
+            reviewSt,
+            finishSt: false,
+        }),
     });
-    yield review.save();
     return { reviewId: review.id };
 });
 /**
@@ -72,26 +69,19 @@ const getQuestionService = (userId, reviewId) => __awaiter(void 0, void 0, void 
         return constant_1.default.NULL_VALUE;
     }
     // review 조회
-    const review = yield models_1.Review.findOne({
-        where: {
-            id: reviewId,
-            userId,
-            isDeleted: false,
-        },
-    });
-    // 존재하지 않는 리뷰일 때
+    const review = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
+    // 존재하지 않는 리뷰
     if (!review) {
-        return constant_1.default.WRONG_REQUEST_VALUE;
+        return constant_1.default.DB_NOT_FOUND;
     }
-    // 질문리스트 default response
-    let questionList = review.questionList;
-    if (questionList.length == 0) {
-        questionList = [""];
-    }
+    // snake to camel
+    const originReview = (0, convertSnakeToCamel_1.keysToCamel)(review);
+    const camelReview = (0, convertSnakeToCamel_1.keysToCamel)(originReview.Doc);
+    // 질문리스트
+    let questionList = camelReview.questionList;
     return { questionList };
 });
 /**
-
  *  @독서중 독서 중 작성
  *  @route PATCH /review/:reviewId/peri
  *  @access private
@@ -107,35 +97,41 @@ const patchReviewPeriService = (reviewId, userId, answerThree, reviewSt) => __aw
         !reviewSt) {
         return constant_1.default.NULL_VALUE;
     }
-    // user 확인
-    const user = yield models_1.User.findOne({ where: { id: userId, isDeleted: false } });
     // 해당 review 조회
-    const review = yield models_1.Review.findOne({
-        where: { id: reviewId, userId: user.id, isDeleted: false },
-    });
+    const review = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     // 2. 존재하지 않는 review
     if (!review) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
     let finishSt = Number(reviewSt) === 4 ? true : false;
     // 3. review update
-    yield review.update({
-        answerThree,
-        reviewSt,
-        finishSt,
+    yield review.updateOne({
+        $set: (0, convertSnakeToCamel_1.keysToSnake)({
+            answerThree,
+            reviewSt,
+            finishSt,
+        }),
     });
-    // 변경 리뷰 저장
-    yield review.save();
+    // snake to camel
+    const originReview = (0, convertSnakeToCamel_1.keysToCamel)(review);
+    const camelReview = (0, convertSnakeToCamel_1.keysToCamel)(originReview.Doc);
     // 책 확인
-    const book = yield models_1.Book.findOne({ where: { id: review.bookId } });
+    const book = yield Book_1.default.findOne((0, convertSnakeToCamel_1.keysToSnake)({ id: camelReview.bookId }), (0, convertSnakeToCamel_1.keysToSnake)({
+        _id: false,
+        isbn: false,
+        isbnSub: false,
+    }));
+    // snake to camel
+    const originBook = (0, convertSnakeToCamel_1.keysToCamel)(book);
+    const camelBook = (0, convertSnakeToCamel_1.keysToCamel)(originBook.Doc);
     return {
         reviewId: review.id,
         bookData: {
-            thumbnail: book.thumbnail,
-            title: book.title,
-            author: book.author,
-            translator: book.translator,
-            publicationDt: book.publicationDt,
+            title: camelBook.title,
+            author: camelBook.author,
+            translator: camelBook.translator,
+            thumbnail: camelBook.thumbnail,
+            publicationDt: camelBook.publicationDt,
         },
     };
 });
@@ -152,33 +148,25 @@ const getReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void 0,
     if (!userId || !reviewId) {
         return constant_1.default.NULL_VALUE;
     }
-    const reviewToShow = yield models_1.Review.findOne({
-        where: {
-            id: reviewId,
-            userId,
-            isDeleted: false,
-        },
-    });
+    // review 조회
+    const reviewToShow = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     // 존재하지 않는 리뷰일 때
     if (!reviewToShow) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
-    const bookToShow = yield models_1.Book.findOne({
-        where: { id: reviewToShow.bookId },
-    });
-    // 질문리스트 default response
-    let questionList = reviewToShow.questionList;
-    if (questionList.length == 0) {
-        questionList = [""];
-    }
+    // snake to camel
+    const originReview = (0, convertSnakeToCamel_1.keysToCamel)(reviewToShow);
+    const camelReview = (0, convertSnakeToCamel_1.keysToCamel)(originReview.Doc);
+    // book 조회
+    const bookToShow = yield Book_1.default.findById(camelReview.bookId);
     return {
         bookTitle: bookToShow.title,
-        answerOne: reviewToShow.answerOne,
-        answerTwo: reviewToShow.answerTwo,
-        questionList,
-        answerThree: reviewToShow.answerThree,
-        reviewSt: reviewToShow.reviewSt,
-        finishSt: reviewToShow.finishSt,
+        answerOne: camelReview.answerOne,
+        answerTwo: camelReview.answerTwo,
+        questionList: camelReview.questionList,
+        answerThree: camelReview.answerThree,
+        reviewSt: camelReview.reviewSt,
+        finishSt: camelReview.finishSt,
     };
 });
 /**
@@ -194,28 +182,20 @@ const getReviewPreService = (userId, reviewId) => __awaiter(void 0, void 0, void
     if (!userId || !reviewId) {
         return constant_1.default.NULL_VALUE;
     }
-    const reviewToShow = yield models_1.Review.findOne({
-        where: {
-            id: reviewId,
-            userId,
-            isDeleted: false,
-        },
-    });
+    const reviewToShow = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     // 존재하지 않는 리뷰일 때
     if (!reviewToShow) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
-    // 질문리스트 default response
-    let questionList = reviewToShow.questionList;
-    if (questionList.length == 0) {
-        questionList = [""];
-    }
+    // snake to camel
+    const originReview = (0, convertSnakeToCamel_1.keysToCamel)(reviewToShow);
+    const camelReview = (0, convertSnakeToCamel_1.keysToCamel)(originReview.Doc);
     return {
-        answerOne: reviewToShow.answerOne,
-        answerTwo: reviewToShow.answerTwo,
-        questionList,
-        reviewSt: reviewToShow.reviewSt,
-        finishSt: reviewToShow.finishSt,
+        answerOne: camelReview.answerOne,
+        answerTwo: camelReview.answerTwo,
+        questionList: camelReview.questionList,
+        reviewSt: camelReview.reviewSt,
+        finishSt: camelReview.finishSt,
     };
 });
 /**
@@ -231,21 +211,18 @@ const getReviewPeriService = (userId, reviewId) => __awaiter(void 0, void 0, voi
     if (!userId || !reviewId) {
         return constant_1.default.NULL_VALUE;
     }
-    const reviewToShow = yield models_1.Review.findOne({
-        where: {
-            id: reviewId,
-            userId,
-            isDeleted: false,
-        },
-    });
+    const reviewToShow = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     // 존재하지 않는 리뷰일 때
     if (!reviewToShow) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
+    // snake to camel
+    const originReview = (0, convertSnakeToCamel_1.keysToCamel)(reviewToShow);
+    const camelReview = (0, convertSnakeToCamel_1.keysToCamel)(originReview.Doc);
     return {
-        answerThree: reviewToShow.answerThree,
-        reviewSt: reviewToShow.reviewSt,
-        finishSt: reviewToShow.finishSt,
+        answerThree: camelReview.answerThree,
+        reviewSt: camelReview.reviewSt,
+        finishSt: camelReview.finishSt,
     };
 });
 /**
@@ -266,18 +243,19 @@ const patchReviewService = (reviewId, answerOne, answerTwo, answerThree) => __aw
         answerThree === null) {
         return constant_1.default.NULL_VALUE;
     }
-    const reviewToChange = yield models_1.Review.findOne({
-        where: { id: reviewId, isDeleted: false },
-    });
+    // find review
+    const reviewToChange = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ isDeleted: false }));
+    // 존재하지 않는 리뷰
     if (!reviewToChange) {
-        return constant_1.default.WRONG_REQUEST_VALUE;
+        return constant_1.default.DB_NOT_FOUND;
     }
-    yield models_1.Review.update({
-        answerOne,
-        answerTwo,
-        answerThree,
-    }, {
-        where: { id: reviewId, isDeleted: false },
+    // review 수정
+    yield reviewToChange.updateOne({
+        $set: (0, convertSnakeToCamel_1.keysToSnake)({
+            answerOne,
+            answerTwo,
+            answerThree,
+        }),
     });
     return constant_1.default.SUCCESS;
 });
@@ -295,26 +273,18 @@ const deleteReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void
     if (!userId || !reviewId) {
         return constant_1.default.NULL_VALUE;
     }
-    // user 확인
-    const user = yield models_1.User.findOne({ where: { id: userId, isDeleted: false } });
     // 해당 review 조회
-    const review = yield models_1.Review.findOne({
-        where: { id: reviewId, userId: user.id },
-    });
-    // 2. 존재하지 않는 review
+    const review = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
+    // 2. 존재하지 않거나 삭제된 review
     if (!review) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
-    // 3. 이미 삭제된 Review 입니다.
-    if (review.isDeleted) {
-        return constant_1.default.VALUE_ALREADY_DELETED;
-    }
     // 독후감 삭제
-    yield review.update({
-        isDeleted: true,
+    yield review.updateOne({
+        $set: (0, convertSnakeToCamel_1.keysToSnake)({
+            isDeleted: true,
+        }),
     });
-    // 삭제 리뷰 저장
-    yield review.save();
     return constant_1.default.SUCCESS;
 });
 const reviewService = {

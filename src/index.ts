@@ -1,9 +1,12 @@
 import express from "express";
 import cors from "cors";
-import { sequelize } from "./models";
 import router from "./router";
+import connectDB from "./loader/db";
 
 const app = express();
+
+// Connect Database
+connectDB();
 
 app.use(express.urlencoded());
 app.use(express.json());
@@ -47,26 +50,6 @@ const server = app
     ##############################################
   `
     );
-
-    // 시퀄라이즈 연결
-    sequelize
-      .authenticate()
-      .then(async () => {
-        console.log("✅ Connect PostgreSQL");
-      })
-      .catch((err) => {
-        console.log("TT : ", err);
-      });
-
-    // 시퀄라이즈 모델 DB에 싱크
-    sequelize
-      .sync({ force: false })
-      .then(() => {
-        console.log("✅ Sync Models to DB");
-      })
-      .catch((err) => {
-        console.error(err);
-      });
   })
   .on("error", (err) => {
     console.error(err);

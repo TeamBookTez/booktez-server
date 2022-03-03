@@ -1,10 +1,13 @@
-import { Op } from "sequelize";
+import mongoose from "mongoose";
 
 // library
 import constant from "../library/constant";
+import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
 
 // model
-import { Book, Review } from "../models";
+import User from "../models/User";
+import Review from "../models/Review";
+import Book from "../models/Book";
 
 /**
  *  @서재,리뷰에 책 추가하기
@@ -16,7 +19,7 @@ import { Book, Review } from "../models";
  */
 const postBookService = async (
   isLogin: boolean,
-  userId: number,
+  userId: string,
   isbn: string,
   thumbnail: string,
   title: string,
@@ -42,63 +45,59 @@ const postBookService = async (
     // isbn이 2개일 경우
     [isbnOne, isbnTwo] = isbn.split(" ");
 
-    bookExist = await Book.findOne({
-      where: {
-        [Op.or]: [
-          { isbn: isbnOne },
-          { isbn: isbnTwo },
-          { isbnSub: isbnOne },
-          { isbnSub: isbnTwo },
-        ],
-      },
+    bookExist = await Book.exists({
+      $or: [
+        { isbn: isbnOne },
+        { isbn: isbnTwo },
+        keysToSnake({ isbnSub: isbnOne }),
+        keysToSnake({ isbnSub: isbnTwo }),
+      ],
     });
   } else {
     // isbn 1개
     isbnOne = isbn;
-    bookExist = await Book.findOne({
-      where: {
-        [Op.or]: [{ isbn: isbnOne }, { isbnSub: isbnOne }],
-      },
+    bookExist = await Book.exists({
+      $or: [{ isbn: isbnOne }, keysToSnake({ isbnSub: isbnOne })],
     });
   }
 
   if (!bookExist) {
-    book = await Book.create({
-      isbn: isbnOne,
-      ...(isbnTwo && { isbnSub: isbnTwo }),
-      title,
-      author,
-      ...(thumbnail && { thumbnail }),
-      translator,
-      publicationDt,
-    });
+    book = await Book.create(
+      keysToSnake({
+        isbn: isbnOne,
+        ...(isbnTwo && { isbnSub: isbnTwo }),
+        title,
+        author,
+        ...(thumbnail && { thumbnail }),
+        translator,
+        publicationDt,
+      })
+    );
   } else {
     book = bookExist;
   }
 
   // review 중복 체크
-  const exist = await Review.findOne({
-    where: {
-      bookId: book.id,
+  const exist = await Review.findOne(
+    keysToSnake({
+      bookId: book._id,
       userId,
       isDeleted: false,
-    },
-  });
-
+    })
+  );
   if (exist) {
     return constant.VALUE_ALREADY_EXIST;
   }
 
   // create review
-  const review = await Review.create({
-    userId: userId,
-    bookId: book.id,
-    questionList: [],
-    answerOne: "",
-    answerTwo: "",
-    reviewSt: 2,
-    finishSt: false,
-  });
+  const review = await Review.create(
+    keysToSnake({
+      userId,
+      bookId: book,
+      reviewSt: 2,
+      finishSt: false,
+    })
+  );
 
   return {
     isLogin,
@@ -111,30 +110,31 @@ const postBookService = async (
  *  @route GET /book
  *  @access private
  */
-const getBookService = async (userId: number) => {
-  let books = [];
-  await Review.findAll({
-    attributes: ["id", "reviewSt"],
-    include: [
-      {
-        model: Book,
-        attributes: ["title", "author", "thumbnail"],
-      },
-    ],
-    where: {
+const getBookService = async (userId: string) => {
+  const reviews = await Review.find(
+    keysToSnake({
       userId,
       isDeleted: false,
-    },
-    order: [["updatedAt", "DESC"]],
-  }).then((reviews) =>
-    reviews.forEach((review) => {
-      books.push({
+    }),
+    keysToSnake({ _id: true, bookId: true, reviewSt: true })
+  ).sort(keysToSnake({ updatedAt: -1 }));
+
+  const books = await Promise.all(
+    reviews.map(async (review) => {
+      // snake to camel
+      const originReview = keysToCamel(review);
+      const camelReview = keysToCamel(originReview.Doc);
+
+      const findBook = await Book.findById(camelReview.bookId);
+      const book = {
         reviewId: review.id,
-        thumbnail: review.book.thumbnail,
-        title: review.book.title,
-        author: review.book.author,
-        reviewSt: review.reviewSt,
-      });
+        thumbnail: findBook.thumbnail,
+        title: findBook.title,
+        author: findBook.author,
+        reviewSt: camelReview.reviewSt,
+      };
+
+      return book;
     })
   );
 
@@ -146,34 +146,34 @@ const getBookService = async (userId: number) => {
  *  @route GET /book/pre
  *  @access private
  */
-const getBookPreService = async (userId: number) => {
-  let books = [];
-  await Review.findAll({
-    attributes: ["id", "reviewSt"],
-    include: [
-      {
-        model: Book,
-        attributes: ["title", "author", "thumbnail"],
-      },
-    ],
-    where: {
+const getBookPreService = async (userId: string) => {
+  const reviews = await Review.find(
+    keysToSnake({
       userId,
-      reviewSt: 2,
       isDeleted: false,
-    },
-    order: [["updatedAt", "DESC"]],
-  }).then((reviews) =>
-    reviews.forEach((review) => {
-      books.push({
+      reviewSt: 2,
+    }),
+    keysToSnake({ _id: true, bookId: true, reviewSt: true })
+  ).sort(keysToSnake({ updatedAt: -1 }));
+
+  const books = await Promise.all(
+    reviews.map(async (review) => {
+      // snake to camel
+      const originReview = keysToCamel(review);
+      const camelReview = keysToCamel(originReview.Doc);
+
+      const findBook = await Book.findById(camelReview.bookId);
+      const book = {
         reviewId: review.id,
-        thumbnail: review.book.thumbnail,
-        title: review.book.title,
-        author: review.book.author,
-        reviewSt: review.reviewSt,
-      });
+        thumbnail: findBook.thumbnail,
+        title: findBook.title,
+        author: findBook.author,
+        reviewSt: camelReview.reviewSt,
+      };
+
+      return book;
     })
   );
-
   return { books: books };
 };
 
@@ -182,34 +182,34 @@ const getBookPreService = async (userId: number) => {
  *  @route GET /book/peri
  *  @access private
  */
-const getBookPeriService = async (userId: number) => {
-  let books = [];
-  await Review.findAll({
-    attributes: ["id", "reviewSt"],
-    include: [
-      {
-        model: Book,
-        attributes: ["title", "author", "thumbnail"],
-      },
-    ],
-    where: {
+const getBookPeriService = async (userId: string) => {
+  const reviews = await Review.find(
+    keysToSnake({
       userId,
-      reviewSt: 3,
       isDeleted: false,
-    },
-    order: [["updatedAt", "DESC"]],
-  }).then((reviews) =>
-    reviews.forEach((review) => {
-      books.push({
+      reviewSt: 3,
+    }),
+    keysToSnake({ _id: true, bookId: true, reviewSt: true })
+  ).sort(keysToSnake({ updatedAt: -1 }));
+
+  const books = await Promise.all(
+    reviews.map(async (review) => {
+      // snake to camel
+      const originReview = keysToCamel(review);
+      const camelReview = keysToCamel(originReview.Doc);
+
+      const findBook = await Book.findById(camelReview.bookId);
+      const book = {
         reviewId: review.id,
-        thumbnail: review.book.thumbnail,
-        title: review.book.title,
-        author: review.book.author,
-        reviewSt: review.reviewSt,
-      });
+        thumbnail: findBook.thumbnail,
+        title: findBook.title,
+        author: findBook.author,
+        reviewSt: camelReview.reviewSt,
+      };
+
+      return book;
     })
   );
-
   return { books: books };
 };
 
@@ -218,34 +218,35 @@ const getBookPeriService = async (userId: number) => {
  *  @route GET /book/post
  *  @access private
  */
-const getBookPostService = async (userId: number) => {
-  let books = [];
-  await Review.findAll({
-    attributes: ["id", "reviewSt"],
-    include: [
-      {
-        model: Book,
-        attributes: ["title", "author", "thumbnail"],
-      },
-    ],
-    where: {
+const getBookPostService = async (userId: string) => {
+  const reviews = await Review.find(
+    keysToSnake({
       userId,
-      reviewSt: 4,
       isDeleted: false,
-    },
-    order: [["updatedAt", "DESC"]],
-  }).then((reviews) =>
-    reviews.forEach((review) => {
-      books.push({
+      reviewSt: 4,
+      finishSt: true,
+    }),
+    keysToSnake({ _id: true, bookId: true, reviewSt: true })
+  ).sort(keysToSnake({ updatedAt: -1 }));
+
+  const books = await Promise.all(
+    reviews.map(async (review) => {
+      // snake to camel
+      const originReview = keysToCamel(review);
+      const camelReview = keysToCamel(originReview.Doc);
+
+      const findBook = await Book.findById(camelReview.bookId);
+      const book = {
         reviewId: review.id,
-        thumbnail: review.book.thumbnail,
-        title: review.book.title,
-        author: review.book.author,
-        reviewSt: review.reviewSt,
-      });
+        thumbnail: findBook.thumbnail,
+        title: findBook.title,
+        author: findBook.author,
+        reviewSt: camelReview.reviewSt,
+      };
+
+      return book;
     })
   );
-
   return { books: books };
 };
 

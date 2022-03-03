@@ -81,19 +81,6 @@ export const isLogin = async (req: Request, res: Response, next) => {
     const token: string = req.headers.authorization;
     const decoded = jwt.verify(token, config.jwtSecret);
 
-    // 맨 처음 (첫번째 유저가 나옴)
-    // const user = await User.findOne({
-    //   where: { id: decoded.user.id, isDeleted: false },
-    // });
-
-    // snake 적용( 첫번째 유저가 나옴)
-    // const user = await User.findOne(
-    //   keysToSnake({ id: decoded.user.id, isDeleted: false })
-    // );
-
-    // console.log(decoded.user.id);
-
-    // 정상작동
     const user = await User.findById(decoded.user.id).where(
       keysToSnake({ isDeleted: false })
     );

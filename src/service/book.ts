@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // library
 import constant from "../library/constant";
-import { keysToSnake } from "../library/convertSnakeToCamel";
+import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
 
 // model
 import User from "../models/User";
@@ -121,13 +121,17 @@ const getBookService = async (userId: string) => {
 
   const books = await Promise.all(
     reviews.map(async (review) => {
-      const findBook = await Book.findById(review.book_id);
+      // snake to camel
+      const originReview = keysToCamel(review);
+      const camelReview = keysToCamel(originReview.Doc);
+
+      const findBook = await Book.findById(camelReview.bookId);
       const book = {
         reviewId: review.id,
         thumbnail: findBook.thumbnail,
         title: findBook.title,
         author: findBook.author,
-        reviewSt: review.review_st,
+        reviewSt: camelReview.reviewSt,
       };
 
       return book;
@@ -144,23 +148,27 @@ const getBookService = async (userId: string) => {
  */
 const getBookPreService = async (userId: string) => {
   const reviews = await Review.find(
-    {
-      user_id: userId,
-      is_deleted: false,
-      review_st: 2,
-    },
-    { _id: true, book_id: true, review_st: true }
-  ).sort({ updated_at: -1 });
+    keysToSnake({
+      userId,
+      isDeleted: false,
+      reviewSt: 2,
+    }),
+    keysToSnake({ _id: true, bookId: true, reviewSt: true })
+  ).sort(keysToSnake({ updatedAt: -1 }));
 
   const books = await Promise.all(
     reviews.map(async function (review) {
-      const findBook = await Book.findById(review.book_id);
+      // snake to camel
+      const originReview = keysToCamel(review);
+      const camelReview = keysToCamel(originReview.Doc);
+
+      const findBook = await Book.findById(camelReview.bookId);
       const book = {
         reviewId: review.id,
         thumbnail: findBook.thumbnail,
         title: findBook.title,
         author: findBook.author,
-        reviewSt: review.review_st,
+        reviewSt: camelReview.reviewSt,
       };
 
       return book;
@@ -176,23 +184,27 @@ const getBookPreService = async (userId: string) => {
  */
 const getBookPeriService = async (userId: string) => {
   const reviews = await Review.find(
-    {
-      user_id: userId,
-      is_deleted: false,
-      review_st: 3,
-    },
-    { _id: true, book_id: true, review_st: true }
-  ).sort({ updated_at: -1 });
+    keysToSnake({
+      userId,
+      isDeleted: false,
+      reviewSt: 3,
+    }),
+    keysToSnake({ _id: true, bookId: true, reviewSt: true })
+  ).sort(keysToSnake({ updatedAt: -1 }));
 
   const books = await Promise.all(
     reviews.map(async function (review) {
-      const findBook = await Book.findById(review.book_id);
+      // snake to camel
+      const originReview = keysToCamel(review);
+      const camelReview = keysToCamel(originReview.Doc);
+
+      const findBook = await Book.findById(camelReview.bookId);
       const book = {
         reviewId: review.id,
         thumbnail: findBook.thumbnail,
         title: findBook.title,
         author: findBook.author,
-        reviewSt: review.review_st,
+        reviewSt: camelReview.reviewSt,
       };
 
       return book;
@@ -208,23 +220,27 @@ const getBookPeriService = async (userId: string) => {
  */
 const getBookPostService = async (userId: string) => {
   const reviews = await Review.find(
-    {
-      user_id: userId,
-      is_deleted: false,
-      review_st: 4,
-    },
-    { _id: true, book_id: true, review_st: true }
-  ).sort({ updated_at: -1 });
+    keysToSnake({
+      userId,
+      isDeleted: false,
+      reviewSt: 4,
+    }),
+    keysToSnake({ _id: true, bookId: true, reviewSt: true })
+  ).sort(keysToSnake({ updatedAt: -1 }));
 
   const books = await Promise.all(
     reviews.map(async function (review) {
-      const findBook = await Book.findById(review.book_id);
+      // snake to camel
+      const originReview = keysToCamel(review);
+      const camelReview = keysToCamel(originReview.Doc);
+
+      const findBook = await Book.findById(camelReview.bookId);
       const book = {
         reviewId: review.id,
         thumbnail: findBook.thumbnail,
         title: findBook.title,
         author: findBook.author,
-        reviewSt: review.review_st,
+        reviewSt: camelReview.reviewSt,
       };
 
       return book;

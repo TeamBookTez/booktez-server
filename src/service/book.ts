@@ -80,12 +80,11 @@ const postBookService = async (
   // review 중복 체크
   const exist = await Review.findOne(
     keysToSnake({
-      bookId: book,
+      bookId: book._id,
       userId,
       isDeleted: false,
     })
   );
-
   if (exist) {
     return constant.VALUE_ALREADY_EXIST;
   }

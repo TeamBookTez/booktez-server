@@ -115,7 +115,7 @@ const postLoginService = (email, password) => __awaiter(void 0, void 0, void 0, 
     };
     const nickname = user.nickname;
     const token = jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: "14d" });
-    return { nickname, token };
+    return { email: user.email, nickname, token };
 });
 /**
  *  @회원가입

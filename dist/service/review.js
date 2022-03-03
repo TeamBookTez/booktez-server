@@ -83,7 +83,12 @@ const getQuestionService = (userId, reviewId) => __awaiter(void 0, void 0, void 
     if (!review) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
-    return { questionList: review.questionList };
+    // 질문리스트 default response
+    let questionList = review.questionList;
+    if (questionList.length == 0) {
+        questionList = [""];
+    }
+    return { questionList };
 });
 /**
 
@@ -161,11 +166,16 @@ const getReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void 0,
     const bookToShow = yield models_1.Book.findOne({
         where: { id: reviewToShow.bookId },
     });
+    // 질문리스트 default response
+    let questionList = reviewToShow.questionList;
+    if (questionList.length == 0) {
+        questionList = [""];
+    }
     return {
         bookTitle: bookToShow.title,
         answerOne: reviewToShow.answerOne,
         answerTwo: reviewToShow.answerTwo,
-        questionList: reviewToShow.questionList,
+        questionList,
         answerThree: reviewToShow.answerThree,
         reviewSt: reviewToShow.reviewSt,
         finishSt: reviewToShow.finishSt,
@@ -195,10 +205,15 @@ const getReviewPreService = (userId, reviewId) => __awaiter(void 0, void 0, void
     if (!reviewToShow) {
         return constant_1.default.WRONG_REQUEST_VALUE;
     }
+    // 질문리스트 default response
+    let questionList = reviewToShow.questionList;
+    if (questionList.length == 0) {
+        questionList = [""];
+    }
     return {
         answerOne: reviewToShow.answerOne,
         answerTwo: reviewToShow.answerTwo,
-        questionList: reviewToShow.questionList,
+        questionList,
         reviewSt: reviewToShow.reviewSt,
         finishSt: reviewToShow.finishSt,
     };

@@ -12,10 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
 // library
 const constant_1 = __importDefault(require("../library/constant"));
+const convertSnakeToCamel_1 = require("../library/convertSnakeToCamel");
 // model
-const models_1 = require("../models");
+const User_1 = __importDefault(require("../models/User"));
+const Review_1 = __importDefault(require("../models/Review"));
 /**
  *  @유저정보조회
  *  @route GET /user/myInfo
@@ -23,18 +26,14 @@ const models_1 = require("../models");
  *  @err 1. 존재하지 않는 유저
  */
 const getMyInfoService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield models_1.User.findOne({
-        where: { id: userId, isDeleted: false },
-    });
+    const user = yield User_1.default.findById(new mongoose_1.default.Types.ObjectId(userId)).where((0, convertSnakeToCamel_1.keysToSnake)({ isDeleted: false }));
     if (!user) {
         return constant_1.default.NON_EXISTENT_USER;
     }
     const img = user.img;
     const nickname = user.nickname;
     const email = user.email;
-    const reviewCount = yield models_1.Review.count({
-        where: { userId, isDeleted: false },
-    });
+    const reviewCount = yield Review_1.default.countDocuments().where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     return { img, nickname, email, reviewCount };
 });
 /**
@@ -51,13 +50,12 @@ const patchImgService = (userId, img) => __awaiter(void 0, void 0, void 0, funct
     if (img === undefined) {
         return constant_1.default.WRONG_IMG_FORM;
     }
-    const user = yield models_1.User.findOne({ where: { id: userId, isDeleted: false } });
+    const user = yield User_1.default.findById(new mongoose_1.default.Types.ObjectId(userId)).where((0, convertSnakeToCamel_1.keysToSnake)({ isDeleted: false }));
     if (!user) {
         return constant_1.default.NON_EXISTENT_USER;
     }
-    yield user.update({ img });
-    yield user.save();
-    return { img: user.img };
+    yield user.updateOne({ img });
+    return { img };
 });
 const userService = {
     getMyInfoService,

@@ -29,7 +29,7 @@ const book_1 = __importDefault(require("../service/book"));
  */
 const postBookController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resData = yield book_1.default.postBookService(req.user ? true : false, req.user ? Number(req.user.id) : constant_1.default.ANONYMOUS_USER, req.body.isbn, req.body.thumbnail, req.body.title, req.body.author, req.body.translator, req.body.publicationDt);
+        const resData = yield book_1.default.postBookService(req.user ? true : false, req.user ? req.user.id : constant_1.default.ANONYMOUS_USER, req.body.isbn, req.body.thumbnail, req.body.title, req.body.author, req.body.translator, req.body.publicationDt);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }

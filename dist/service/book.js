@@ -12,11 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
 // library
 const constant_1 = __importDefault(require("../library/constant"));
-// model
-const models_1 = require("../models");
+const convertSnakeToCamel_1 = require("../library/convertSnakeToCamel");
+const Review_1 = __importDefault(require("../models/Review"));
+const Book_1 = __importDefault(require("../models/Book"));
 /**
  *  @서재,리뷰에 책 추가하기
  *  @route POST /book
@@ -39,55 +39,46 @@ const postBookService = (isLogin, userId, isbn, thumbnail, title, author, transl
     if (/\s/.test(isbn)) {
         // isbn이 2개일 경우
         [isbnOne, isbnTwo] = isbn.split(" ");
-        bookExist = yield models_1.Book.findOne({
-            where: {
-                [sequelize_1.Op.or]: [
-                    { isbn: isbnOne },
-                    { isbn: isbnTwo },
-                    { isbnSub: isbnOne },
-                    { isbnSub: isbnTwo },
-                ],
-            },
+        bookExist = yield Book_1.default.exists({
+            $or: [
+                { isbn: isbnOne },
+                { isbn: isbnTwo },
+                (0, convertSnakeToCamel_1.keysToSnake)({ isbnSub: isbnOne }),
+                (0, convertSnakeToCamel_1.keysToSnake)({ isbnSub: isbnTwo }),
+            ],
         });
     }
     else {
         // isbn 1개
         isbnOne = isbn;
-        bookExist = yield models_1.Book.findOne({
-            where: {
-                [sequelize_1.Op.or]: [{ isbn: isbnOne }, { isbnSub: isbnOne }],
-            },
+        bookExist = yield Book_1.default.exists({
+            $or: [{ isbn: isbnOne }, (0, convertSnakeToCamel_1.keysToSnake)({ isbnSub: isbnOne })],
         });
     }
     if (!bookExist) {
-        book = yield models_1.Book.create(Object.assign(Object.assign(Object.assign(Object.assign({ isbn: isbnOne }, (isbnTwo && { isbnSub: isbnTwo })), { title,
+        book = yield Book_1.default.create((0, convertSnakeToCamel_1.keysToSnake)(Object.assign(Object.assign(Object.assign(Object.assign({ isbn: isbnOne }, (isbnTwo && { isbnSub: isbnTwo })), { title,
             author }), (thumbnail && { thumbnail })), { translator,
-            publicationDt }));
+            publicationDt })));
     }
     else {
         book = bookExist;
     }
     // review 중복 체크
-    const exist = yield models_1.Review.findOne({
-        where: {
-            bookId: book.id,
-            userId,
-            isDeleted: false,
-        },
-    });
+    const exist = yield Review_1.default.findOne((0, convertSnakeToCamel_1.keysToSnake)({
+        bookId: book._id,
+        userId,
+        isDeleted: false,
+    }));
     if (exist) {
         return constant_1.default.VALUE_ALREADY_EXIST;
     }
     // create review
-    const review = yield models_1.Review.create({
-        userId: userId,
-        bookId: book.id,
-        questionList: [],
-        answerOne: "",
-        answerTwo: "",
+    const review = yield Review_1.default.create((0, convertSnakeToCamel_1.keysToSnake)({
+        userId,
+        bookId: book,
         reviewSt: 2,
         finishSt: false,
-    });
+    }));
     return {
         isLogin,
         reviewId: review.id,
@@ -99,29 +90,24 @@ const postBookService = (isLogin, userId, isbn, thumbnail, title, author, transl
  *  @access private
  */
 const getBookService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    let books = [];
-    yield models_1.Review.findAll({
-        attributes: ["id", "reviewSt"],
-        include: [
-            {
-                model: models_1.Book,
-                attributes: ["title", "author", "thumbnail"],
-            },
-        ],
-        where: {
-            userId,
-            isDeleted: false,
-        },
-        order: [["updatedAt", "DESC"]],
-    }).then((reviews) => reviews.forEach((review) => {
-        books.push({
+    const reviews = yield Review_1.default.find((0, convertSnakeToCamel_1.keysToSnake)({
+        userId,
+        isDeleted: false,
+    }), (0, convertSnakeToCamel_1.keysToSnake)({ _id: true, bookId: true, reviewSt: true })).sort((0, convertSnakeToCamel_1.keysToSnake)({ updatedAt: -1 }));
+    const books = yield Promise.all(reviews.map((review) => __awaiter(void 0, void 0, void 0, function* () {
+        // snake to camel
+        const originReview = (0, convertSnakeToCamel_1.keysToCamel)(review);
+        const camelReview = (0, convertSnakeToCamel_1.keysToCamel)(originReview.Doc);
+        const findBook = yield Book_1.default.findById(camelReview.bookId);
+        const book = {
             reviewId: review.id,
-            thumbnail: review.book.thumbnail,
-            title: review.book.title,
-            author: review.book.author,
-            reviewSt: review.reviewSt,
-        });
-    }));
+            thumbnail: findBook.thumbnail,
+            title: findBook.title,
+            author: findBook.author,
+            reviewSt: camelReview.reviewSt,
+        };
+        return book;
+    })));
     return { books: books };
 });
 /**
@@ -130,30 +116,25 @@ const getBookService = (userId) => __awaiter(void 0, void 0, void 0, function* (
  *  @access private
  */
 const getBookPreService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    let books = [];
-    yield models_1.Review.findAll({
-        attributes: ["id", "reviewSt"],
-        include: [
-            {
-                model: models_1.Book,
-                attributes: ["title", "author", "thumbnail"],
-            },
-        ],
-        where: {
-            userId,
-            reviewSt: 2,
-            isDeleted: false,
-        },
-        order: [["updatedAt", "DESC"]],
-    }).then((reviews) => reviews.forEach((review) => {
-        books.push({
+    const reviews = yield Review_1.default.find((0, convertSnakeToCamel_1.keysToSnake)({
+        userId,
+        isDeleted: false,
+        reviewSt: 2,
+    }), (0, convertSnakeToCamel_1.keysToSnake)({ _id: true, bookId: true, reviewSt: true })).sort((0, convertSnakeToCamel_1.keysToSnake)({ updatedAt: -1 }));
+    const books = yield Promise.all(reviews.map((review) => __awaiter(void 0, void 0, void 0, function* () {
+        // snake to camel
+        const originReview = (0, convertSnakeToCamel_1.keysToCamel)(review);
+        const camelReview = (0, convertSnakeToCamel_1.keysToCamel)(originReview.Doc);
+        const findBook = yield Book_1.default.findById(camelReview.bookId);
+        const book = {
             reviewId: review.id,
-            thumbnail: review.book.thumbnail,
-            title: review.book.title,
-            author: review.book.author,
-            reviewSt: review.reviewSt,
-        });
-    }));
+            thumbnail: findBook.thumbnail,
+            title: findBook.title,
+            author: findBook.author,
+            reviewSt: camelReview.reviewSt,
+        };
+        return book;
+    })));
     return { books: books };
 });
 /**
@@ -162,30 +143,25 @@ const getBookPreService = (userId) => __awaiter(void 0, void 0, void 0, function
  *  @access private
  */
 const getBookPeriService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    let books = [];
-    yield models_1.Review.findAll({
-        attributes: ["id", "reviewSt"],
-        include: [
-            {
-                model: models_1.Book,
-                attributes: ["title", "author", "thumbnail"],
-            },
-        ],
-        where: {
-            userId,
-            reviewSt: 3,
-            isDeleted: false,
-        },
-        order: [["updatedAt", "DESC"]],
-    }).then((reviews) => reviews.forEach((review) => {
-        books.push({
+    const reviews = yield Review_1.default.find((0, convertSnakeToCamel_1.keysToSnake)({
+        userId,
+        isDeleted: false,
+        reviewSt: 3,
+    }), (0, convertSnakeToCamel_1.keysToSnake)({ _id: true, bookId: true, reviewSt: true })).sort((0, convertSnakeToCamel_1.keysToSnake)({ updatedAt: -1 }));
+    const books = yield Promise.all(reviews.map((review) => __awaiter(void 0, void 0, void 0, function* () {
+        // snake to camel
+        const originReview = (0, convertSnakeToCamel_1.keysToCamel)(review);
+        const camelReview = (0, convertSnakeToCamel_1.keysToCamel)(originReview.Doc);
+        const findBook = yield Book_1.default.findById(camelReview.bookId);
+        const book = {
             reviewId: review.id,
-            thumbnail: review.book.thumbnail,
-            title: review.book.title,
-            author: review.book.author,
-            reviewSt: review.reviewSt,
-        });
-    }));
+            thumbnail: findBook.thumbnail,
+            title: findBook.title,
+            author: findBook.author,
+            reviewSt: camelReview.reviewSt,
+        };
+        return book;
+    })));
     return { books: books };
 });
 /**
@@ -194,30 +170,26 @@ const getBookPeriService = (userId) => __awaiter(void 0, void 0, void 0, functio
  *  @access private
  */
 const getBookPostService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    let books = [];
-    yield models_1.Review.findAll({
-        attributes: ["id", "reviewSt"],
-        include: [
-            {
-                model: models_1.Book,
-                attributes: ["title", "author", "thumbnail"],
-            },
-        ],
-        where: {
-            userId,
-            reviewSt: 4,
-            isDeleted: false,
-        },
-        order: [["updatedAt", "DESC"]],
-    }).then((reviews) => reviews.forEach((review) => {
-        books.push({
+    const reviews = yield Review_1.default.find((0, convertSnakeToCamel_1.keysToSnake)({
+        userId,
+        isDeleted: false,
+        reviewSt: 4,
+        finishSt: true,
+    }), (0, convertSnakeToCamel_1.keysToSnake)({ _id: true, bookId: true, reviewSt: true })).sort((0, convertSnakeToCamel_1.keysToSnake)({ updatedAt: -1 }));
+    const books = yield Promise.all(reviews.map((review) => __awaiter(void 0, void 0, void 0, function* () {
+        // snake to camel
+        const originReview = (0, convertSnakeToCamel_1.keysToCamel)(review);
+        const camelReview = (0, convertSnakeToCamel_1.keysToCamel)(originReview.Doc);
+        const findBook = yield Book_1.default.findById(camelReview.bookId);
+        const book = {
             reviewId: review.id,
-            thumbnail: review.book.thumbnail,
-            title: review.book.title,
-            author: review.book.author,
-            reviewSt: review.reviewSt,
-        });
-    }));
+            thumbnail: findBook.thumbnail,
+            title: findBook.title,
+            author: findBook.author,
+            reviewSt: camelReview.reviewSt,
+        };
+        return book;
+    })));
     return { books: books };
 });
 const bookService = {

@@ -70,7 +70,7 @@ const getEmailController = async (req: Request, res: Response) => {
       { isValid: true }
     );
   } catch (err) {
-    // slack.slackWebhook(req, err.message);
+    slack.slackWebhook(req, err.message);
     console.error(err.message);
     return response.basicResponse(
       res,

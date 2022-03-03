@@ -157,7 +157,7 @@ const getBookPreService = async (userId: string) => {
   ).sort(keysToSnake({ updatedAt: -1 }));
 
   const books = await Promise.all(
-    reviews.map(async function (review) {
+    reviews.map(async (review) => {
       // snake to camel
       const originReview = keysToCamel(review);
       const camelReview = keysToCamel(originReview.Doc);
@@ -193,7 +193,7 @@ const getBookPeriService = async (userId: string) => {
   ).sort(keysToSnake({ updatedAt: -1 }));
 
   const books = await Promise.all(
-    reviews.map(async function (review) {
+    reviews.map(async (review) => {
       // snake to camel
       const originReview = keysToCamel(review);
       const camelReview = keysToCamel(originReview.Doc);
@@ -224,12 +224,13 @@ const getBookPostService = async (userId: string) => {
       userId,
       isDeleted: false,
       reviewSt: 4,
+      finishSt: true,
     }),
     keysToSnake({ _id: true, bookId: true, reviewSt: true })
   ).sort(keysToSnake({ updatedAt: -1 }));
 
   const books = await Promise.all(
-    reviews.map(async function (review) {
+    reviews.map(async (review) => {
       // snake to camel
       const originReview = keysToCamel(review);
       const camelReview = keysToCamel(originReview.Doc);

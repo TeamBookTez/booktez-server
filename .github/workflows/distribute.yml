@@ -18,6 +18,7 @@ jobs:
           port: ${{ secrets.REMOTE_SSH_PORT }}
           script: |
             cd booktez-server
+            sudo git checkout .
             sudo git pull origin main
             sudo npm install
             sudo npx pm2 restart 0

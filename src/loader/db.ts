@@ -10,13 +10,13 @@ const connectDB = async () => {
   try {
     await mongoose.connect(config.mongoURI, {});
 
-    await User.createCollection().then(function (collection) {
+    await User.createCollection().then((collection) => {
       console.log("User Collection is created!");
     });
-    await Book.createCollection().then(function (collection) {
+    await Book.createCollection().then((collection) => {
       console.log("Book Collection is created!");
     });
-    await Review.createCollection().then(function (collection) {
+    await Review.createCollection().then((collection) => {
       console.log("Review Collection is created!");
     });
 

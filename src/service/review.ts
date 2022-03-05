@@ -171,7 +171,6 @@ const patchReviewPeriService = async (
   const originBook = keysToCamel(book);
   const camelBook = keysToCamel(originBook.Doc);
 
-  // console.log(originBook);
   return {
     reviewId: review.id,
     bookData: {

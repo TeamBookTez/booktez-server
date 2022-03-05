@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 // library
 import constant from "../library/constant";
 import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
+import { isValidObjectId } from "mongoose";
 
 // model
 import User from "../models/User";
@@ -40,6 +41,11 @@ const patchReviewPreService = async (
     return constant.NULL_VALUE;
   }
 
+  // MongoDB id 형식이 아닐 때
+  if (!isValidObjectId(reviewId) || !isValidObjectId(userId)) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
   // review 체크
   const review = await Review.findById(
     new mongoose.Types.ObjectId(reviewId)
@@ -75,6 +81,11 @@ const getQuestionService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
+  }
+
+  // MongoDB id 형식이 아닐 때
+  if (!isValidObjectId(reviewId) || !isValidObjectId(userId)) {
+    return constant.WRONG_REQUEST_VALUE;
   }
 
   // review 조회
@@ -121,6 +132,11 @@ const patchReviewPeriService = async (
     return constant.NULL_VALUE;
   }
 
+  // MongoDB id 형식이 아닐 때
+  if (!isValidObjectId(reviewId) || !isValidObjectId(userId)) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
   // 해당 review 조회
   const review = await Review.findById(
     new mongoose.Types.ObjectId(reviewId)
@@ -128,7 +144,7 @@ const patchReviewPeriService = async (
 
   // 2. 존재하지 않는 review
   if (!review) {
-    return constant.WRONG_REQUEST_VALUE;
+    return constant.DB_NOT_FOUND;
   }
 
   let finishSt = Number(reviewSt) === 4 ? true : false;
@@ -186,6 +202,11 @@ const getReviewService = async (userId: string, reviewId: string) => {
     return constant.NULL_VALUE;
   }
 
+  // MongoDB id 형식이 아닐 때
+  if (!isValidObjectId(reviewId) || !isValidObjectId(userId)) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
   // review 조회
   const reviewToShow = await Review.findById(
     new mongoose.Types.ObjectId(reviewId)
@@ -193,7 +214,7 @@ const getReviewService = async (userId: string, reviewId: string) => {
 
   // 존재하지 않는 리뷰일 때
   if (!reviewToShow) {
-    return constant.WRONG_REQUEST_VALUE;
+    return constant.DB_NOT_FOUND;
   }
   // snake to camel
   const originReview = keysToCamel(reviewToShow);
@@ -226,13 +247,19 @@ const getReviewPreService = async (userId: string, reviewId: string) => {
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
   }
+
+  // MongoDB id 형식이 아닐 때
+  if (!isValidObjectId(reviewId) || !isValidObjectId(userId)) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
   const reviewToShow = await Review.findById(
     new mongoose.Types.ObjectId(reviewId)
   ).where(keysToSnake({ userId, isDeleted: false }));
 
   // 존재하지 않는 리뷰일 때
   if (!reviewToShow) {
-    return constant.WRONG_REQUEST_VALUE;
+    return constant.DB_NOT_FOUND;
   }
 
   // snake to camel
@@ -260,6 +287,11 @@ const getReviewPeriService = async (userId: string, reviewId: string) => {
   // 필요한 값이 없을 때
   if (!userId || !reviewId) {
     return constant.NULL_VALUE;
+  }
+
+  // MongoDB id 형식이 아닐 때
+  if (!isValidObjectId(reviewId) || !isValidObjectId(userId)) {
+    return constant.WRONG_REQUEST_VALUE;
   }
 
   const reviewToShow = await Review.findById(
@@ -307,6 +339,11 @@ const patchReviewService = async (
     return constant.NULL_VALUE;
   }
 
+  // MongoDB id 형식이 아닐 때
+  if (!isValidObjectId(reviewId)) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
   // find review
   const reviewToChange = await Review.findById(
     new mongoose.Types.ObjectId(reviewId)
@@ -344,6 +381,11 @@ const deleteReviewService = async (userId: string, reviewId: string) => {
     return constant.NULL_VALUE;
   }
 
+  // MongoDB id 형식이 아닐 때
+  if (!isValidObjectId(reviewId) || !isValidObjectId(userId)) {
+    return constant.WRONG_REQUEST_VALUE;
+  }
+
   // 해당 review 조회
   const review = await Review.findById(
     new mongoose.Types.ObjectId(reviewId)
@@ -351,7 +393,7 @@ const deleteReviewService = async (userId: string, reviewId: string) => {
 
   // 2. 존재하지 않거나 삭제된 review
   if (!review) {
-    return constant.WRONG_REQUEST_VALUE;
+    return constant.DB_NOT_FOUND;
   }
 
   // 독후감 삭제

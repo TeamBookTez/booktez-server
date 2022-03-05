@@ -163,13 +163,8 @@ const patchReviewPeriService = async (
   const camelReview = keysToCamel(originReview.Doc);
 
   // 책 확인
-  const book = await Book.findOne(
-    keysToSnake({ id: camelReview.bookId }),
-    keysToSnake({
-      _id: false,
-      isbn: false,
-      isbnSub: false,
-    })
+  const book = await Book.findById(
+    new mongoose.Types.ObjectId(camelReview.bookId)
   );
 
   // snake to camel

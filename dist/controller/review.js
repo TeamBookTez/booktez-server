@@ -34,6 +34,9 @@ const patchReviewPreController = (req, res) => __awaiter(void 0, void 0, void 0,
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "요청값이 잘못되었습니다.");
         }
+        if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "ID 형식이 잘못되었습니다.");
+        }
         if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
@@ -58,6 +61,9 @@ const getQuestionController = (req, res) => __awaiter(void 0, void 0, void 0, fu
         const resData = yield review_1.default.getQuestionService(req.user.id, req.params.reviewId);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
+        }
+        if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "ID 형식이 잘못되었습니다.");
         }
         if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
@@ -85,6 +91,9 @@ const patchReviewPeriController = (req, res) => __awaiter(void 0, void 0, void 0
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "요청값이 없습니다.");
         }
         if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "ID 형식이 잘못되었습니다.");
+        }
+        if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
         return response_1.default.dataResponse(res, returnCode_1.default.OK, "작성/수정이 완료되었습니다.", true, resData);
@@ -110,6 +119,9 @@ const getReviewController = (req, res) => __awaiter(void 0, void 0, void 0, func
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
         if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "ID 형식이 잘못되었습니다.");
+        }
+        if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
         return response_1.default.dataResponse(res, returnCode_1.default.OK, "독후감 조회 성공.", true, resData);
@@ -135,6 +147,9 @@ const getReviewPreController = (req, res) => __awaiter(void 0, void 0, void 0, f
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
         if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "ID 형식이 잘못되었습니다.");
+        }
+        if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
         return response_1.default.dataResponse(res, returnCode_1.default.OK, "독후감 전단계 조회 성공.", true, resData);
@@ -160,6 +175,9 @@ const getReviewPeriController = (req, res) => __awaiter(void 0, void 0, void 0, 
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
         if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "ID 형식이 잘못되었습니다.");
+        }
+        if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
         }
         return response_1.default.dataResponse(res, returnCode_1.default.OK, "독후감 중단계 조회 성공.", true, resData);
@@ -183,6 +201,9 @@ const patchReviewController = (req, res) => __awaiter(void 0, void 0, void 0, fu
         const resData = yield review_1.default.patchReviewService(req.params.reviewId, req.body.answerOne, req.body.answerTwo, req.body.answerThree);
         if (resData === constant_1.default.NULL_VALUE) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
+        }
+        if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "ID 형식이 잘못되었습니다.");
         }
         if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않는 Review입니다.");
@@ -211,6 +232,9 @@ const deleteReviewController = (req, res) => __awaiter(void 0, void 0, void 0, f
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
         }
         if (resData === constant_1.default.WRONG_REQUEST_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "ID 형식이 잘못되었습니다.");
+        }
+        if (resData === constant_1.default.DB_NOT_FOUND) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "존재하지 않거나 삭제된 Review입니다.");
         }
         if (resData === constant_1.default.VALUE_ALREADY_DELETED) {

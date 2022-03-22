@@ -16,6 +16,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 // library
 const constant_1 = __importDefault(require("../library/constant"));
 const convertSnakeToCamel_1 = require("../library/convertSnakeToCamel");
+const mongoose_2 = require("mongoose");
 const Review_1 = __importDefault(require("../models/Review"));
 const Book_1 = __importDefault(require("../models/Book"));
 /**
@@ -37,6 +38,10 @@ const patchReviewPreService = (reviewId, userId, answerOne, answerTwo, questionL
         questionList === null ||
         !reviewSt) {
         return constant_1.default.NULL_VALUE;
+    }
+    // MongoDB id 형식이 아닐 때
+    if (!(0, mongoose_2.isValidObjectId)(reviewId) || !(0, mongoose_2.isValidObjectId)(userId)) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
     }
     // review 체크
     const review = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
@@ -68,6 +73,10 @@ const getQuestionService = (userId, reviewId) => __awaiter(void 0, void 0, void 
     if (!userId || !reviewId) {
         return constant_1.default.NULL_VALUE;
     }
+    // MongoDB id 형식이 아닐 때
+    if (!(0, mongoose_2.isValidObjectId)(reviewId) || !(0, mongoose_2.isValidObjectId)(userId)) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
     // review 조회
     const review = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     // 존재하지 않는 리뷰
@@ -97,11 +106,15 @@ const patchReviewPeriService = (reviewId, userId, answerThree, reviewSt) => __aw
         !reviewSt) {
         return constant_1.default.NULL_VALUE;
     }
+    // MongoDB id 형식이 아닐 때
+    if (!(0, mongoose_2.isValidObjectId)(reviewId) || !(0, mongoose_2.isValidObjectId)(userId)) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
     // 해당 review 조회
     const review = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     // 2. 존재하지 않는 review
     if (!review) {
-        return constant_1.default.WRONG_REQUEST_VALUE;
+        return constant_1.default.DB_NOT_FOUND;
     }
     let finishSt = Number(reviewSt) === 4 ? true : false;
     // 3. review update
@@ -116,11 +129,7 @@ const patchReviewPeriService = (reviewId, userId, answerThree, reviewSt) => __aw
     const originReview = (0, convertSnakeToCamel_1.keysToCamel)(review);
     const camelReview = (0, convertSnakeToCamel_1.keysToCamel)(originReview.Doc);
     // 책 확인
-    const book = yield Book_1.default.findOne((0, convertSnakeToCamel_1.keysToSnake)({ id: camelReview.bookId }), (0, convertSnakeToCamel_1.keysToSnake)({
-        _id: false,
-        isbn: false,
-        isbnSub: false,
-    }));
+    const book = yield Book_1.default.findById(new mongoose_1.default.Types.ObjectId(camelReview.bookId));
     // snake to camel
     const originBook = (0, convertSnakeToCamel_1.keysToCamel)(book);
     const camelBook = (0, convertSnakeToCamel_1.keysToCamel)(originBook.Doc);
@@ -148,11 +157,15 @@ const getReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void 0,
     if (!userId || !reviewId) {
         return constant_1.default.NULL_VALUE;
     }
+    // MongoDB id 형식이 아닐 때
+    if (!(0, mongoose_2.isValidObjectId)(reviewId) || !(0, mongoose_2.isValidObjectId)(userId)) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
     // review 조회
     const reviewToShow = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     // 존재하지 않는 리뷰일 때
     if (!reviewToShow) {
-        return constant_1.default.WRONG_REQUEST_VALUE;
+        return constant_1.default.DB_NOT_FOUND;
     }
     // snake to camel
     const originReview = (0, convertSnakeToCamel_1.keysToCamel)(reviewToShow);
@@ -182,10 +195,14 @@ const getReviewPreService = (userId, reviewId) => __awaiter(void 0, void 0, void
     if (!userId || !reviewId) {
         return constant_1.default.NULL_VALUE;
     }
+    // MongoDB id 형식이 아닐 때
+    if (!(0, mongoose_2.isValidObjectId)(reviewId) || !(0, mongoose_2.isValidObjectId)(userId)) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
     const reviewToShow = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     // 존재하지 않는 리뷰일 때
     if (!reviewToShow) {
-        return constant_1.default.WRONG_REQUEST_VALUE;
+        return constant_1.default.DB_NOT_FOUND;
     }
     // snake to camel
     const originReview = (0, convertSnakeToCamel_1.keysToCamel)(reviewToShow);
@@ -210,6 +227,10 @@ const getReviewPeriService = (userId, reviewId) => __awaiter(void 0, void 0, voi
     // 필요한 값이 없을 때
     if (!userId || !reviewId) {
         return constant_1.default.NULL_VALUE;
+    }
+    // MongoDB id 형식이 아닐 때
+    if (!(0, mongoose_2.isValidObjectId)(reviewId) || !(0, mongoose_2.isValidObjectId)(userId)) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
     }
     const reviewToShow = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     // 존재하지 않는 리뷰일 때
@@ -243,6 +264,10 @@ const patchReviewService = (reviewId, answerOne, answerTwo, answerThree) => __aw
         answerThree === null) {
         return constant_1.default.NULL_VALUE;
     }
+    // MongoDB id 형식이 아닐 때
+    if (!(0, mongoose_2.isValidObjectId)(reviewId)) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
     // find review
     const reviewToChange = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ isDeleted: false }));
     // 존재하지 않는 리뷰
@@ -273,11 +298,15 @@ const deleteReviewService = (userId, reviewId) => __awaiter(void 0, void 0, void
     if (!userId || !reviewId) {
         return constant_1.default.NULL_VALUE;
     }
+    // MongoDB id 형식이 아닐 때
+    if (!(0, mongoose_2.isValidObjectId)(reviewId) || !(0, mongoose_2.isValidObjectId)(userId)) {
+        return constant_1.default.WRONG_REQUEST_VALUE;
+    }
     // 해당 review 조회
     const review = yield Review_1.default.findById(new mongoose_1.default.Types.ObjectId(reviewId)).where((0, convertSnakeToCamel_1.keysToSnake)({ userId, isDeleted: false }));
     // 2. 존재하지 않거나 삭제된 review
     if (!review) {
-        return constant_1.default.WRONG_REQUEST_VALUE;
+        return constant_1.default.DB_NOT_FOUND;
     }
     // 독후감 삭제
     yield review.updateOne({

@@ -39,6 +39,15 @@ const patchReviewPreController = async (req: Request, res: Response) => {
       );
     }
 
+    if (resData === constant.WRONG_REQUEST_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "ID 형식이 잘못되었습니다."
+      );
+    }
+
     if (resData === constant.DB_NOT_FOUND) {
       return response.basicResponse(
         res,
@@ -88,6 +97,15 @@ const getQuestionController = async (req: Request, res: Response) => {
         returnCode.BAD_REQUEST,
         false,
         "필요한 값이 없습니다."
+      );
+    }
+
+    if (resData === constant.WRONG_REQUEST_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "ID 형식이 잘못되었습니다."
       );
     }
 
@@ -150,6 +168,15 @@ const patchReviewPeriController = async (req: Request, res: Response) => {
         res,
         returnCode.BAD_REQUEST,
         false,
+        "ID 형식이 잘못되었습니다."
+      );
+    }
+
+    if (resData === constant.DB_NOT_FOUND) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
         "존재하지 않는 Review입니다."
       );
     }
@@ -198,6 +225,15 @@ const getReviewController = async (req: Request, res: Response) => {
     }
 
     if (resData === constant.WRONG_REQUEST_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "ID 형식이 잘못되었습니다."
+      );
+    }
+
+    if (resData === constant.DB_NOT_FOUND) {
       return response.basicResponse(
         res,
         returnCode.BAD_REQUEST,
@@ -254,6 +290,15 @@ const getReviewPreController = async (req: Request, res: Response) => {
         res,
         returnCode.BAD_REQUEST,
         false,
+        "ID 형식이 잘못되었습니다."
+      );
+    }
+
+    if (resData === constant.DB_NOT_FOUND) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
         "존재하지 않는 Review입니다."
       );
     }
@@ -306,6 +351,15 @@ const getReviewPeriController = async (req: Request, res: Response) => {
         res,
         returnCode.BAD_REQUEST,
         false,
+        "ID 형식이 잘못되었습니다."
+      );
+    }
+
+    if (resData === constant.DB_NOT_FOUND) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
         "존재하지 않는 Review입니다."
       );
     }
@@ -352,6 +406,15 @@ const patchReviewController = async (req: Request, res: Response) => {
         returnCode.BAD_REQUEST,
         false,
         "필요한 값이 없습니다."
+      );
+    }
+
+    if (resData === constant.WRONG_REQUEST_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "ID 형식이 잘못되었습니다."
       );
     }
 
@@ -408,6 +471,15 @@ const deleteReviewController = async (req: Request, res: Response) => {
     }
 
     if (resData === constant.WRONG_REQUEST_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "ID 형식이 잘못되었습니다."
+      );
+    }
+
+    if (resData === constant.DB_NOT_FOUND) {
       return response.basicResponse(
         res,
         returnCode.BAD_REQUEST,

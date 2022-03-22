@@ -171,4 +171,4 @@ SOPT 29th APPJAM
 |  1.0.1  | bug fix, add api                               | [📄](https://github.com/TeamBookTez/booktez-server/releases/tag/v1.0.1) | 2022.02.10 |
 |  1.0.2  | bug fix, modify api                            | [📄](https://github.com/TeamBookTez/booktez-server/releases/tag/v1.0.2) | 2022.02.21 |
 |  2.0.0  | switch database <br>from postgreSQL to mongoDB | [📄](https://github.com/TeamBookTez/booktez-server/releases/tag/v2.0.0) | 2022.03.03 |
-|  2.0.1  | bug fix                                        | [📄](https://github.com/TeamBookTez/booktez-server/releases/tag/v2.0.`) | 2022.03.06 |
+|  2.0.1  | bug fix                                        | [📄](https://github.com/TeamBookTez/booktez-server/releases/tag/v2.0.1) | 2022.03.06 |

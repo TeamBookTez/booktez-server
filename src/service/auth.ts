@@ -1,5 +1,4 @@
-import index from "../config";
-import mongoose from "mongoose";
+import config from "../config";
 
 // library
 import jwt from "jsonwebtoken";
@@ -122,7 +121,7 @@ const postLoginService = async (email: string, password: string) => {
   };
   const nickname = user.nickname;
   const userEmail = user.email;
-  const token = jwt.sign(payload, index.jwtSecret, { expiresIn: "14d" });
+  const token = jwt.sign(payload, config.jwt.secret, { expiresIn: "14d" });
   return { email: userEmail, nickname, token };
 };
 
@@ -193,7 +192,7 @@ const postSignupService = async (
     },
   };
 
-  const token = jwt.sign(payload, index.jwtSecret, {
+  const token = jwt.sign(payload, config.jwt.secret, {
     expiresIn: "14d",
   });
   return token;

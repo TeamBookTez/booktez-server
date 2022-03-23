@@ -28,7 +28,7 @@ export const auth = async (req: Request, res: Response, next) => {
   // Verify token
   try {
     const token: string = req.headers.authorization;
-    const decoded = jwt.verify(token, config.jwtSecret);
+    const decoded = jwt.verify(token, config.jwt.secret);
 
     const user = await User.findById(decoded.user.id).where(
       keysToSnake({ isDeleted: false })
@@ -79,7 +79,7 @@ export const isLogin = async (req: Request, res: Response, next) => {
     // 적합한 토큰이 있을 경우
     // 로그인 상태
     const token: string = req.headers.authorization;
-    const decoded = jwt.verify(token, config.jwtSecret);
+    const decoded = jwt.verify(token, config.jwt.secret);
 
     const user = await User.findById(decoded.user.id).where(
       keysToSnake({ isDeleted: false })

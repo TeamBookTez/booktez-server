@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import router from "./router";
 import connectDB from "./loader/db";
+import config from "./config";
 
 const app = express();
 
@@ -12,7 +13,7 @@ app.use(express.urlencoded());
 app.use(express.json());
 
 // Port Host
-const PORT: number = parseInt(process.env.PORT as string, 10) || 3000 || 8080;
+const PORT: number = config.port || 3000 || 8080;
 
 // allow cors
 app.use(

@@ -20,7 +20,12 @@ const connectDB = async () => {
       console.log("Review Collection is created!");
     });
 
-    console.log("Mongoose Connected ...");
+    const uri = config.mongoURI;
+    console.log(
+      "\nMongoose Connected... [" +
+        uri.substring(uri.lastIndexOf("/") + 1, uri.length) +
+        "]\n"
+    );
   } catch (err) {
     console.error(err.message);
     process.exit(1);

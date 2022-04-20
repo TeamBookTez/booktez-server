@@ -189,12 +189,65 @@ const getBookPostController = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * @서재 중복검사
+ * @route GET /book/exist/:isbn
+ * @access private
+ */
+const getBookExistController = async (req: Request, res: Response) => {
+  try {
+    const resData = await bookService.getBookExistService(
+      req.user.id,
+      req.params.isbn
+    );
+
+    if (resData === constant.NULL_VALUE) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "필요한 값이 없습니다."
+      );
+    }
+
+    if (resData === constant.VALUE_ALREADY_EXIST) {
+      return response.dataResponse(
+        res,
+        returnCode.OK,
+        "이미 추가된 책입니다.",
+        true,
+        { isExist: true }
+      );
+    }
+
+    if (resData === constant.SUCCESS) {
+      return response.dataResponse(
+        res,
+        returnCode.OK,
+        "추가할 수 있는 책입니다.",
+        true,
+        { isExist: false }
+      );
+    }
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
 const bookController = {
   postBookController,
   getBookController,
   getBookPreController,
   getBookPeriController,
   getBookPostController,
+  getBookExistController,
 };
 
 export default bookController;

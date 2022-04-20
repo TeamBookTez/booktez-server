@@ -276,7 +276,6 @@ const getBookExistService = async (userId: string, isbn: string) => {
   ).populate(toSnakeString("bookId"));
 
   const existReview = reviews.filter((review) => {
-    console.log(review);
     if (review.book_id.isbn === isbn || review.book_id.isbn_sub === isbn) {
       return review;
     }

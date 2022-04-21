@@ -268,6 +268,17 @@ const getBookExistService = async (userId: string, isbn: string) => {
     return constant.NULL_VALUE;
   }
 
+  isbn = isbn.trim();
+  let isbnOne: string, isbnTwo: string;
+
+  // isbn이 2개일 경우, 1개일 경우
+  if (/\s/.test(isbn)) {
+    [isbnOne, isbnTwo] = isbn.split(" ");
+  } else {
+    isbnOne = isbn;
+    isbnTwo = "";
+  }
+
   const reviews = await Review.find(
     keysToSnake({
       userId,
@@ -276,7 +287,12 @@ const getBookExistService = async (userId: string, isbn: string) => {
   ).populate(toSnakeString("bookId"));
 
   const existReview = reviews.filter((review) => {
-    if (review.book_id.isbn === isbn || review.book_id.isbn_sub === isbn) {
+    if (
+      review.book_id.isbn === isbnOne ||
+      review.book_id.isbn_sub === isbnOne ||
+      review.book_id.isbn === isbnTwo ||
+      review.book_id.isbn_sub === isbnTwo
+    ) {
       return review;
     }
   });

@@ -1,4 +1,5 @@
 import config from "../config";
+import mongoose from "mongoose";
 
 // library
 import jwt from "jsonwebtoken";
@@ -9,7 +10,7 @@ import {
   checkNicknameValid,
   checkPasswordValid,
 } from "../library/checkValidation";
-import { keysToSnake } from "../library/convertSnakeToCamel";
+import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
 
 // model
 import User from "../models/User";
@@ -208,12 +209,41 @@ const getLoginFlagService = async (isLogin: Boolean) => {
   return { isLogin };
 };
 
+/**
+ *  @회원탈퇴
+ *  @route Patch /auth/withdraw
+ *  @access private
+ *  @err
+ */
+const patchWithdrawService = async (userId: string) => {
+  const user = await User.findById(new mongoose.Types.ObjectId(userId));
+
+  // snake to camel
+  const originUser = keysToCamel(user);
+  const camelUser = keysToCamel(originUser.Doc);
+
+  if (camelUser.isDeleted) {
+    return constant.NON_EXISTENT_USER;
+  }
+
+  // 삭제
+  await user.updateOne({ $set: keysToSnake({ isDeleted: true }) });
+
+  // 만료 날짜
+  const date = new Date(Date.now() + 30 * 24 * 3600 * 1000);
+
+  // 시간 아래는 0 으로 초기화
+  const expiredAt = date.setUTCMinutes(0, 0, 0);
+  await user.updateOne({ $set: keysToSnake({ expiredAt }) });
+};
+
 const authService = {
   getEmailService,
   getNicknameService,
   postLoginService,
   postSignupService,
   getLoginFlagService,
+  patchWithdrawService,
 };
 
 export default authService;

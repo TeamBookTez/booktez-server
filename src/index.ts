@@ -4,6 +4,9 @@ import router from "./router";
 import connectDB from "./loader/db";
 import config from "./config";
 
+// scheduler
+import { userScan } from "./scheduler/userScheduler";
+
 const app = express();
 
 // Connect Database
@@ -40,6 +43,9 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.json({ error: err });
+
+  // scheduler
+  userScan;
 });
 
 const server = app

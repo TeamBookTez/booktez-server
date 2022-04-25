@@ -34,6 +34,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+
+  // 만료 일자
+  expired_at: {
+    type: Date,
+    required: false,
+  },
+
   // 생성 일자
   created_at: {
     type: Date,

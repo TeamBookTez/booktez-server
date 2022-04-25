@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("../config"));
+const mongoose_1 = __importDefault(require("mongoose"));
 // library
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -113,7 +114,7 @@ const postLoginService = (email, password) => __awaiter(void 0, void 0, void 0, 
     };
     const nickname = user.nickname;
     const userEmail = user.email;
-    const token = jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: "14d" });
+    const token = jsonwebtoken_1.default.sign(payload, config_1.default.jwt.secret, { expiresIn: "14d" });
     return { email: userEmail, nickname, token };
 });
 /**
@@ -167,7 +168,7 @@ const postSignupService = (email, nickname, password) => __awaiter(void 0, void 
             id: user.id,
         },
     };
-    const token = jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, {
+    const token = jsonwebtoken_1.default.sign(payload, config_1.default.jwt.secret, {
         expiresIn: "14d",
     });
     return token;
@@ -181,12 +182,35 @@ const postSignupService = (email, nickname, password) => __awaiter(void 0, void 
 const getLoginFlagService = (isLogin) => __awaiter(void 0, void 0, void 0, function* () {
     return { isLogin };
 });
+/**
+ *  @회원탈퇴
+ *  @route Patch /auth/withdraw
+ *  @access private
+ *  @err
+ */
+const patchWithdrawService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findById(new mongoose_1.default.Types.ObjectId(userId));
+    // snake to camel
+    const originUser = (0, convertSnakeToCamel_1.keysToCamel)(user);
+    const camelUser = (0, convertSnakeToCamel_1.keysToCamel)(originUser.Doc);
+    if (camelUser.isDeleted) {
+        return constant_1.default.NON_EXISTENT_USER;
+    }
+    // 삭제
+    yield user.updateOne({ $set: (0, convertSnakeToCamel_1.keysToSnake)({ isDeleted: true }) });
+    // 만료 날짜
+    const date = new Date(Date.now() + 30 * 24 * 3600 * 1000);
+    // 시간 아래는 0 으로 초기화
+    const expiredAt = date.setUTCMinutes(0, 0, 0);
+    yield user.updateOne({ $set: (0, convertSnakeToCamel_1.keysToSnake)({ expiredAt }) });
+});
 const authService = {
     getEmailService,
     getNicknameService,
     postLoginService,
     postSignupService,
     getLoginFlagService,
+    patchWithdrawService,
 };
 exports.default = authService;
 //# sourceMappingURL=auth.js.map

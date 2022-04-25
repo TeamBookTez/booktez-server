@@ -30,7 +30,10 @@ const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
         yield Review_1.default.createCollection().then((collection) => {
             console.log("Review Collection is created!");
         });
-        console.log("Mongoose Connected ...");
+        const uri = config_1.default.mongoURI;
+        console.log("\nMongoose Connected... [" +
+            uri.substring(uri.lastIndexOf("/") + 1, uri.length) +
+            "]\n");
     }
     catch (err) {
         console.error(err.message);

@@ -163,12 +163,33 @@ const getLoginFlagController = (req, res) => __awaiter(void 0, void 0, void 0, f
         return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
     }
 });
+/**
+ *  @회원탈퇴
+ *  @route Patch /auth/withdraw
+ *  @access private
+ *  @err
+ */
+const patchWithdrawController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield auth_1.default.patchWithdrawService(req.user.id);
+        if (resData === constant_1.default.NON_EXISTENT_USER) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "이미 삭제된 유저입니다.");
+        }
+        return response_1.default.basicResponse(res, returnCode_1.default.OK, true, "삭제가 완료되었습니다.");
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
 const authController = {
     getEmailController,
     getNicknameController,
     postLoginController,
     postSignupController,
     getLoginFlagController,
+    patchWithdrawController,
 };
 exports.default = authController;
 //# sourceMappingURL=auth.js.map

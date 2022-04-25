@@ -31,7 +31,7 @@ const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     // Verify token
     try {
         const token = req.headers.authorization;
-        const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwtSecret);
+        const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt.secret);
         const user = yield User_1.default.findById(decoded.user.id).where((0, convertSnakeToCamel_1.keysToSnake)({ isDeleted: false }));
         if (!user) {
             return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "유저가 존재하지 않습니다.");
@@ -61,7 +61,7 @@ const isLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         // 적합한 토큰이 있을 경우
         // 로그인 상태
         const token = req.headers.authorization;
-        const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwtSecret);
+        const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt.secret);
         const user = yield User_1.default.findById(decoded.user.id).where((0, convertSnakeToCamel_1.keysToSnake)({ isDeleted: false }));
         if (!user) {
             return next();

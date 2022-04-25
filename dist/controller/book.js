@@ -114,12 +114,37 @@ const getBookPostController = (req, res) => __awaiter(void 0, void 0, void 0, fu
         return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
     }
 });
+/**
+ * @서재 중복검사
+ * @route GET /book/exist/:isbn
+ * @access private
+ */
+const getBookExistController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resData = yield book_1.default.getBookExistService(req.user.id, req.params.isbn);
+        if (resData === constant_1.default.NULL_VALUE) {
+            return response_1.default.basicResponse(res, returnCode_1.default.BAD_REQUEST, false, "필요한 값이 없습니다.");
+        }
+        if (resData === constant_1.default.VALUE_ALREADY_EXIST) {
+            return response_1.default.dataResponse(res, returnCode_1.default.OK, "이미 추가된 책입니다.", true, { isExist: true });
+        }
+        if (resData === constant_1.default.SUCCESS) {
+            return response_1.default.dataResponse(res, returnCode_1.default.OK, "추가할 수 있는 책입니다.", true, { isExist: false });
+        }
+    }
+    catch (err) {
+        slack_1.default.slackWebhook(req, err.message);
+        console.error(err.message);
+        return response_1.default.basicResponse(res, returnCode_1.default.INTERNAL_SERVER_ERROR, false, "서버 오류");
+    }
+});
 const bookController = {
     postBookController,
     getBookController,
     getBookPreController,
     getBookPeriController,
     getBookPostController,
+    getBookExistController,
 };
 exports.default = bookController;
 //# sourceMappingURL=book.js.map

@@ -1,7 +1,7 @@
 import express from "express";
 
 // Middleware
-import { isLogin } from "../middleware/authMiddleware";
+import { auth, isLogin } from "../middleware/authMiddleware";
 
 // Controller
 import authController from "../controller/auth";
@@ -13,5 +13,6 @@ router.get("/nickname", authController.getNicknameController);
 router.post("/login", authController.postLoginController);
 router.post("/signup", authController.postSignupController);
 router.get("/check", isLogin, authController.getLoginFlagController);
+router.patch("/withdraw", auth, authController.patchWithdrawController);
 
 module.exports = router;

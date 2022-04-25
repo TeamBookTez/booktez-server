@@ -334,12 +334,50 @@ const getLoginFlagController = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *  @회원탈퇴
+ *  @route Patch /auth/withdraw
+ *  @access private
+ *  @err
+ */
+const patchWithdrawController = async (req: Request, res: Response) => {
+  try {
+    const resData = await authService.patchWithdrawService(req.user.id);
+
+    if (resData === constant.NON_EXISTENT_USER) {
+      return response.basicResponse(
+        res,
+        returnCode.BAD_REQUEST,
+        false,
+        "이미 삭제된 유저입니다."
+      );
+    }
+
+    return response.basicResponse(
+      res,
+      returnCode.OK,
+      true,
+      "삭제가 완료되었습니다."
+    );
+  } catch (err) {
+    slack.slackWebhook(req, err.message);
+    console.error(err.message);
+    return response.basicResponse(
+      res,
+      returnCode.INTERNAL_SERVER_ERROR,
+      false,
+      "서버 오류"
+    );
+  }
+};
+
 const authController = {
   getEmailController,
   getNicknameController,
   postLoginController,
   postSignupController,
   getLoginFlagController,
+  patchWithdrawController,
 };
 
 export default authController;

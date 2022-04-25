@@ -1,11 +1,9 @@
 import axios from "axios";
-import dotenv from "dotenv";
-
-dotenv.config();
+import config from "../../config";
 
 // 슬랙 Webhook에서 발급받은 endpoint를 .env 파일에서 끌어옴
 // endpoint 자체는 깃허브에 올라가면 안 되기 때문!
-const DEV_WEB_HOOK_ERROR_MONITORING = process.env.DEV_WEB_HOOK_ERROR_MONITORING;
+const DEV_WEB_HOOK_ERROR_MONITORING = config.slackURI;
 
 const sendMessageToSlack = (
   message: string,

@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-dotenv.config();
+import config from "../config";
 
 // interface
 import { IBook } from "../interface/IBook";
@@ -37,7 +36,7 @@ const BookSchema = new mongoose.Schema({
   thumbnail: {
     type: String,
     required: false,
-    default: process.env.DEFAULT_BOOK_IMG,
+    default: config.defaultImg.book,
   },
   // 생성 일자
   publication_dt: {

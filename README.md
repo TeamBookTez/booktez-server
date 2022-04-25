@@ -8,13 +8,15 @@
 
 ### **_진짜 독서가들의 독서법, 북스테어즈 💡_**
 
-북스테어즈는 여러분들의 보다 똑똑한 독서를 돕습니다! [랜딩페이지 바로가기](https://bookstairs.netlify.app/)
+북스테어즈는 여러분들의 보다 똑똑한 독서를 돕습니다! <br>
+[북스테어즈 바로가기](https://book-stairs.com/)
 
 <br/>
 
 SOPT 29th APPJAM
 
-- 프로젝트 기간: 2022.12.18 ~
+- 프로젝트 기간: 2021.12.18 ~
+- 릴리즈: 2022.03.17 ~
 - [Notion](https://rose-prepared-583.notion.site/d454c4437530405f9e526e86e66912b3)
 - [API 명세서](https://rose-prepared-583.notion.site/API-42e1ea2497d344399fda98cfbe55febd)
 - [코드 컨벤션](https://rose-prepared-583.notion.site/Code-Convention-27afc41450b74fd8a5f1688bfb0b2ede)
@@ -32,30 +34,7 @@ SOPT 29th APPJAM
 
 ![badge](https://img.shields.io/badge/Part-Back--end-brightgreen) ![lang](https://img.shields.io/badge/Language-TypeScript-blue) ![react](https://img.shields.io/badge/Tech--stack-Node.js-orange) ![realease](https://img.shields.io/badge/release-v1.0.0-yellow)
 
-```json
-"dependencies": {
-  "@types/express-serve-static-core": "^4.17.28",
-  "aws-sdk": "^2.1057.0",
-  "axios": "^0.24.0",
-  "bcryptjs": "^2.4.3",
-  "cors": "^2.8.5",
-  "dotenv": "^8.6.0",
-  "express": "^4.17.1",
-  "express-validator": "^6.10.0",
-  "gravatar": "^1.8.1",
-  "jsonwebtoken": "^8.5.1",
-  "moment": "^2.29.1",
-  "multer": "^1.4.2",
-  "multer-s3": "^2.9.0",
-  "pg": "^8.7.1",
-  "pg-hstore": "^2.3.4",
-  "reflect-metadata": "^0.1.13",
-  "request": "^2.88.2",
-  "sequelize": "^6.13.0",
-  "sequelize-cli": "^6.3.0",
-  "sequelize-typescript": "^2.1.0"
-}
-```
+
 
 <br/>
 
@@ -76,26 +55,31 @@ SOPT 29th APPJAM
 ```
 📦src
  ┣ 📂config
- ┃ ┣ 📜config.ts
  ┃ ┗ 📜index.ts
  ┣ 📂controller
  ┃ ┣ 📜auth.ts
  ┃ ┣ 📜book.ts
  ┃ ┣ 📜review.ts
  ┃ ┗ 📜user.ts
+ ┣ 📂interface
+ ┃ ┣ 📜IBook.ts
+ ┃ ┣ 📜IReview.ts
+ ┃ ┗ 📜IUser.ts
  ┣ 📂library
  ┃ ┣ 📜checkValidation.ts
  ┃ ┣ 📜constant.ts
+ ┃ ┣ 📜convertSnakeToCamel.ts
  ┃ ┣ 📜response.ts
  ┃ ┗ 📜returnCode.ts
+ ┣ 📂loader
+ ┃ ┗ 📜db.ts
  ┣ 📂middleware
  ┃ ┣ 📜authMiddleware.ts
  ┃ ┗ 📜upload.ts
  ┣ 📂models
  ┃ ┣ 📜Book.ts
  ┃ ┣ 📜Review.ts
- ┃ ┣ 📜User.ts
- ┃ ┗ 📜index.ts
+ ┃ ┗ 📜User.ts
  ┣ 📂others
  ┃ ┗ 📂slack
  ┃ ┃ ┣ 📜slack.ts
@@ -119,15 +103,9 @@ SOPT 29th APPJAM
  ┃ ┃ ┣ 📜book.spec.ts
  ┃ ┃ ┣ 📜review.spec.ts
  ┃ ┃ ┗ 📜user.spec.ts
- ┣ 📜.sequelizerc.ts
  ┗ 📜index.ts
 ```
 
-<br/>
-
-# 🪜 ERD
-
-![image](https://user-images.githubusercontent.com/68222629/150541524-3583fe28-fd09-4e4b-813f-37fb0c37e99d.png)
 
 <br/>
 
@@ -159,23 +137,28 @@ SOPT 29th APPJAM
 
 # 📄 API
 
-| Route  | URI                             | HTTP<br>메서드 |           설명            | 담당 | 완료 |
-| :----: | :------------------------------ | :------------: | :-----------------------: | :--: | :--: |
-|  Auth  | /auth/email/?email=             |     `GET`      |    이메일 유효성 검사     | 동근 |  🧐  |
-|        | /auth/nickname/?nickname=       |     `GET`      |    닉네임 유효성 검사     | 서현 |  🧐  |
-|        | /auth/login                     |     `POST`     |        유저 로그인        | 서현 |  🧐  |
-|        | /auth/signup                    |     `POST`     |         회원가입          | 동근 |  🧐  |
-|        | /auth/check                     |     `GET`      |     로그인 여부 판별      | 서현 |  🧐  |
-|  User  | /user/myInfo                    |     `GET`      |       내 정보 조회        | 서현 |  🧐  |
-|        | /user/img                       |    `PATCH`     |     프로필 사진 수정      | 서현 |  🧐  |
-|  Book  | /book                           |     `POST`     | 서재 / 리뷰에 책 추가하기 | 동근 |  🧐  |
-|        | /book                           |     `GET`      |     서재 책 전체 조회     | 동근 |  🧐  |
-| Review | /review/before/:reviewId        |    `PATCH`     |       독서 전 단계        | 성용 |  🧐  |
-|        | /review/:reviewId/question-list |     `GET`      |     질문 리스트 조회      | 성용 |  🧐  |
-|        | /review/now/:reviewId           |    `PATCH`     |       독서 중 단계        | 성용 |  🧐  |
-|        | /review/:reviewId               |     `GET`      |         리뷰 조회         | 서현 |  🧐  |
-|        | /review/:reviewId               |    `PATCH`     |         리뷰 수정         | 동근 |  🧐  |
-|        | /review/:reviewId               |    `DELETE`    |         리뷰 삭제         | 성용 |  🧐  |
+| Route  | URI                             | HTTP<br>메서드 |           설명            |
+| :----: | :------------------------------ | :------------: | :-----------------------: |
+|  Auth  | /auth/email/?email=             |     `GET`      |    이메일 유효성 검사     |
+|        | /auth/nickname/?nickname=       |     `GET`      |    닉네임 유효성 검사     |
+|        | /auth/login                     |     `POST`     |        유저 로그인        |
+|        | /auth/signup                    |     `POST`     |         회원가입          |
+|        | /auth/check                     |     `GET`      |     로그인 여부 판별      |
+|  User  | /user/myInfo                    |     `GET`      |       내 정보 조회        |
+|        | /user/img                       |    `PATCH`     |     프로필 사진 수정      |
+|  Book  | /book                           |     `POST`     | 서재 / 리뷰에 책 추가하기 |
+|        | /book                           |     `GET`      |     서재 책 전체 조회     |
+|        | /book/pre                       |     `GET`      |     서재 독서 전 조회     |
+|        | /book/peri                      |     `GET`      |     서재 독서 중 조회     |
+|        | /book/post                      |     `GET`      |     서재 독서 완료 조회   |
+| Review | /review/before/:reviewId        |    `PATCH`     |       독서 전 단계        |
+|        | /review/:reviewId/question-list |     `GET`      |     질문 리스트 조회      |
+|        | /review/now/:reviewId           |    `PATCH`     |       독서 중 단계        |
+|        | /review/:reviewId               |     `GET`      |         리뷰 조회         |
+|        | /review/:reviewId               |    `PATCH`     |         리뷰 수정         |
+|        | /review/:reviewId               |    `DELETE`    |         리뷰 삭제         |
+|        | /review/:reviewId/pre           |     `GET`      |     독서 전 리뷰 조회     |
+|        | /review/:reviewId/peri          |     `GET`      |     독서 후 리뷰 조회     |
 
 <br />
 
@@ -189,4 +172,4 @@ SOPT 29th APPJAM
 |  1.0.1  | bug fix, add api                               | [📄](https://github.com/TeamBookTez/booktez-server/releases/tag/v1.0.1) | 2022.02.10 |
 |  1.0.2  | bug fix, modify api                            | [📄](https://github.com/TeamBookTez/booktez-server/releases/tag/v1.0.2) | 2022.02.21 |
 |  2.0.0  | switch database <br>from postgreSQL to mongoDB | [📄](https://github.com/TeamBookTez/booktez-server/releases/tag/v2.0.0) | 2022.03.03 |
-|  2.0.1  | bug fix                                        | [📄](https://github.com/TeamBookTez/booktez-server/releases/tag/v2.0.`) | 2022.03.06 |
+|  2.0.1  | bug fix                                        | [📄](https://github.com/TeamBookTez/booktez-server/releases/tag/v2.0.1) | 2022.03.06 |

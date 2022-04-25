@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-dotenv.config();
+import config from "../config";
 
 // interface
 import { IUser } from "../interface/IUser";
@@ -23,7 +22,7 @@ const UserSchema = new mongoose.Schema({
   img: {
     type: String,
     required: false,
-    default: process.env.DEFAULT_IMG,
+    default: config.defaultImg.user,
   },
   // 리프레시 토큰
   refresh_token: {
@@ -35,6 +34,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+
+  // 만료 일자
+  expired_at: {
+    type: Date,
+    required: false,
+  },
+
   // 생성 일자
   created_at: {
     type: Date,

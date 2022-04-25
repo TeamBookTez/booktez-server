@@ -8,6 +8,7 @@ export interface IUser {
   img: string;
   refresh_token: string;
   email_code: string;
+  expired_at: Date;
   created_at: Date;
   updated_at: Date;
   is_deleted: boolean;

@@ -288,10 +288,10 @@ const getBookExistService = async (userId: string, isbn: string) => {
 
   const existReview = reviews.filter((review) => {
     if (
-      review.book_id.isbn === isbnOne ||
-      review.book_id.isbn_sub === isbnOne ||
-      review.book_id.isbn === isbnTwo ||
-      review.book_id.isbn_sub === isbnTwo
+      review.book_id["isbn"] === isbnOne ||
+      review.book_id["isbn_sub"] === isbnOne ||
+      review.book_id["isbn"] === isbnTwo ||
+      review.book_id["isbn_sub"] === isbnTwo
     ) {
       return review;
     }

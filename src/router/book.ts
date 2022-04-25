@@ -13,5 +13,6 @@ router.get("/", auth, bookController.getBookController);
 router.get("/pre", auth, bookController.getBookPreController);
 router.get("/peri", auth, bookController.getBookPeriController);
 router.get("/post", auth, bookController.getBookPostController);
+router.get("/exist/:isbn", auth, bookController.getBookExistController);
 
 module.exports = router;

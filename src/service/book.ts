@@ -2,7 +2,12 @@ import mongoose from "mongoose";
 
 // library
 import constant from "../library/constant";
-import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
+import {
+  keysToSnake,
+  keysToCamel,
+  toSnakeString,
+} from "../library/convertSnakeToCamel";
+import { isValidObjectId } from "mongoose";
 
 // model
 import User from "../models/User";
@@ -250,12 +255,62 @@ const getBookPostService = async (userId: string) => {
   return { books: books };
 };
 
+/**
+ * @서재 중복검사
+ * @route GET /book/exist/:isbn
+ * @access private
+ */
+// TODO: 책 검사하는 과정에서 isbn이 2개 들어오는지 클라랑 이야기해보기
+// TODO: isbn 형식값 검사 필요 고민
+const getBookExistService = async (userId: string, isbn: string) => {
+  // 필요한 값이 없는 경우
+  if (!userId || !isbn) {
+    return constant.NULL_VALUE;
+  }
+
+  isbn = isbn.trim();
+  let isbnOne: string, isbnTwo: string;
+
+  // isbn이 2개일 경우, 1개일 경우
+  if (/\s/.test(isbn)) {
+    [isbnOne, isbnTwo] = isbn.split(" ");
+  } else {
+    isbnOne = isbn;
+    isbnTwo = "";
+  }
+
+  const reviews = await Review.find(
+    keysToSnake({
+      userId,
+      isDeleted: false,
+    })
+  ).populate(toSnakeString("bookId"));
+
+  const existReview = reviews.filter((review) => {
+    if (
+      review.book_id.isbn === isbnOne ||
+      review.book_id.isbn_sub === isbnOne ||
+      review.book_id.isbn === isbnTwo ||
+      review.book_id.isbn_sub === isbnTwo
+    ) {
+      return review;
+    }
+  });
+
+  if (existReview.length > 0) {
+    return constant.VALUE_ALREADY_EXIST;
+  }
+
+  return constant.SUCCESS;
+};
+
 const bookService = {
   postBookService,
   getBookService,
   getBookPreService,
   getBookPeriService,
   getBookPostService,
+  getBookExistService,
 };
 
 export default bookService;

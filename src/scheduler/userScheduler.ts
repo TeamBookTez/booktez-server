@@ -15,7 +15,7 @@ export const userScan = schedule.scheduleJob("0 0 0 * * *", async () => {
   // 삭제 예정 유저
   const deletedUsers = await User.find(keysToSnake({ isDeleted: true }));
 
-  deletedUsers.map(async (user) => {
+  deletedUsers.forEach(async (user) => {
     // 현재 날짜가 만료 날짜 이후
     if (current.getTime() >= user.expired_at.getTime()) {
       // 해당 유저가 가진 리뷰 모두 삭제

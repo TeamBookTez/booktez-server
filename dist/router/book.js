@@ -14,5 +14,6 @@ router.get("/", authMiddleware_1.auth, book_1.default.getBookController);
 router.get("/pre", authMiddleware_1.auth, book_1.default.getBookPreController);
 router.get("/peri", authMiddleware_1.auth, book_1.default.getBookPeriController);
 router.get("/post", authMiddleware_1.auth, book_1.default.getBookPostController);
+router.get("/exist/:isbn", authMiddleware_1.auth, book_1.default.getBookExistController);
 module.exports = router;
 //# sourceMappingURL=book.js.map

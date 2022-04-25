@@ -14,5 +14,6 @@ router.get("/nickname", auth_1.default.getNicknameController);
 router.post("/login", auth_1.default.postLoginController);
 router.post("/signup", auth_1.default.postSignupController);
 router.get("/check", authMiddleware_1.isLogin, auth_1.default.getLoginFlagController);
+router.patch("/withdraw", authMiddleware_1.auth, auth_1.default.patchWithdrawController);
 module.exports = router;
 //# sourceMappingURL=auth.js.map

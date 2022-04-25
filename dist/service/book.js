@@ -192,12 +192,52 @@ const getBookPostService = (userId) => __awaiter(void 0, void 0, void 0, functio
     })));
     return { books: books };
 });
+/**
+ * @서재 중복검사
+ * @route GET /book/exist/:isbn
+ * @access private
+ */
+// TODO: 책 검사하는 과정에서 isbn이 2개 들어오는지 클라랑 이야기해보기
+// TODO: isbn 형식값 검사 필요 고민
+const getBookExistService = (userId, isbn) => __awaiter(void 0, void 0, void 0, function* () {
+    // 필요한 값이 없는 경우
+    if (!userId || !isbn) {
+        return constant_1.default.NULL_VALUE;
+    }
+    isbn = isbn.trim();
+    let isbnOne, isbnTwo;
+    // isbn이 2개일 경우, 1개일 경우
+    if (/\s/.test(isbn)) {
+        [isbnOne, isbnTwo] = isbn.split(" ");
+    }
+    else {
+        isbnOne = isbn;
+        isbnTwo = "";
+    }
+    const reviews = yield Review_1.default.find((0, convertSnakeToCamel_1.keysToSnake)({
+        userId,
+        isDeleted: false,
+    })).populate((0, convertSnakeToCamel_1.toSnakeString)("bookId"));
+    const existReview = reviews.filter((review) => {
+        if (review.book_id["isbn"] === isbnOne ||
+            review.book_id["isbn_sub"] === isbnOne ||
+            review.book_id["isbn"] === isbnTwo ||
+            review.book_id["isbn_sub"] === isbnTwo) {
+            return review;
+        }
+    });
+    if (existReview.length > 0) {
+        return constant_1.default.VALUE_ALREADY_EXIST;
+    }
+    return constant_1.default.SUCCESS;
+});
 const bookService = {
     postBookService,
     getBookService,
     getBookPreService,
     getBookPeriService,
     getBookPostService,
+    getBookExistService,
 };
 exports.default = bookService;
 //# sourceMappingURL=book.js.map

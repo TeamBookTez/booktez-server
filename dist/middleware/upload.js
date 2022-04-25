@@ -6,15 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const multer_1 = __importDefault(require("multer"));
 const multer_s3_1 = __importDefault(require("multer-s3"));
-const index_1 = __importDefault(require("../config/index"));
+const config_1 = __importDefault(require("../config"));
 const s3 = new aws_sdk_1.default.S3({
-    accessKeyId: index_1.default.awsS3AccessKey,
-    secretAccessKey: index_1.default.awsS3SecretAccessKey,
+    accessKeyId: config_1.default.aws.s3AccessKey,
+    secretAccessKey: config_1.default.aws.s3SecretAccessKey,
 });
 const upload = (0, multer_1.default)({
     storage: (0, multer_s3_1.default)({
         s3: s3,
-        bucket: index_1.default.awsBucket + "/user_profile",
+        bucket: config_1.default.aws.bucket + "/user_profile",
         contentType: multer_s3_1.default.AUTO_CONTENT_TYPE,
         acl: "public-read",
         key: (req, file, cb) => {

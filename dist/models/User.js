@@ -4,8 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
+const config_1 = __importDefault(require("../config"));
 const UserSchema = new mongoose_1.default.Schema({
     email: {
         type: String,
@@ -24,7 +23,7 @@ const UserSchema = new mongoose_1.default.Schema({
     img: {
         type: String,
         required: false,
-        default: process.env.DEFAULT_IMG,
+        default: config_1.default.defaultImg.user,
     },
     // 리프레시 토큰
     refresh_token: {
@@ -34,6 +33,11 @@ const UserSchema = new mongoose_1.default.Schema({
     // 이메일 인증번호
     email_code: {
         type: String,
+        required: false,
+    },
+    // 만료 일자
+    expired_at: {
+        type: Date,
         required: false,
     },
     // 생성 일자

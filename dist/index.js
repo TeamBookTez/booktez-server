@@ -7,13 +7,16 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const router_1 = __importDefault(require("./router"));
 const db_1 = __importDefault(require("./loader/db"));
+const config_1 = __importDefault(require("./config"));
+// scheduler
+const userScheduler_1 = require("./scheduler/userScheduler");
 const app = (0, express_1.default)();
 // Connect Database
 (0, db_1.default)();
 app.use(express_1.default.urlencoded());
 app.use(express_1.default.json());
 // Port Host
-const PORT = parseInt(process.env.PORT, 10) || 3000 || 8080;
+const PORT = config_1.default.port || 3000 || 8080;
 // allow cors
 app.use((0, cors_1.default)({
     credentials: true,
@@ -34,6 +37,8 @@ app.use(function (err, req, res, next) {
     // render the error page
     res.status(err.status || 500);
     res.json({ error: err });
+    // scheduler
+    userScheduler_1.userScan;
 });
 const server = app
     .listen(PORT, () => {

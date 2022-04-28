@@ -44,7 +44,7 @@ const getEmailService = (email) => __awaiter(void 0, void 0, void 0, function* (
     }
     // email이 이미 존재할 때
     // TODO: DB에서 isDeleted string으로 되있는 것 변경
-    const emailExist = yield User_1.default.exists((0, convertSnakeToCamel_1.keysToSnake)({ email, isDeleted: false }));
+    const emailExist = yield User_1.default.exists({ email });
     if (emailExist) {
         return constant_1.default.EMAIL_ALREADY_EXIST;
     }
@@ -70,10 +70,7 @@ const getNicknameService = (nickname) => __awaiter(void 0, void 0, void 0, funct
         return constant_1.default.WRONG_NICKNAME_CONVENTION;
     }
     // nickname이 이미 존재할 때
-    const nicknameExist = yield User_1.default.find({
-        nickname,
-        isDeleted: false,
-    });
+    const nicknameExist = yield User_1.default.find({ nickname });
     if (nicknameExist.length > 0) {
         return constant_1.default.NICKNAME_ALREADY_EXIST;
     }
@@ -93,10 +90,10 @@ const postLoginService = (email, password) => __awaiter(void 0, void 0, void 0, 
         return constant_1.default.NULL_VALUE;
     }
     // 존재하지 않는 이메일
-    const user = yield User_1.default.findOne({
+    const user = yield User_1.default.findOne((0, convertSnakeToCamel_1.keysToSnake)({
         email,
         isDeleted: false,
-    });
+    }));
     if (!user) {
         return constant_1.default.EMAIL_NOT_FOUND;
     }
@@ -146,12 +143,12 @@ const postSignupService = (email, nickname, password) => __awaiter(void 0, void 
         return constant_1.default.WRONG_PASSWORD_CONVENTION;
     }
     // email이 이미 존재할 때
-    const emailExist = yield User_1.default.exists((0, convertSnakeToCamel_1.keysToSnake)({ email, isDeleted: false }));
+    const emailExist = yield User_1.default.exists({ email });
     if (emailExist) {
         return constant_1.default.EMAIL_ALREADY_EXIST;
     }
     // nickname이 이미 존재할 때
-    const nicknameExist = yield User_1.default.exists((0, convertSnakeToCamel_1.keysToSnake)({ nickname, isDeleted: false }));
+    const nicknameExist = yield User_1.default.exists({ nickname });
     if (nicknameExist) {
         return constant_1.default.NICKNAME_ALREADY_EXIST;
     }

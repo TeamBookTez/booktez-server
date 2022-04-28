@@ -25,15 +25,16 @@ exports.userScan = node_schedule_1.default.scheduleJob("0 0 0 * * *", () => __aw
     console.log("Scanning users...[" + current + "]");
     // 삭제 예정 유저
     const deletedUsers = yield User_1.default.find((0, convertSnakeToCamel_1.keysToSnake)({ isDeleted: true }));
-    deletedUsers.forEach((user) => __awaiter(void 0, void 0, void 0, function* () {
+    yield Promise.all(deletedUsers.map((user) => __awaiter(void 0, void 0, void 0, function* () {
         // 현재 날짜가 만료 날짜 이후
         if (current.getTime() >= user.expired_at.getTime()) {
             // 해당 유저가 가진 리뷰 모두 삭제
-            yield Review_1.default.deleteMany((0, convertSnakeToCamel_1.keysToSnake)({ userID: user._id }));
+            const { deletedCount } = yield Review_1.default.deleteMany((0, convertSnakeToCamel_1.keysToSnake)({ userId: user._id }));
             // 해당 유저 삭제
             yield user.deleteOne((0, convertSnakeToCamel_1.keysToSnake)({ _id: user._id }));
+            console.log("Delete Count: " + deletedCount);
         }
-    }));
+    })));
     console.log("Complete scanning...");
 }));
 //# sourceMappingURL=userScheduler.js.map

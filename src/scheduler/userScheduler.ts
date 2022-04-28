@@ -15,14 +15,19 @@ export const userScan = schedule.scheduleJob("0 0 0 * * *", async () => {
   // 삭제 예정 유저
   const deletedUsers = await User.find(keysToSnake({ isDeleted: true }));
 
-  deletedUsers.forEach(async (user) => {
-    // 현재 날짜가 만료 날짜 이후
-    if (current.getTime() >= user.expired_at.getTime()) {
-      // 해당 유저가 가진 리뷰 모두 삭제
-      await Review.deleteMany(keysToSnake({ userID: user._id }));
-      // 해당 유저 삭제
-      await user.deleteOne(keysToSnake({ _id: user._id }));
-    }
-  });
+  await Promise.all(
+    deletedUsers.map(async (user) => {
+      // 현재 날짜가 만료 날짜 이후
+      if (current.getTime() >= user.expired_at.getTime()) {
+        // 해당 유저가 가진 리뷰 모두 삭제
+        const { deletedCount } = await Review.deleteMany(
+          keysToSnake({ userId: user._id })
+        );
+        // 해당 유저 삭제
+        await user.deleteOne(keysToSnake({ _id: user._id }));
+        console.log("Delete Count: " + deletedCount);
+      }
+    })
+  );
   console.log("Complete scanning...");
 });

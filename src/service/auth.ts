@@ -70,10 +70,7 @@ const getNicknameService = async (nickname?: string) => {
   }
 
   // nickname이 이미 존재할 때
-  const nicknameExist = await User.find({
-    nickname,
-    isDeleted: false,
-  });
+  const nicknameExist = await User.find({ nickname });
 
   if (nicknameExist.length > 0) {
     return constant.NICKNAME_ALREADY_EXIST;

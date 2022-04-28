@@ -94,9 +94,12 @@ const postLoginService = async (email: string, password: string) => {
   }
 
   // 존재하지 않는 이메일
-  const user = await User.findOne({
-    email,
-  });
+  const user = await User.findOne(
+    keysToSnake({
+      email,
+      isDeleted: false,
+    })
+  );
   if (!user) {
     return constant.EMAIL_NOT_FOUND;
   }

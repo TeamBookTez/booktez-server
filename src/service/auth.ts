@@ -157,17 +157,13 @@ const postSignupService = async (
   }
 
   // email이 이미 존재할 때
-  const emailExist = await User.exists(
-    keysToSnake({ email, isDeleted: false })
-  );
+  const emailExist = await User.exists({ email });
   if (emailExist) {
     return constant.EMAIL_ALREADY_EXIST;
   }
 
   // nickname이 이미 존재할 때
-  const nicknameExist = await User.exists(
-    keysToSnake({ nickname, isDeleted: false })
-  );
+  const nicknameExist = await User.exists({ nickname });
   if (nicknameExist) {
     return constant.NICKNAME_ALREADY_EXIST;
   }

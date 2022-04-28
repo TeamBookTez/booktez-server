@@ -39,9 +39,7 @@ const getEmailService = async (email?: string) => {
 
   // email이 이미 존재할 때
   // TODO: DB에서 isDeleted string으로 되있는 것 변경
-  const emailExist = await User.exists(
-    keysToSnake({ email, isDeleted: false })
-  );
+  const emailExist = await User.exists({ email });
   if (emailExist) {
     return constant.EMAIL_ALREADY_EXIST;
   }
@@ -101,7 +99,6 @@ const postLoginService = async (email: string, password: string) => {
   // 존재하지 않는 이메일
   const user = await User.findOne({
     email,
-    isDeleted: false,
   });
   if (!user) {
     return constant.EMAIL_NOT_FOUND;

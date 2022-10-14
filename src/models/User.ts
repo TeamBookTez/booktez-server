@@ -1,8 +1,11 @@
 import mongoose from "mongoose";
 import config from "../config";
+import { convertTimeZone } from "../library/convertTimezone";
 
 // interface
 import { IUser } from "../interface/IUser";
+
+const date: Date = convertTimeZone(Date.now());
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -45,13 +48,13 @@ const UserSchema = new mongoose.Schema({
   created_at: {
     type: Date,
     required: true,
-    default: Date.now,
+    default: date,
   },
   // 수정 일자
   updated_at: {
     type: Date,
     required: true,
-    default: Date.now,
+    default: date,
   },
   is_deleted: {
     type: Boolean,

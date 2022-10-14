@@ -4,9 +4,9 @@ import mongoose from "mongoose";
 import constant from "../library/constant";
 import { keysToSnake, keysToCamel } from "../library/convertSnakeToCamel";
 import { isValidObjectId } from "mongoose";
+import { convertTimeZone } from "../library/convertTimezone";
 
 // model
-import User from "../models/User";
 import Review from "../models/Review";
 import Book from "../models/Book";
 
@@ -56,6 +56,8 @@ const patchReviewPreService = async (
   }
 
   // review 수정
+  const present: Date = convertTimeZone(Date.now());
+
   await review.updateOne({
     $set: keysToSnake({
       questionList,
@@ -63,6 +65,7 @@ const patchReviewPreService = async (
       answerTwo,
       reviewSt,
       finishSt: false,
+      updatedAt: present
     }),
   });
 
@@ -150,11 +153,14 @@ const patchReviewPeriService = async (
   let finishSt = Number(reviewSt) === 4 ? true : false;
 
   // 3. review update
+  const present: Date = convertTimeZone(Date.now());
+
   await review.updateOne({
     $set: keysToSnake({
       answerThree,
       reviewSt,
       finishSt,
+      updatedAt: present
     }),
   });
 

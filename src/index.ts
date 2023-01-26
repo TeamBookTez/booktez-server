@@ -19,15 +19,21 @@ app.use(express.json());
 const PORT: number = config.port || 3000 || 8080;
 
 // allow cors
+// app.use(
+//   cors({
+//     credentials: true,
+//     origin: [
+//       "http://localhost:3000",
+//       "https://dev.book-stairs.com",
+//       "https://api.book-stairs.com",
+//       "https://book-stairs.com",
+//     ],
+//   })
+// );
+
 app.use(
   cors({
-    credentials: true,
-    origin: [
-      "http://localhost:3000",
-      "https://dev.book-stairs.com",
-      "https://api.book-stairs.com",
-      "https://book-stairs.com",
-    ],
+    origin: "*", // 모든 출처 허용 옵션. true 를 써도 된다.
   })
 );
 

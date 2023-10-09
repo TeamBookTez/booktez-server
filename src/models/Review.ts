@@ -1,9 +1,12 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
+import { convertTimeZone } from "../library/convertTimezone";
 
 // interface
 import { IReview } from "../interface/IReview";
+
+const date: Date = convertTimeZone(Date.now());
 
 const ReviewSchema = new mongoose.Schema({
   user_id: {
@@ -56,13 +59,13 @@ const ReviewSchema = new mongoose.Schema({
   created_at: {
     type: Date,
     required: true,
-    default: Date.now,
+    default: date,
   },
   // 수정 일자
   updated_at: {
     type: Date,
     required: true,
-    default: Date.now,
+    default: date,
   },
   is_deleted: {
     type: Boolean,
